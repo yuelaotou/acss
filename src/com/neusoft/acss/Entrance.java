@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import com.neusoft.acss.bean.EmployeeDetailBean;
 import com.neusoft.acss.bean.EmployeeTotalBean;
 import com.neusoft.acss.bean.EntranceBean;
-import com.neusoft.acss.bs.Business;
+import com.neusoft.acss.bs.BusinessT;
 import com.neusoft.acss.consts.FileConst;
 
 public class Entrance extends JFrame {
@@ -74,13 +74,13 @@ public class Entrance extends JFrame {
 
 		beginTimePanel.setLayout(new GridLayout());
 		beginTimePanel.add(beginTimeLabel);
-		beginTimeField.setText(Business.readValue("work.begin.time"));
+		beginTimeField.setText(BusinessT.readValue("work.begin.time"));
 		beginTimePanel.add(beginTimeField);
 		frame1ContentPane.add(beginTimePanel);
 
 		endTimePanel.setLayout(new GridLayout());
 		endTimePanel.add(endTimeLabel);
-		endTimeField.setText(Business.readValue("work.end.time"));
+		endTimeField.setText(BusinessT.readValue("work.end.time"));
 		endTimePanel.add(endTimeField);
 		frame1ContentPane.add(endTimePanel);
 
@@ -109,16 +109,16 @@ public class Entrance extends JFrame {
 			if (e.getActionCommand().equals("确定")) {
 				if (beginTimeField.getText() == null || "".equals(beginTimeField.getText().toString())) {
 					JOptionPane.showMessageDialog(frame, "上班时间为空，请检查！");
-					beginTimeField.setText(Business.readValue("work.begin.time"));
+					beginTimeField.setText(BusinessT.readValue("work.begin.time"));
 					return;
 				} else if (endTimeField.getText() == null || "".equals(endTimeField.getText().toString())) {
 					JOptionPane.showMessageDialog(frame, "下班时间为空，请检查！");
-					endTimeField.setText(Business.readValue("work.end.time"));
+					endTimeField.setText(BusinessT.readValue("work.end.time"));
 					return;
 				} else {
 					try {
-						Business.writeProperties("work.begin.time", beginTimeField.getText(), "");
-						Business.writeProperties("work.end.time", endTimeField.getText(), "");
+						BusinessT.writeProperties("work.begin.time", beginTimeField.getText(), "");
+						BusinessT.writeProperties("work.end.time", endTimeField.getText(), "");
 						JOptionPane.showMessageDialog(frame, "设置成功！");
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -130,7 +130,7 @@ public class Entrance extends JFrame {
 				int result = fDialog.showOpenDialog(frame);
 				if (result == JFileChooser.APPROVE_OPTION) {
 					try {
-						Business.saveVacations(fDialog.getSelectedFile());
+						BusinessT.saveVacations(fDialog.getSelectedFile());
 						JOptionPane.showMessageDialog(frame, "导入法定假期文本成功！");
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -143,7 +143,7 @@ public class Entrance extends JFrame {
 				int result = fDialog.showOpenDialog(frame);
 				if (result == JFileChooser.APPROVE_OPTION) {
 					try {
-						Business.saveWorkDates(fDialog.getSelectedFile());
+						BusinessT.saveWorkDates(fDialog.getSelectedFile());
 						JOptionPane.showMessageDialog(frame, "导入工作串休信息文本成功！");
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -167,10 +167,10 @@ public class Entrance extends JFrame {
 					String path = fDialog.getName(fDialog.getSelectedFile());
 					try {
 						if (path.endsWith(".xls")) {
-							entranceBeanList = Business.ParseExcel2003(fDialog.getSelectedFile());
+							entranceBeanList = BusinessT.ParseExcel2003(fDialog.getSelectedFile());
 							JOptionPane.showMessageDialog(frame, "导入成功，可以查看导出统计报表！");
 						} else if (path.endsWith(".xlsx")) {
-							entranceBeanList = Business.ParseExcel2007(fDialog.getSelectedFile());
+							entranceBeanList = BusinessT.ParseExcel2007(fDialog.getSelectedFile());
 							JOptionPane.showMessageDialog(frame, "导入成功，可以查看导出统计报表！");
 						} else {
 							JOptionPane.showMessageDialog(frame, "导入的文件不是Excel2003或2007版本，请确认！");
@@ -189,10 +189,10 @@ public class Entrance extends JFrame {
 					JOptionPane.showMessageDialog(frame, "还未导入打卡记录，无法导出详细信息表！");
 					return;
 				} else {
-					List<EmployeeDetailBean> employeeDetailBeanList = Business
+					List<EmployeeDetailBean> employeeDetailBeanList = BusinessT
 							.generateEmployeeDetailList(entranceBeanList);
 					try {
-						Business.GenerateDetailExcel(FileConst.PATH_EMPLOYEEDETAIL, employeeDetailBeanList);
+						BusinessT.GenerateDetailExcel(FileConst.PATH_EMPLOYEEDETAIL, employeeDetailBeanList);
 						JOptionPane.showMessageDialog(frame, "导出成功，请查看: " + FileConst.PATH_EMPLOYEEDETAIL);
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -203,12 +203,12 @@ public class Entrance extends JFrame {
 					JOptionPane.showMessageDialog(frame, "还未导入打卡记录，无法导出统计总表！");
 					return;
 				} else {
-					List<EmployeeDetailBean> employeeDetailBeanList = Business
+					List<EmployeeDetailBean> employeeDetailBeanList = BusinessT
 							.generateEmployeeDetailList(entranceBeanList);
 					try {
-						List<EmployeeTotalBean> employeeTotalBeanList = Business
+						List<EmployeeTotalBean> employeeTotalBeanList = BusinessT
 								.ConvertDetail2Total(employeeDetailBeanList);
-						Business.GenerateTotalExcel(FileConst.PATH_EMPLOYEETOTAL, employeeTotalBeanList);
+						BusinessT.GenerateTotalExcel(FileConst.PATH_EMPLOYEETOTAL, employeeTotalBeanList);
 						JOptionPane.showMessageDialog(frame, "导出成功，请查看: " + FileConst.PATH_EMPLOYEETOTAL);
 					} catch (IOException e1) {
 						e1.printStackTrace();

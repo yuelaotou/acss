@@ -3,7 +3,7 @@ package com.neusoft.acss.bean;
 import java.io.Serializable;
 import java.util.Date;
 
-public class WorkDate implements Serializable {
+public class WorkDay implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

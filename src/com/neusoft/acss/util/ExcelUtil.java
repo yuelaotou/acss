@@ -12,10 +12,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -24,18 +20,17 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.neusoft.acss.bean.AcssBean;
 import com.neusoft.acss.bean.EmployeeDetailBean;
 import com.neusoft.acss.bean.EmployeeTotalBean;
-import com.neusoft.acss.bs.BusinessT;
+import com.neusoft.acss.bean.EvectionBean;
+import com.neusoft.acss.consts.Consts;
 import com.neusoft.acss.enums.WorkStatus;
 
 public class ExcelUtil {
 
 	/**
-	 * 
 	 * <p>
-	 * Discription:[解析EXCEL2003版本，每行作为一个JavaBean存储在中ArrayList中]
+	 * Discription:[解析EXCEL2007版本的外出登记表，存储在List&lt;{@link EvectionBean}&gt;中]
 	 * </p>
 	 * Created on 2012-6-29
 	 * 
@@ -45,83 +40,44 @@ public class ExcelUtil {
 	 * @throws URISyntaxException 
 	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
-	public static List<AcssBean> ParseExcel2003(File file) throws IOException, ParseException {
-		InputStream is = new FileInputStream(file);
-		HSSFWorkbook wb = new HSSFWorkbook(new POIFSFileSystem(is));
-		HSSFSheet sheet = wb.getSheetAt(0);
-		HSSFRow row = null;
-		AcssBean acssBean = null;
+	public static List<EvectionBean> parseExcel2EvectionList() throws ParseException, IOException {
+		List<EvectionBean> list = new ArrayList<EvectionBean>();
 
-		// List<Vacation> vacationList = TxtUtil.getVacations();
-		// List<WorkDay> workDateList = TxtUtil.getWorkDays();
-
-		List<AcssBean> list = new ArrayList<AcssBean>();
-		for (int i = sheet.getFirstRowNum() + 1; i < sheet.getPhysicalNumberOfRows(); i++) {
-			row = sheet.getRow(i);
-			acssBean = new AcssBean();
-
-			acssBean.setDepartment(row.getCell(0).toString().trim());
-			acssBean.setName(row.getCell(1).toString().trim());
-			acssBean.setId(Integer.parseInt(row.getCell(2).toString().trim()));
-
-			String date = StringUtils.substringBefore(row.getCell(3).toString(), " ");
-			String time = StringUtils.substringAfter(row.getCell(3).toString(), " ");
-			acssBean.setDate(date);
-			acssBean.setTMorning(StringUtils.leftPad(time, 8, "0"));
-			acssBean.setMachine(Integer.parseInt(row.getCell(4).toString().trim()));
-			acssBean.setCode(row.getCell(5).toString().trim());
-			acssBean.setType(row.getCell(6).toString().trim());
-			acssBean.setCardnum(row.getCell(7).toString().trim());
-			list.add(acssBean);
-		}
-		// Acss.checkVacation(list, vacationList, workDateList);
-		is.close();
-		return list;
-	}
-
-	/**
-	 * 
-	 * <p>
-	 * Discription:[解析EXCEL2007版本，每行作为一个JavaBean存储在中ArrayList中]
-	 * </p>
-	 * Created on 2012-6-29
-	 * 
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws URISyntaxException 
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 */
-	public static List<AcssBean> ParseExcel2007(File file) throws ParseException, IOException {
-		InputStream is = new FileInputStream(file);
-		XSSFWorkbook xwb = new XSSFWorkbook(is);
-		XSSFSheet sheet = xwb.getSheetAt(0);
 		XSSFRow row = null;
-		AcssBean acssBean = null;
-
-		// List<Vacation> vacationList = TxtUtil.getVacations();
-		// List<WorkDay> workDateList = TxtUtil.getWorkDays();
-
-		List<AcssBean> list = new ArrayList<AcssBean>();
-		for (int i = sheet.getFirstRowNum() + 1; i < sheet.getPhysicalNumberOfRows(); i++) {
-			row = sheet.getRow(i);
-			acssBean = new AcssBean();
-			acssBean.setDepartment(row.getCell(0).toString().trim());
-			acssBean.setName(row.getCell(1).toString().trim());
-			acssBean.setId(Integer.parseInt(row.getCell(2).toString().trim()));
-
-			String date = StringUtils.substringBefore(row.getCell(3).toString(), " ");
-			String time = StringUtils.substringAfter(row.getCell(3).toString(), " ");
-			acssBean.setDate(date);
-			acssBean.setTMorning(StringUtils.leftPad(time, 8, "0"));
-			acssBean.setMachine(Integer.parseInt(row.getCell(4).toString().trim()));
-			acssBean.setCode(row.getCell(5).toString().trim());
-			acssBean.setType(row.getCell(6).toString().trim());
-			acssBean.setCardnum(row.getCell(7).toString().trim());
-			list.add(acssBean);
+		EvectionBean eb = null;
+		File folder = new File(Consts.FOLDER_EVECTIONS);
+		if (!folder.exists()) {
+			folder.mkdir();
+			throw new IOException("请在 " + Consts.FOLDER_EVECTIONS + " 路径下放入所有人员的外出登记表");
 		}
-		// Acss.checkVacation(list, vacationList, workDateList);
-		is.close();
+		File files[] = folder.listFiles();
+		for (File file : files) {
+			String name = StringUtils.substringBefore(file.getName(), "-");
+			String month = StringUtils.substringBetween(file.getName(), "-", ".");
+			InputStream is = new FileInputStream(file);
+			XSSFWorkbook xwb = new XSSFWorkbook(is);
+			XSSFSheet sheet = xwb.getSheetAt(0);
+			// 根据表格的样式，确定从第4行开始读取，读到总行-2。其实也是4+31行。
+			for (int i = sheet.getFirstRowNum() + 3; i < sheet.getPhysicalNumberOfRows() - 2; i++) {
+				row = sheet.getRow(i);
+				eb = new EvectionBean();
+				eb.setName(name);
+				eb.setMonth(month);
+				eb.setDay(StringUtils.leftPad(row.getCell(0).toString().replace("日", ""), 2, "0"));
+				eb.setEvection(row.getCell(1).toString().trim());
+				eb.setOutPosition(row.getCell(2).toString().trim());
+				eb.setInPosition(row.getCell(3).toString().trim());
+				eb.setOvertime(row.getCell(4).toString().trim());
+				eb.setSick_leave(row.getCell(5).toString().trim());
+				eb.setThing_leave(row.getCell(6).toString().trim());
+				eb.setYear_leave(row.getCell(7).toString().trim());
+				if (eb.isEmpty()) {
+					continue;
+				}
+				list.add(eb);
+			}
+			is.close();
+		}
 		return list;
 	}
 
@@ -219,10 +175,10 @@ public class ExcelUtil {
 
 				// 判断，若上班或下班时间未打卡，但是因为是加班，就算成是属性设置中的上班时间和下班时间
 				if (employeeDetailBean.getBeginTime().equals("")) {
-					employeeDetailBean.setBeginTime(BusinessT.readValue("work.begin.time"));
+					employeeDetailBean.setBeginTime("");
 				}
 				if (employeeDetailBean.getEndTime().equals("")) {
-					employeeDetailBean.setEndTime(BusinessT.readValue("work.end.time"));
+					employeeDetailBean.setEndTime("");
 				}
 
 				// 计算两个时间的小时差，也就是加班多少时间

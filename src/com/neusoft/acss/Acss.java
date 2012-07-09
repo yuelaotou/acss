@@ -168,7 +168,7 @@ public class Acss extends JFrame {
 		tnoon_begin = DateFormatUtils.format(d_tnoon_begin, "HH:mm:ss");
 
 		Date d_tnoon_end = DateUtils.addMinutes(DateUtils.parseDate(tnoon_end, "HH:mm:ss"),
-				-Integer.parseInt(tnoon_grace));
+				Integer.parseInt(tnoon_grace));
 		tnoon_end = DateFormatUtils.format(d_tnoon_end, "HH:mm:ss");
 	}
 
@@ -273,12 +273,12 @@ public class Acss extends JFrame {
 				} else {
 					try {
 						PropUtil.writeProperties("work.morning.time", morningTimeField.getText(), "");
+						PropUtil.writeProperties("work.evening.time", eveningTimeField.getText(), "");
+						PropUtil.writeProperties("work.grace.time", graceTimeField.getText(), "");
 						PropUtil.writeProperties("work.noon.time.begin", noonBeginTimeField.getText(), "");
 						PropUtil.writeProperties("work.noon.time.end", noonEndTimeField.getText(), "");
 						PropUtil.writeProperties("work.noon.time.middle", noonMiddleTimeField.getText(), "");
 						PropUtil.writeProperties("work.noon.grace.time", noongraceTimeField.getText(), "");
-						PropUtil.writeProperties("work.evening.time", eveningTimeField.getText(), "");
-						PropUtil.writeProperties("work.grace.time", graceTimeField.getText(), "");
 						initProperties();
 						JOptionPane.showMessageDialog(frame, "设置成功！");
 					} catch (IOException e1) {
@@ -326,13 +326,17 @@ public class Acss extends JFrame {
 					String path = fDialog.getName(fDialog.getSelectedFile());
 					try {
 						if (path.endsWith(".txt")) {
-
 							initGraceProperties();
 							acssBeanList = TxtUtil.readAcssBeanFromFile(fDialog.getSelectedFile(), tnoon_begin,
 									tnoon_middle, tnoon_end);
 							List<Vacation> vacationList = TxtUtil.getVacations();
 							List<WorkDay> workDayList = TxtUtil.getWorkDays();
+							System.out.println("a.." + acssBeanList.size());
 							checkVacation(acssBeanList, vacationList, workDayList);
+							System.out.println("b.." + acssBeanList.size());
+							for(AcssBean acssBean:acssBeanList){
+								System.out.println(acssBean);
+							}
 							JOptionPane.showMessageDialog(frame, "导入成功，可以查看导出统计报表！");
 							// } else if (path.endsWith(".xls")) {
 							// acssBeanList = ExcelUtil.ParseExcel2003(fDialog.getSelectedFile());

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.neusoft.acss.Acss;
 import com.neusoft.acss.consts.Consts;
 
 public class PropUtil {
@@ -56,6 +57,12 @@ public class PropUtil {
 		os.flush();
 		os.close();
 		is.close();
+	}
+	
+	public static void main(String args[]) {
+		Acss a = new Acss();
+		a.setSize(500, 300);
+		a.setVisible(true);
 	}
 
 }

@@ -199,4 +199,11 @@ public class AcssBean {
 		this.isLeave = isLeave;
 	}
 
+	@Override
+	public String toString() {
+		return "AcssBean [name=" + name + ", date=" + date + ", week=" + week + ", tMorning=" + tMorning
+				+ ", tNooningA=" + tNooningA + ", tNooningB=" + tNooningB + ", tEvening=" + tEvening + ", isVacation="
+				+ isVacation + "]";
+	}
+
 }

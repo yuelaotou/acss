@@ -2,9 +2,11 @@ package com.neusoft.acss.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import com.neusoft.acss.Acss;
 import com.neusoft.acss.bean.AcssBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
@@ -20,6 +23,7 @@ import com.neusoft.acss.consts.Consts;
 import com.neusoft.acss.enums.Week;
 
 public class TxtUtil {
+	private static String NAME = null;
 
 	/**
 	 * 
@@ -32,12 +36,14 @@ public class TxtUtil {
 	public static List<AcssBean> readAcssBeanFromFile(File file, String tnoon_begin, String tnoon_middle,
 			String tnoon_end) throws IOException {
 		List<AcssBean> acssBeanList = new ArrayList<AcssBean>();
-		BufferedReader br = new BufferedReader(new FileReader(file));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GB2312"));
 		String str = "";
 		AcssBean acssBean = null;
-		while ((str = br.readLine().trim()) != null) {
-			acssBean = parseStrToAcssBean(str, tnoon_begin, tnoon_middle, tnoon_end);
-			acssBeanList.add(acssBean);
+		while ((str = br.readLine()) != null) {
+			if (!StringUtils.isEmpty(str)) {
+				acssBean = parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end);
+				acssBeanList.add(acssBean);
+			}
 		}
 
 		return acssBeanList;
@@ -59,22 +65,23 @@ public class TxtUtil {
 		str = StringUtils.replaceEach(str, searchList, replacementList);
 
 		String s_info[] = StringUtils.split(str);
-
-		for (int i = 0; i < s_info.length; i++) {
-			if (!s_info[0].startsWith("[")) {
-				acssBean.setName(s_info[0]);
-				String date_week[] = StringUtils.substringsBetween(s_info[1], "[", "]");
-				acssBean.setDate(date_week[0]);
-				acssBean.setWeek(getWeek(date_week[1]));
-				i++;
-				continue;
-			}
-			if (s_info[0].startsWith("[")) {
-				String date_week[] = StringUtils.substringsBetween(s_info[0], "[", "]");
-				acssBean.setDate(date_week[0]);
-				acssBean.setWeek(getWeek(date_week[1]));
-				continue;
-			}
+		int n = 0;
+		if (!str.startsWith("[")) {
+			acssBean.setName(s_info[0]);
+			NAME = s_info[0];
+			String date_week[] = StringUtils.substringsBetween(s_info[1], "[", "]");
+			acssBean.setDate(date_week[0]);
+			acssBean.setWeek(getWeek(date_week[1]));
+			n += 2;
+		} else {
+			acssBean.setName(NAME);
+			String date_week[] = StringUtils.substringsBetween(s_info[0], "[", "]");
+			acssBean.setDate(date_week[0]);
+			acssBean.setWeek(getWeek(date_week[1]));
+			n++;
+		}
+		
+		for (int i = n; i < s_info.length; i++) {
 			String time = s_info[i];
 			if (time.compareTo(tnoon_begin) < 0) {// 上班
 				// 判断是否为空，需要写入相对早些的时间，因为读取的时间是按照顺序来的。
@@ -90,6 +97,12 @@ public class TxtUtil {
 				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
 				if (StringUtils.isEmpty(acssBean.getTNooningB())) {
 					acssBean.setTNooningB(time);
+				}else{
+					//若午休第一次打卡为空，则进行一定的处理。
+					if (StringUtils.isEmpty(acssBean.getTNooningA())) {
+						acssBean.setTNooningA(acssBean.getTNooningB());
+						acssBean.setTNooningB(time);
+					}
 				}
 			} else if (time.compareTo(tnoon_end) > 0) {// 下班
 				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
@@ -233,15 +246,10 @@ public class TxtUtil {
 		out.close();
 	}
 
-	/**
-	 * <p>Discription:[方法功能中文描述]</p>
-	 * Created on 2012-7-9
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 * @throws: 
-	 */
-	public static void main(String[] args) {
-
+	public static void main(String args[]) {
+		Acss a = new Acss();
+		a.setSize(500, 300);
+		a.setVisible(true);
 	}
 
 }

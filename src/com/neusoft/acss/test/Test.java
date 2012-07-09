@@ -1,10 +1,9 @@
 package com.neusoft.acss.test;
 
+import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
+import com.neusoft.acss.util.ExcelUtil;
 
 public class Test {
 
@@ -17,9 +16,11 @@ public class Test {
 	 * @throws: 
 	 */
 	public static void main(String[] args) throws ParseException {
-		Date d_tevening = DateUtils.addMinutes(DateUtils.parseDate("17:30:10", "HH:mm:ss"), 5);
-		String s = DateFormatUtils.format(d_tevening, "HH:mm:ss");
-		System.out.println(s);
+		try {
+			ExcelUtil.parseExcel2EvectionList();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

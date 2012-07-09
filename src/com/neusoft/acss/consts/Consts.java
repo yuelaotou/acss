@@ -18,6 +18,11 @@ public abstract class Consts {
 	public static String PATH_WORKDAYS = "D:\\acss\\workdates.txt";
 
 	/**
+	 * 个人出差登记表保存路径
+	 */
+	public static String FOLDER_EVECTIONS = "D:\\acss\\evection";
+
+	/**
 	 * 考勤明细表保存位置
 	 */
 	public static String PATH_EMPLOYEEDETAIL = "D:\\acss\\employeeDetail.xlsx";

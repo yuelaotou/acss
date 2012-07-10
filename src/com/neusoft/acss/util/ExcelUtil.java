@@ -94,7 +94,7 @@ public class ExcelUtil {
 	}
 
 	/**
-	 * <p>Discription:[根据传入的employeeDetailBeanList生成DetailExcel，文件保存位置为传入的file值]</p>
+	 * <p>Discription:[根据传入的employeeDetailBeanList生成DetailExcel，文件保存在Consts.PATH_EMPLOYEEDETAIL]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 * @update: [日期YYYY-MM-DD] [更改人姓名]
@@ -131,7 +131,7 @@ public class ExcelUtil {
 				try {
 					value = FieldUtils.readField(employeeDetailBean, key.toString(), true);
 				} catch (IllegalAccessException e) {
-					throw new BizException("读取EmployeeDetailBean属性出错", e);
+					throw new BizException("EmployeeDetailBean#getDetailMap配置错误，读取EmployeeDetailBean属性出错", e);
 				}
 				row.createCell(i).setCellValue(value == null ? "" : value.toString());
 				i++;
@@ -149,7 +149,7 @@ public class ExcelUtil {
 	}
 
 	/**
-	 * <p>Discription:[根据传入的employeeTotalBeanList导出统计总表，文件保存位置为传入的file值]</p>
+	 * <p>Discription:[根据传入的employeeTotalBeanList导出统计总表，文件保存在Consts.PATH_EMPLOYEETOTAL]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 * @update: [日期YYYY-MM-DD] [更改人姓名]
@@ -186,7 +186,7 @@ public class ExcelUtil {
 				try {
 					value = FieldUtils.readField(employeeTotalBean, key.toString(), true);
 				} catch (IllegalAccessException e) {
-					throw new BizException("读取EmployeeTotalBean属性出错", e);
+					throw new BizException("EmployeeTotalBean#getTotalMap配置错误，读取EmployeeTotalBean属性出错", e);
 				}
 				row.createCell(i).setCellValue(value == null ? "" : value.toString());
 				i++;

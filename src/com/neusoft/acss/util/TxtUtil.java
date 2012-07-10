@@ -20,8 +20,8 @@ import com.neusoft.acss.Acss;
 import com.neusoft.acss.bean.AcssBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
+import com.neusoft.acss.bs.Business;
 import com.neusoft.acss.consts.Consts;
-import com.neusoft.acss.enums.Week;
 import com.neusoft.acss.exception.BizException;
 
 /**
@@ -35,8 +35,6 @@ import com.neusoft.acss.exception.BizException;
  */
 public class TxtUtil {
 
-	private static String NAME = null;
-
 	/**
 	 * <p>Discription:[读取考勤结果txt文件，存入到List&lt;{@link AcssBean}&gt;中]</p>
 	 * Created on 2012-7-10
@@ -45,15 +43,15 @@ public class TxtUtil {
 	 */
 	public static List<AcssBean> readAcssBeanFromFile(File file, String tnoon_begin, String tnoon_middle,
 			String tnoon_end) {
-		List<AcssBean> acssBeanList = new ArrayList<AcssBean>();
+		List<AcssBean> list = new ArrayList<AcssBean>();
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GB2312"));
 			String str = "";
 			AcssBean acssBean = null;
 			while ((str = br.readLine()) != null) {
 				if (!StringUtils.isEmpty(str)) {
-					acssBean = parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end);
-					acssBeanList.add(acssBean);
+					acssBean = Business.parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end);
+					list.add(acssBean);
 				}
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -64,100 +62,7 @@ public class TxtUtil {
 			throw new BizException("读取文件：" + file.getName() + " 内容异常", e);
 		}
 
-		return acssBeanList;
-	}
-
-	/**
-	 * <p>Discription:[按照规则解析字符串到{@link AcssBean}中，以后更改解析规则来此修改，请记录信息]</p>
-	 * Created on 2012-7-10
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 */
-	public static AcssBean parseStrToAcssBean(String str, String tnoon_begin, String tnoon_middle, String tnoon_end) {
-		AcssBean acssBean = new AcssBean();
-
-		String searchList[] = new String[] { "[ ", "【", "】", "缺" };
-		String replacementList[] = new String[] { "[", " ", " ", " " };
-		str = StringUtils.replaceEach(str, searchList, replacementList);
-
-		String s_info[] = StringUtils.split(str);
-		int n = 0;
-		if (!str.startsWith("[")) {
-			acssBean.setName(s_info[0]);
-			NAME = s_info[0];
-			String date_week[] = StringUtils.substringsBetween(s_info[1], "[", "]");
-			acssBean.setDate(date_week[0]);
-			acssBean.setWeek(getWeek(date_week[1]));
-			n += 2;
-		} else {
-			acssBean.setName(NAME);
-			String date_week[] = StringUtils.substringsBetween(s_info[0], "[", "]");
-			acssBean.setDate(date_week[0]);
-			acssBean.setWeek(getWeek(date_week[1]));
-			n++;
-		}
-
-		for (int i = n; i < s_info.length; i++) {
-			String time = s_info[i];
-			if (time.compareTo(tnoon_begin) < 0) {// 上班
-				// 判断是否为空，需要写入相对早些的时间，因为读取的时间是按照顺序来的。
-				if (StringUtils.isEmpty(acssBean.getTMorning())) {
-					acssBean.setTMorning(time);
-				}
-			} else if (time.compareTo(tnoon_begin) >= 0 && time.compareTo(tnoon_middle) < 0) {// 午休A
-				// 判断是否为空，需要写入相对早些的时间，因为读取的时间是按照顺序来的。
-				if (StringUtils.isEmpty(acssBean.getTNooningA())) {
-					acssBean.setTNooningA(time);
-				}
-			} else if (time.compareTo(tnoon_middle) >= 0 && time.compareTo(tnoon_end) <= 0) {// 午休B
-				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
-				if (StringUtils.isEmpty(acssBean.getTNooningB())) {
-					acssBean.setTNooningB(time);
-				} else {
-					// 若午休第一次打卡为空，则进行一定的处理。
-					if (StringUtils.isEmpty(acssBean.getTNooningA())) {
-						acssBean.setTNooningA(acssBean.getTNooningB());
-						acssBean.setTNooningB(time);
-					}
-				}
-			} else if (time.compareTo(tnoon_end) > 0) {// 下班
-				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
-				acssBean.setTEvening(time);
-			}
-		}
-
-		return acssBean;
-	}
-
-	/**
-	 * <p>Discription:[根据传入的字符串转换成Week的Enum对象]</p>
-	 * Created on 2012-7-10
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 */
-	public static Week getWeek(String week) {
-		if (week.equals("1") || week.equals("一")) {
-			return Week.MON;
-		}
-		if (week.equals("2") || week.equals("二")) {
-			return Week.TUE;
-		}
-		if (week.equals("3") || week.equals("三")) {
-			return Week.WED;
-		}
-		if (week.equals("4") || week.equals("四")) {
-			return Week.THU;
-		}
-		if (week.equals("5") || week.equals("五")) {
-			return Week.FRI;
-		}
-		if (week.equals("6") || week.equals("六")) {
-			return Week.SAT;
-		}
-		if (week.equals("7") || week.equals("日")) {
-			return Week.SUN;
-		}
-		return null;
+		return list;
 	}
 
 	/**
@@ -166,7 +71,8 @@ public class TxtUtil {
 	 * #元旦：2012年1月1日至3日放假调休，共3天。2011年12月31日(星期六)上班。</br>
 	 * #春节：1月22日至28日放假调休，共7天。1月21日(星期六)、1月29日(星期日)上班。</br>
 	 * #清明节：4月2日至4日放假调休，共3天。3月31日(星期六)、4月1日(星期日)上班。</br>
-	 * #劳动节：4月29日至5月1日放假调休，共3天。4月28日(星期六)上班。</br> #端午节：6月22日至24日放假公休，共3天。</br>
+	 * #劳动节：4月29日至5月1日放假调休，共3天。4月28日(星期六)上班。</br>
+	 * #端午节：6月22日至24日放假公休，共3天。</br>
 	 * #中秋节、国庆节：9月30日至10月7日放假调休，共8天。9月29日(星期六)上班。</br>
 	 * </p>
 	 * Created on 2012-7-10

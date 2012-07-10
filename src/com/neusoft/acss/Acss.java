@@ -278,40 +278,32 @@ public class Acss extends JFrame {
 				if (e.getActionCommand().equals("确定")) {
 					if (!morningTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "上班时间格式不正确，请检查。格式为：HH:mm:ss，如：08:30:00");
-						morningTimeField.setText(tmorning);
+//						morningTimeField.setText(tmorning);
+						return;
+					} else if (!eveningTimeField.getText().matches(Consts.REGEX_TIME)) {
+						JOptionPane.showMessageDialog(frame, "下班时间格式不正确，请检查。格式为：HH:mm:ss，如：17:30:00");
+//						eveningTimeField.setText(tevening);
+						return;
+					} else if (!NumberUtils.isNumber(graceTimeField.getText())) {
+						JOptionPane.showMessageDialog(frame, "上下班宽限时间不为数字，请检查！");
+//						graceTimeField.setText(tgrace);
 						return;
 					} else if (!noonBeginTimeField.getText().matches(Consts.REGEX_TIME)) {
-						JOptionPane.showMessageDialog(frame, "午休开始时间为空，请检查！");
-						noonBeginTimeField.setText(tnoon_begin);
+						JOptionPane.showMessageDialog(frame, "午休开始时间格式不正确，请检查。格式为：HH:mm:ss，如：12:00:00");
+//						noonBeginTimeField.setText(tnoon_begin);
 						return;
 					} else if (!noonEndTimeField.getText().matches(Consts.REGEX_TIME)) {
-						JOptionPane.showMessageDialog(frame, "午休结束时间为空，请检查！");
-						noonEndTimeField.setText(tnoon_end);
+						JOptionPane.showMessageDialog(frame, "午休结束时间格式不正确，请检查。格式为：HH:mm:ss，如：13:00:00");
+//						noonEndTimeField.setText(tnoon_end);
 						return;
 					} else if (!noonMiddleTimeField.getText().matches(Consts.REGEX_TIME)) {
-						JOptionPane.showMessageDialog(frame, "午休分割时间为空，请检查！");
-						noonMiddleTimeField.setText(tnoon_middle);
+						JOptionPane.showMessageDialog(frame, "午休分割时间格式不正确，请检查。格式为：HH:mm:ss，如：12:30:00");
+//						noonMiddleTimeField.setText(tnoon_middle);
 						return;
-					} else if (!noongraceTimeField.getText().matches(Consts.REGEX_TIME)) {
-						JOptionPane.showMessageDialog(frame, "午休宽限时间为空，请检查！");
-						noongraceTimeField.setText(tnoon_grace);
-					} else if (!eveningTimeField.getText().matches(Consts.REGEX_TIME)) {
-						JOptionPane.showMessageDialog(frame, "下班时间为空，请检查！");
-						eveningTimeField.setText(tevening);
-						return;
-					} else if (!graceTimeField.getText().matches(Consts.REGEX_TIME)) {
-						JOptionPane.showMessageDialog(frame, "上下班宽限时间为空，请检查！");
-						graceTimeField.setText(tgrace);
-						return;
+					} else if (!NumberUtils.isNumber(noongraceTimeField.getText())) {
+						JOptionPane.showMessageDialog(frame, "午休宽限时间不为数字，请检查！");
+//						noongraceTimeField.setText(tnoon_grace);
 					} else {
-						if (!NumberUtils.isNumber(noongraceTimeField.getText())) {
-							JOptionPane.showMessageDialog(frame, "午休宽限时间不为数字，请检查！");
-							return;
-						}
-						if (!NumberUtils.isNumber(graceTimeField.getText())) {
-							JOptionPane.showMessageDialog(frame, "上下班宽限时间不为数字，请检查！");
-							return;
-						}
 						PropUtil.writeProperties("work.morning.time", morningTimeField.getText(), "");
 						PropUtil.writeProperties("work.evening.time", eveningTimeField.getText(), "");
 						PropUtil.writeProperties("work.grace.time", graceTimeField.getText(), "");

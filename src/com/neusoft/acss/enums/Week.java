@@ -1,5 +1,15 @@
 package com.neusoft.acss.enums;
 
+/**
+ * <p> Title: [星期]</p>
+ * <p> Description: [描述星期的Enum类]</p>
+ * <p> Description: [SUN("日"), MON("一"), TUE("二"), WED("三"), THU("四"), FRI("五"), SAT("六")]</p>
+ * <p> Created on 2012-7-10</p>
+ * <p> Copyright: Copyright (c) 2012</p>
+ * <p> Company: 东软集团股份有限公司</p>
+ * @author 杨光 - yang.guang@neusoft.com
+ * @version 1.0
+ */
 public enum Week {
 	SUN("日"), MON("一"), TUE("二"), WED("三"), THU("四"), FRI("五"), SAT("六");
 

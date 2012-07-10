@@ -1,5 +1,14 @@
 package com.neusoft.acss.consts;
 
+/**
+ * <p> Title: [Consts常量类]</p>
+ * <p> Description: [常量类，各种文件保存的位置，路径，文件名等存入到此。]</p>
+ * <p> Created on 2012-7-10</p>
+ * <p> Copyright: Copyright (c) 2012</p>
+ * <p> Company: 东软集团股份有限公司</p>
+ * @author 杨光 - yang.guang@neusoft.com
+ * @version 1.0
+ */
 public abstract class Consts {
 
 	/**

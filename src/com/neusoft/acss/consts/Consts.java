@@ -41,4 +41,14 @@ public abstract class Consts {
 	 */
 	public static String PATH_EMPLOYEETOTAL = "D:\\acss\\employeeTotal.xlsx";
 
+	/**
+	 * 日期正则表达式
+	 */
+	public static String REGEX_DATE = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
+
+	/**
+	 * 时间正则表达式
+	 */
+	public static String REGEX_TIME = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
+
 }

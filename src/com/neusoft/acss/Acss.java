@@ -5,10 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -30,8 +28,8 @@ import com.neusoft.acss.bean.EmployeeTotalBean;
 import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
+import com.neusoft.acss.bs.Business;
 import com.neusoft.acss.consts.Consts;
-import com.neusoft.acss.enums.WorkSt;
 import com.neusoft.acss.exception.BizException;
 import com.neusoft.acss.util.ExcelUtil;
 import com.neusoft.acss.util.PropUtil;
@@ -278,37 +276,42 @@ public class Acss extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			try {
 				if (e.getActionCommand().equals("确定")) {
-					if (morningTimeField.getText() == null || "".equals(morningTimeField.getText().toString())) {
-						JOptionPane.showMessageDialog(frame, "上班时间为空，请检查！");
+					if (!morningTimeField.getText().matches(Consts.REGEX_TIME)) {
+						JOptionPane.showMessageDialog(frame, "上班时间格式不正确，请检查。格式为：HH:mm:ss，如：08:30:00");
 						morningTimeField.setText(tmorning);
 						return;
-					} else if (noonBeginTimeField.getText() == null
-							|| "".equals(noonBeginTimeField.getText().toString())) {
+					} else if (!noonBeginTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "午休开始时间为空，请检查！");
 						noonBeginTimeField.setText(tnoon_begin);
 						return;
-					} else if (noonEndTimeField.getText() == null || "".equals(noonEndTimeField.getText().toString())) {
+					} else if (!noonEndTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "午休结束时间为空，请检查！");
 						noonEndTimeField.setText(tnoon_end);
 						return;
-					} else if (noonMiddleTimeField.getText() == null
-							|| "".equals(noonMiddleTimeField.getText().toString())) {
+					} else if (!noonMiddleTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "午休分割时间为空，请检查！");
 						noonMiddleTimeField.setText(tnoon_middle);
 						return;
-					} else if (noongraceTimeField.getText() == null
-							|| "".equals(noongraceTimeField.getText().toString())) {
+					} else if (!noongraceTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "午休宽限时间为空，请检查！");
 						noongraceTimeField.setText(tnoon_grace);
-					} else if (eveningTimeField.getText() == null || "".equals(eveningTimeField.getText().toString())) {
+					} else if (!eveningTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "下班时间为空，请检查！");
 						eveningTimeField.setText(tevening);
 						return;
-					} else if (graceTimeField.getText() == null || "".equals(graceTimeField.getText().toString())) {
+					} else if (!graceTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "上下班宽限时间为空，请检查！");
 						graceTimeField.setText(tgrace);
 						return;
 					} else {
+						if (!NumberUtils.isNumber(noongraceTimeField.getText())) {
+							JOptionPane.showMessageDialog(frame, "午休宽限时间不为数字，请检查！");
+							return;
+						}
+						if (!NumberUtils.isNumber(graceTimeField.getText())) {
+							JOptionPane.showMessageDialog(frame, "上下班宽限时间不为数字，请检查！");
+							return;
+						}
 						PropUtil.writeProperties("work.morning.time", morningTimeField.getText(), "");
 						PropUtil.writeProperties("work.evening.time", eveningTimeField.getText(), "");
 						PropUtil.writeProperties("work.grace.time", graceTimeField.getText(), "");
@@ -358,7 +361,7 @@ public class Acss extends JFrame {
 							workDayList = TxtUtil.getWorkDays();
 
 							// 根据法定假日和串休记录，再结合正常周六周日休息，判断AcssBean是正常上班还是休息
-							checkVacation(acssBeanList, vacationList, workDayList);
+							Business.checkVacation(acssBeanList, vacationList, workDayList);
 
 							// 读取本月所有人的外出登记表，存在List<EvectionBean>中
 							evectionBeanList = ExcelUtil.parseExcel2EvectionList();
@@ -372,8 +375,8 @@ public class Acss extends JFrame {
 						JOptionPane.showMessageDialog(frame, "还未导入打卡记录，无法导出详细信息表！");
 						return;
 					} else {
-						List<EmployeeDetailBean> employeeDetailBeanList = generateEmployeeDetailList(acssBeanList,
-								evectionBeanList);
+						List<EmployeeDetailBean> employeeDetailBeanList = Business.generateEmployeeDetailList(
+								acssBeanList, evectionBeanList);
 						Map<String, String> detailMap = EmployeeDetailBean.getDetailMap();
 						ExcelUtil.exportEmployeeDetailExcel(employeeDetailBeanList, detailMap);
 						JOptionPane.showMessageDialog(frame, "导出成功，请查看: " + Consts.PATH_EMPLOYEEDETAIL);
@@ -383,10 +386,11 @@ public class Acss extends JFrame {
 						JOptionPane.showMessageDialog(frame, "还未导入打卡记录，无法导出统计总表！");
 						return;
 					} else {
-						List<EmployeeDetailBean> employeeDetailBeanList = generateEmployeeDetailList(acssBeanList,
-								evectionBeanList);
+						List<EmployeeDetailBean> employeeDetailBeanList = Business.generateEmployeeDetailList(
+								acssBeanList, evectionBeanList);
 						Map<String, String> totalMap = EmployeeTotalBean.getTotalMap();
-						List<EmployeeTotalBean> employeeTotalBeanList = convertDetail2Total(employeeDetailBeanList);
+						List<EmployeeTotalBean> employeeTotalBeanList = Business
+								.convertDetail2Total(employeeDetailBeanList);
 						ExcelUtil.exportEmployeeTotalExcel(employeeTotalBeanList, totalMap);
 						JOptionPane.showMessageDialog(frame, "导出成功，请查看: " + Consts.PATH_EMPLOYEETOTAL);
 					}
@@ -399,205 +403,6 @@ public class Acss extends JFrame {
 				JOptionPane.showMessageDialog(frame, "未知错误！");
 			}
 		}
-	}
-
-	/**
-	 * 
-	 * <p>Discription:[根据法定假日和串休记录，再结合正常周六周日休息，判断AcssBean是正常上班还是休息]</p>
-	 * Created on 2012-7-9
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 */
-	public static void checkVacation(List<AcssBean> acssBeanList, List<Vacation> vacationList, List<WorkDay> workDayList) {
-		for (AcssBean acssBean : acssBeanList) {
-			Calendar c = Calendar.getInstance();
-			try {
-				c.setTime(DateUtils.parseDate(acssBean.getDate(), "yyyy-MM-dd"));
-			} catch (ParseException e) {
-				throw new BizException("考勤文件中日期格式错误，请确认格式为：yyyy-MM-dd，" + acssBean.getDate(), e);
-			}
-
-			// 判断是否为周六周日
-			if (c.get(Calendar.DAY_OF_WEEK) == 7 || c.get(Calendar.DAY_OF_WEEK) == 1) {
-				acssBean.setVacation(true);
-				// 如果在串休列表中，直接return flase，不再计算Vacation了。
-				for (WorkDay wd : workDayList) {
-					if (wd.getDate().compareTo(c.getTime()) == 0) {
-						acssBean.setVacation(false);
-						break;
-					}
-				}
-			} else {
-				// 如果在国家规定的休假列表中，return true。
-				for (Vacation vac : vacationList) {
-					if (vac.getDate().compareTo(c.getTime()) == 0) {
-						acssBean.setVacation(true);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * <p>Discription:[通过导入的考勤记录、出差登记表和相关设置计算职工本月详细考勤记录]</p>
-	 * Created on 2012-6-30
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 */
-	public List<EmployeeDetailBean> generateEmployeeDetailList(List<AcssBean> acssBeanList,
-			List<EvectionBean> evectionBeanList) {
-		EmployeeDetailBean employeeDetailBean = null;
-		List<EmployeeDetailBean> employeeDetailBeanList = new ArrayList<EmployeeDetailBean>();
-
-		String mdate = "";
-		for (AcssBean acssBean : acssBeanList) {
-
-			// 新开始一天的打卡记录
-			if (!mdate.equals(acssBean.getId() + acssBean.getDate())) {
-				if (!mdate.equals("")) {
-					employeeDetailBeanList.add(employeeDetailBean);
-				}
-
-				employeeDetailBean = new EmployeeDetailBean();
-				employeeDetailBean.setDepartment(acssBean.getDepartment());
-				employeeDetailBean.setName(acssBean.getName());
-				employeeDetailBean.setId(acssBean.getId());
-				employeeDetailBean.setDate(acssBean.getDate());
-				employeeDetailBean.setTEarly("");
-				employeeDetailBean.setTEarly("");
-				if (acssBean.isVacation()) {
-					// 如果是休息，则认为今天打卡是加班。否则先不处理，等以后再统一处理。
-					employeeDetailBean.setStatus(WorkSt.EVECTION);
-				}
-
-				// 确保是一个人同一天
-				mdate = acssBean.getId() + acssBean.getDate();
-			}
-
-			String acssBeanTime = acssBean.getTMorning();
-			if (acssBeanTime.compareTo("12:00:00") < 0) {// 上午
-				employeeDetailBean.setTEarly(acssBeanTime);
-			} else if (acssBeanTime.compareTo("12:00:00") >= 0 && acssBeanTime.compareTo("13:00:00") <= 0) {// 中午
-				if (employeeDetailBean.getTEarly().equals("")) {
-					employeeDetailBean.setTEarly(acssBeanTime);
-				} else {
-					employeeDetailBean.setTEarly(acssBeanTime);
-				}
-			} else if (acssBeanTime.compareTo("13:00:00") > 0) {// 下午
-				employeeDetailBean.setTEarly(acssBeanTime);
-			}
-		}
-		employeeDetailBeanList = getEmployeeDetailWorkSt(employeeDetailBeanList);
-		return employeeDetailBeanList;
-	}
-
-	/**
-	 * 
-	 * <p>Discription:[通过EmployeeDetailBean的上班时间，下班时间计算EmployeeDetailBean的打卡情况]</p>
-	 * Created on 2012-7-2
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 */
-	public List<EmployeeDetailBean> getEmployeeDetailWorkSt(List<EmployeeDetailBean> employeeDetailBeanList) {
-
-		// 读取所有设置的信息。
-		String beginTime = info.get("work.begin.time");
-		String endTime = info.get("work.end.time");
-
-		for (EmployeeDetailBean employeeDetailBean : employeeDetailBeanList) {
-			if (employeeDetailBean.getStatus() != null
-					&& employeeDetailBean.getStatus().compareTo(WorkSt.EVECTION) == 0) {
-				continue;
-			}
-
-			if ("".equals(employeeDetailBean.getTEarly())) {
-				employeeDetailBean.setStatus(WorkSt.EVECTION);
-			} else if ("".equals(employeeDetailBean.getTEarly())) {
-				employeeDetailBean.setStatus(WorkSt.EVECTION);
-			} else if (employeeDetailBean.getTEarly().compareTo(beginTime) > 0) {
-				employeeDetailBean.setStatus(WorkSt.EVECTION);
-			} else if (employeeDetailBean.getTEarly().compareTo(endTime) < 0) {
-				employeeDetailBean.setStatus(WorkSt.EVECTION);
-			} else {
-				employeeDetailBean.setStatus(WorkSt.EVECTION);
-			}
-		}
-		return employeeDetailBeanList;
-	}
-
-	/**
-	 * 
-	 * <p>Discription:[通过employeeDetailBeanList计算出employeeTotalBeanList]</p>
-	 * Created on 2012-7-2
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @throws IOException, ParseException 
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 */
-	public static List<EmployeeTotalBean> convertDetail2Total(List<EmployeeDetailBean> employeeDetailBeanList) {
-		List<EmployeeTotalBean> employeeTotalBeanList = new ArrayList<EmployeeTotalBean>();
-		EmployeeTotalBean employeeTotalBean = null;
-		int id = 0;
-		int c_late = 0;
-		int c_early = 0;
-		for (EmployeeDetailBean employeeDetailBean : employeeDetailBeanList) {
-			if (id != employeeDetailBean.getId()) {
-				if (id != 0) {
-					employeeTotalBean.setC_late(c_late);
-					employeeTotalBean.setC_early(c_early);
-					employeeTotalBeanList.add(employeeTotalBean);
-				}
-				employeeTotalBean = new EmployeeTotalBean();
-				employeeTotalBean.setDepartment(employeeDetailBean.getDepartment());
-				employeeTotalBean.setName(employeeDetailBean.getName());
-				employeeTotalBean.setId(employeeDetailBean.getId());
-				// 换人了
-				c_late = 0;
-				c_early = 0;
-			}
-			if (employeeDetailBean.getStatus().compareTo(WorkSt.LEAVE) == 0) {
-				c_late++;
-			}
-			if (employeeDetailBean.getStatus().compareTo(WorkSt.LEAVE) == 0) {
-				c_early++;
-			}
-			if (employeeDetailBean.getStatus().compareTo(WorkSt.LEAVE) == 0) {
-			}
-			if (employeeDetailBean.getStatus().compareTo(WorkSt.LEAVE) == 0) {
-
-				// 判断，若上班或下班时间未打卡，但是因为是加班，就算成是属性设置中的上班时间和下班时间
-				if (employeeDetailBean.getTEarly().equals("")) {
-					employeeDetailBean.setTEarly("");
-				}
-				if (employeeDetailBean.getTEarly().equals("")) {
-					employeeDetailBean.setTEarly("");
-				}
-
-				// 计算两个时间的小时差，也就是加班多少时间
-				c_early += minusDate(employeeDetailBean.getTEarly(), employeeDetailBean.getTEarly());
-			}
-			id = employeeDetailBean.getId();
-		}
-		return employeeTotalBeanList;
-	}
-
-	/**
-	 * <p>Discription:[计算两个时间之间相差多少小时]</p>
-	 * Created on 2012-7-2
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @throws ParseException 
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 */
-	public static int minusDate(String beginTime, String endTime) {
-		long begin = 0;
-		long end = 0;
-		try {
-			begin = DateUtils.parseDate(beginTime, "HH:mm:ss").getTime();
-			end = DateUtils.parseDate(endTime, "HH:mm:ss").getTime();
-		} catch (ParseException e) {
-			throw new BizException("计算日期相差时间出错:" + beginTime + "，" + endTime, e);
-		}
-		return (int) ((end - begin) / (1000 * 60 * 60)) + 1;
 	}
 
 	public static void main(String args[]) {

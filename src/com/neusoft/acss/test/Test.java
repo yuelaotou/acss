@@ -4,12 +4,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-
-import com.neusoft.acss.bean.EmployeeDetailBean;
+import com.neusoft.acss.consts.Consts;
 
 public class Test {
 
@@ -22,28 +18,31 @@ public class Test {
 	 * @throws: 
 	 */
 	public static void main(String[] args) throws ParseException {
-		List<EmployeeDetailBean> employeeDetailBeanList = new ArrayList<EmployeeDetailBean>();
+
+		System.out.println("2012-02-22".matches(Consts.REGEX_TIME));
+
+		// List<EmployeeDetailBean> employeeDetailBeanList = new ArrayList<EmployeeDetailBean>();
 		// try {
 		// ExcelUtil.GenerateDetailExcel(Consts.PATH_EMPLOYEEDETAIL, employeeDetailBeanList);
 		// } catch (IOException e1) {
 		// e1.printStackTrace();
 		// }
 
-		EmployeeDetailBean employeeDetailBean = new EmployeeDetailBean();
-		employeeDetailBean.setEvection_remote("我是外地出差");
-		employeeDetailBean.setDepartment("我是部门");
-
-		try {
-			// Object o = FieldUtils.readField(employeeDetailBean, "evection_remote");
-			Object o = FieldUtils.readField(employeeDetailBean, "evection_remote", true);
-			Object o1 = FieldUtils.readField(employeeDetailBean, "department", true);
-			Object o2 = FieldUtils.readField(employeeDetailBean, "evection_locale", true);
-			System.out.println(o);
-			System.out.println(o1);
-			System.out.println(o2);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		// EmployeeDetailBean employeeDetailBean = new EmployeeDetailBean();
+		// employeeDetailBean.setEvection_remote("我是外地出差");
+		// employeeDetailBean.setDepartment("我是部门");
+		//
+		// try {
+		// // Object o = FieldUtils.readField(employeeDetailBean, "evection_remote");
+		// Object o = FieldUtils.readField(employeeDetailBean, "evection_remote", true);
+		// Object o1 = FieldUtils.readField(employeeDetailBean, "department", true);
+		// Object o2 = FieldUtils.readField(employeeDetailBean, "evection_locale", true);
+		// System.out.println(o);
+		// System.out.println(o1);
+		// System.out.println(o2);
+		// } catch (IllegalAccessException e) {
+		// e.printStackTrace();
+		// }
 
 		// Class<?> clazz = employeeDetailBean.getClass();
 		// PropertyDescriptor pd;

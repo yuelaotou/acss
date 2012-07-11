@@ -108,7 +108,7 @@ public class ExcelUtil {
 	public static void exportEmployeeDetailExcel(List<EmployeeDetailBean> employeeDetailBeanList, Map<String, String> m) {
 		Workbook wb = new SXSSFWorkbook(500);
 		Sheet sheet = wb.createSheet();
-
+		sheet.createFreezePane(0, 1);
 		// 生成表头
 		Row row = sheet.createRow(0);
 		row.setHeightInPoints(Consts.ROW_HEIGHT);
@@ -175,7 +175,8 @@ public class ExcelUtil {
 	public static void exportEmployeeTotalExcel(List<EmployeeTotalBean> employeeTotalBeanList, Map<String, String> m) {
 		Workbook wb = new SXSSFWorkbook(500);
 		Sheet sheet = wb.createSheet();
-
+		sheet.createFreezePane(0, 1);
+		
 		// 生成表头
 		Row row = sheet.createRow(0);
 		row.setHeightInPoints(Consts.ROW_HEIGHT);

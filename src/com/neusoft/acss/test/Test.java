@@ -18,6 +18,8 @@ public class Test {
 		// Map<String, Integer> map = new IdentityHashMap<String, Integer>();
 		// map.put("a", 1);
 		//
+
+		
 		System.out.println(StringUtils.isEmpty(null));
 		System.out.println(StringUtils.isNumeric("5d"));
 

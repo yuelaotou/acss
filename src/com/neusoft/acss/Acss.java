@@ -384,10 +384,10 @@ public class Acss extends JFrame {
 				}
 			} catch (BizException ex) {
 				ex.printStackTrace();
-				JOptionPane.showMessageDialog(frame, ex.getMessage());
+				JOptionPane.showMessageDialog(frame, ex.getMessage(), "错误信息", JOptionPane.ERROR_MESSAGE);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "未知错误！" + ex.getMessage());
+				JOptionPane.showMessageDialog(frame, ex.getMessage(), "未知错误", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

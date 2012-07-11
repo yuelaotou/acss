@@ -155,7 +155,7 @@ public class Business {
 			edb.setTLate(tLate);
 
 			// 处理早退信息
-			String tEarly = getTLate(ab, evb, tmorning, tevening, tnoon_begin, tnoon_end);
+			String tEarly = getTEarly(ab, evb, tmorning, tevening, tnoon_begin, tnoon_end);
 			edb.setTEarly(tEarly);
 
 			// 处理加班类型
@@ -229,7 +229,7 @@ public class Business {
 				|| StringUtils.isEmpty(ab.getTNooningB()) || StringUtils.isEmpty(ab.getTEvening())) {
 			return "";
 		} else {
-			int t = minusDate(tevening, ab.getTEvening(), 1000 * 60);
+			int t = minusDate(ab.getTEvening(), tevening, 1000 * 60);
 			if (t <= 0) {
 				return "";
 			} else {
@@ -307,11 +307,18 @@ public class Business {
 	 */
 	public static String getException(AcssBean ab, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		if (StringUtils.isEmpty(ab.getTMorning()) || StringUtils.isEmpty(ab.getTNooningA())
-				|| StringUtils.isEmpty(ab.getTNooningB()) || StringUtils.isEmpty(ab.getTEvening())) {
-			return "异常";
+		if (ab.isVacation()) {
+			if (!StringUtils.isEmpty(ab.getTMorning()) && !StringUtils.isEmpty(ab.getTNooningA())
+					&& !StringUtils.isEmpty(ab.getTNooningB()) && !StringUtils.isEmpty(ab.getTEvening())) {
+				return "异常";
+			}
+		} else {
+			if (StringUtils.isEmpty(ab.getTMorning()) || StringUtils.isEmpty(ab.getTNooningA())
+					|| StringUtils.isEmpty(ab.getTNooningB()) || StringUtils.isEmpty(ab.getTEvening())) {
+				return "异常";
+			}
 		}
-		return "";
+		return null;
 	}
 
 	/**

@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -136,6 +136,7 @@ public class Acss extends JFrame {
 		this.setTitle("考勤统计系统");
 		initProperties();
 		initComponents();
+		initGraceProperties();
 		// 添加关闭事件
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -278,31 +279,25 @@ public class Acss extends JFrame {
 				if (e.getActionCommand().equals("确定")) {
 					if (!morningTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "上班时间格式不正确，请检查。格式为：HH:mm:ss，如：08:30:00");
-//						morningTimeField.setText(tmorning);
 						return;
 					} else if (!eveningTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "下班时间格式不正确，请检查。格式为：HH:mm:ss，如：17:30:00");
-//						eveningTimeField.setText(tevening);
 						return;
-					} else if (!NumberUtils.isNumber(graceTimeField.getText())) {
-						JOptionPane.showMessageDialog(frame, "上下班宽限时间不为数字，请检查！");
-//						graceTimeField.setText(tgrace);
+					} else if (!StringUtils.isNumeric(graceTimeField.getText())) {
+						JOptionPane.showMessageDialog(frame, "上下班宽限时间不为整数字，请检查！");
 						return;
 					} else if (!noonBeginTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "午休开始时间格式不正确，请检查。格式为：HH:mm:ss，如：12:00:00");
-//						noonBeginTimeField.setText(tnoon_begin);
 						return;
 					} else if (!noonEndTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "午休结束时间格式不正确，请检查。格式为：HH:mm:ss，如：13:00:00");
-//						noonEndTimeField.setText(tnoon_end);
 						return;
 					} else if (!noonMiddleTimeField.getText().matches(Consts.REGEX_TIME)) {
 						JOptionPane.showMessageDialog(frame, "午休分割时间格式不正确，请检查。格式为：HH:mm:ss，如：12:30:00");
-//						noonMiddleTimeField.setText(tnoon_middle);
 						return;
-					} else if (!NumberUtils.isNumber(noongraceTimeField.getText())) {
-						JOptionPane.showMessageDialog(frame, "午休宽限时间不为数字，请检查！");
-//						noongraceTimeField.setText(tnoon_grace);
+					} else if (!StringUtils.isNumeric(noongraceTimeField.getText())) {
+						JOptionPane.showMessageDialog(frame, "午休宽限时间不为整数字，请检查！");
+						return;
 					} else {
 						PropUtil.writeProperties("work.morning.time", morningTimeField.getText(), "");
 						PropUtil.writeProperties("work.evening.time", eveningTimeField.getText(), "");
@@ -312,6 +307,7 @@ public class Acss extends JFrame {
 						PropUtil.writeProperties("work.noon.time.middle", noonMiddleTimeField.getText(), "");
 						PropUtil.writeProperties("work.noon.grace.time", noongraceTimeField.getText(), "");
 						initProperties();
+						initGraceProperties();
 						JOptionPane.showMessageDialog(frame, "设置成功！");
 					}
 
@@ -340,7 +336,6 @@ public class Acss extends JFrame {
 						String path = fDialog.getName(fDialog.getSelectedFile());
 						if (path.endsWith(".txt")) {
 							// 根据宽限时间重新计算上班下班等时间和中午休息打卡时间。
-							initGraceProperties();
 
 							// 读取考勤打卡记录
 							acssBeanList = TxtUtil.readAcssBeanFromFile(fDialog.getSelectedFile(), tnoon_begin,
@@ -368,7 +363,7 @@ public class Acss extends JFrame {
 						return;
 					} else {
 						List<EmployeeDetailBean> employeeDetailBeanList = Business.generateEmployeeDetailList(
-								acssBeanList, evectionBeanList);
+								acssBeanList, evectionBeanList, tmorning, tevening, tnoon_begin, tnoon_end);
 						Map<String, String> detailMap = EmployeeDetailBean.getDetailMap();
 						ExcelUtil.exportEmployeeDetailExcel(employeeDetailBeanList, detailMap);
 						JOptionPane.showMessageDialog(frame, "导出成功，请查看: " + Consts.PATH_EMPLOYEEDETAIL);
@@ -379,7 +374,7 @@ public class Acss extends JFrame {
 						return;
 					} else {
 						List<EmployeeDetailBean> employeeDetailBeanList = Business.generateEmployeeDetailList(
-								acssBeanList, evectionBeanList);
+								acssBeanList, evectionBeanList, tmorning, tevening, tnoon_begin, tnoon_end);
 						Map<String, String> totalMap = EmployeeTotalBean.getTotalMap();
 						List<EmployeeTotalBean> employeeTotalBeanList = Business
 								.convertDetail2Total(employeeDetailBeanList);
@@ -392,7 +387,7 @@ public class Acss extends JFrame {
 				JOptionPane.showMessageDialog(frame, ex.getMessage());
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "未知错误！");
+				JOptionPane.showMessageDialog(frame, "未知错误！" + ex.getMessage());
 			}
 		}
 	}

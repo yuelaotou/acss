@@ -14,10 +14,16 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -71,13 +77,13 @@ public class ExcelUtil {
 					eb.setName(name);
 					eb.setMonth(month);
 					eb.setDay(StringUtils.leftPad(row.getCell(0).toString().replace("日", ""), 2, "0"));
-					eb.setEvection(row.getCell(1).toString().trim());
-					eb.setOutPosition(row.getCell(2).toString().trim());
-					eb.setInPosition(row.getCell(3).toString().trim());
+					eb.setTEvection(row.getCell(1).toString().trim());
+					eb.setEvection_remote(row.getCell(2).toString().trim());
+					eb.setEvection_locale(row.getCell(3).toString().trim());
 					eb.setOvertime(row.getCell(4).toString().trim());
-					eb.setSick_leave(row.getCell(5).toString().trim());
-					eb.setThing_leave(row.getCell(6).toString().trim());
-					eb.setYear_leave(row.getCell(7).toString().trim());
+					eb.setLeave_sick(row.getCell(5).toString().trim());
+					eb.setLeave_thing(row.getCell(6).toString().trim());
+					eb.setLeave_year(row.getCell(7).toString().trim());
 					if (eb.isEmpty()) {
 						continue;
 					}
@@ -105,20 +111,28 @@ public class ExcelUtil {
 
 		// 生成表头
 		Row row = sheet.createRow(0);
+		row.setHeightInPoints(Consts.ROW_HEIGHT);
 		Iterator<Entry<String, String>> it = m.entrySet().iterator();
+		CellStyle style_head = getHeadCellStyle(wb);
 		int i = 0;
 		while (it.hasNext()) {
 			Map.Entry<String, String> entry = it.next();
 			Object value = entry.getValue();
-			row.createCell(i).setCellValue(value.toString());
+
+			sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
+			Cell c = row.createCell(i);
+			c.setCellStyle(style_head);
+			c.setCellValue(value.toString());
 			i++;
 		}
 
 		// 生成表体，填充内容
 		EmployeeDetailBean employeeDetailBean = null;
+		CellStyle style_body = getBodyCellStyle(wb);
 		for (int rownum = 0; rownum < employeeDetailBeanList.size(); rownum++) {
 			employeeDetailBean = employeeDetailBeanList.get(rownum);
 			row = sheet.createRow(rownum + 1);
+			row.setHeightInPoints(Consts.ROW_HEIGHT - 2);
 
 			it = m.entrySet().iterator();
 			i = 0;
@@ -130,10 +144,14 @@ public class ExcelUtil {
 				Object value = null;
 				try {
 					value = FieldUtils.readField(employeeDetailBean, key.toString(), true);
-				} catch (IllegalAccessException e) {
-					throw new BizException("EmployeeDetailBean#getDetailMap配置错误，读取EmployeeDetailBean属性出错", e);
+				} catch (Exception e) {
+					// IllegalAccessException,IllegalArgumentException
+					throw new BizException("EmployeeDetailBean#getDetailMap配置错误，属性是：" + key, e);
 				}
-				row.createCell(i).setCellValue(value == null ? "" : value.toString());
+
+				Cell c = row.createCell(i);
+				c.setCellStyle(style_body);
+				c.setCellValue(value == null ? "" : value.toString());
 				i++;
 			}
 		}
@@ -142,7 +160,7 @@ public class ExcelUtil {
 			wb.write(out);
 			out.close();
 		} catch (FileNotFoundException e) {
-			throw new BizException("找不到文件：" + Consts.PATH_EMPLOYEEDETAIL, e);
+			throw new BizException("找不到文件：" + Consts.PATH_EMPLOYEEDETAIL + "，或文件正在被占用", e);
 		} catch (IOException e) {
 			throw new BizException("导出EmployeeDetailExcel出错，IO异常", e);
 		}
@@ -155,25 +173,32 @@ public class ExcelUtil {
 	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static void exportEmployeeTotalExcel(List<EmployeeTotalBean> employeeTotalBeanList, Map<String, String> m) {
-		Workbook workbook = new SXSSFWorkbook(500);
-		Sheet sheet = workbook.createSheet();
+		Workbook wb = new SXSSFWorkbook(500);
+		Sheet sheet = wb.createSheet();
 
 		// 生成表头
 		Row row = sheet.createRow(0);
+		row.setHeightInPoints(Consts.ROW_HEIGHT);
 		Iterator<Entry<String, String>> it = m.entrySet().iterator();
+		CellStyle style_head = getHeadCellStyle(wb);
 		int i = 0;
 		while (it.hasNext()) {
 			Map.Entry<String, String> entry = it.next();
 			Object value = entry.getValue();
-			row.createCell(i).setCellValue(value.toString());
+			sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
+			Cell c = row.createCell(i);
+			c.setCellStyle(style_head);
+			c.setCellValue(value.toString());
 			i++;
 		}
 
 		// 生成表体，填充内容
 		EmployeeTotalBean employeeTotalBean = null;
+		CellStyle style_body = getBodyCellStyle(wb);
 		for (int rownum = 0; rownum < employeeTotalBeanList.size(); rownum++) {
 			employeeTotalBean = employeeTotalBeanList.get(rownum);
 			row = sheet.createRow(rownum + 1);
+			row.setHeightInPoints(Consts.ROW_HEIGHT - 2);
 
 			it = m.entrySet().iterator();
 			i = 0;
@@ -185,23 +210,56 @@ public class ExcelUtil {
 				Object value = null;
 				try {
 					value = FieldUtils.readField(employeeTotalBean, key.toString(), true);
-				} catch (IllegalAccessException e) {
-					throw new BizException("EmployeeTotalBean#getTotalMap配置错误，读取EmployeeTotalBean属性出错", e);
+				} catch (Exception e) {
+					// IllegalAccessException,IllegalArgumentException
+					throw new BizException("EmployeeTotalBean#getTotalMap配置错误，属性是：" + key, e);
 				}
-				row.createCell(i).setCellValue(value == null ? "" : value.toString());
+				Cell c = row.createCell(i);
+				c.setCellStyle(style_body);
+				c.setCellValue(value == null ? "" : value.toString());
 				i++;
 			}
 		}
 
 		try {
 			FileOutputStream out = new FileOutputStream(Consts.PATH_EMPLOYEETOTAL);
-			workbook.write(out);
+			wb.write(out);
 			out.close();
 		} catch (FileNotFoundException e) {
-			throw new BizException("找不到文件：" + Consts.PATH_EMPLOYEETOTAL, e);
+			throw new BizException("找不到文件：" + Consts.PATH_EMPLOYEETOTAL + "，或文件正在被占用", e);
 		} catch (IOException e) {
 			throw new BizException("导出EmployeeTotalExcel出错，IO异常", e);
 		}
+	}
+
+	private static CellStyle getHeadCellStyle(Workbook wb) {
+		XSSFCellStyle style = (XSSFCellStyle) wb.createCellStyle();
+		XSSFFont font = (XSSFFont) wb.createFont();
+		font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		font.setFontName("宋体");
+		style.setFont(font);
+		style.setAlignment(HSSFCellStyle.ALIGN_CENTER_SELECTION);
+		style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		style.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+		style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		return style;
+	}
+
+	private static CellStyle getBodyCellStyle(Workbook wb) {
+		XSSFCellStyle style = (XSSFCellStyle) wb.createCellStyle();
+		XSSFFont font = (XSSFFont) wb.createFont();
+		font.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+		font.setFontName("Arial");
+		style.setFont(font);
+		style.setAlignment(HSSFCellStyle.ALIGN_CENTER_SELECTION);
+		style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		return style;
 	}
 
 	public static void main(String[] args) {

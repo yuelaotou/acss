@@ -51,6 +51,7 @@ public class TxtUtil {
 			while ((str = br.readLine()) != null) {
 				if (!StringUtils.isEmpty(str)) {
 					acssBean = Business.parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end);
+					System.out.println(acssBean);
 					list.add(acssBean);
 				}
 			}

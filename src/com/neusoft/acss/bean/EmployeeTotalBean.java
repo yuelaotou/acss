@@ -57,9 +57,19 @@ public class EmployeeTotalBean extends EmployeeDomain {
 	private int c_evection_remote;
 
 	/**
-	 * 本地加班（天）
+	 * 工作日加班（天）
 	 */
-	private int c_overtime_locale;
+	private int c_overtime_workday;
+
+	/**
+	 * 周末加班（天）
+	 */
+	private int c_overtime_weekend;
+
+	/**
+	 * 法定假日加班（天）
+	 */
+	private int c_overtime_holiday;
 
 	/**
 	 * 外地加班（天）
@@ -74,7 +84,7 @@ public class EmployeeTotalBean extends EmployeeDomain {
 	/**
 	 * 异常情况
 	 */
-	private String exception;
+	private int c_exception;
 
 	public int getC_late() {
 		return c_late;
@@ -140,12 +150,28 @@ public class EmployeeTotalBean extends EmployeeDomain {
 		this.c_evection_remote = c_evection_remote;
 	}
 
-	public int getC_overtime_locale() {
-		return c_overtime_locale;
+	public int getC_overtime_workday() {
+		return c_overtime_workday;
 	}
 
-	public void setC_overtime_locale(int c_overtime_locale) {
-		this.c_overtime_locale = c_overtime_locale;
+	public void setC_overtime_workday(int c_overtime_workday) {
+		this.c_overtime_workday = c_overtime_workday;
+	}
+
+	public int getC_overtime_weekend() {
+		return c_overtime_weekend;
+	}
+
+	public void setC_overtime_weekend(int c_overtime_weekend) {
+		this.c_overtime_weekend = c_overtime_weekend;
+	}
+
+	public int getC_overtime_holiday() {
+		return c_overtime_holiday;
+	}
+
+	public void setC_overtime_holiday(int c_overtime_holiday) {
+		this.c_overtime_holiday = c_overtime_holiday;
 	}
 
 	public int getC_overtime_remote() {
@@ -164,21 +190,22 @@ public class EmployeeTotalBean extends EmployeeDomain {
 		this.h_overtime = h_overtime;
 	}
 
-	public String getException() {
-		return exception;
+	public int getC_exception() {
+		return c_exception;
 	}
 
-	public void setException(String exception) {
-		this.exception = exception;
+	public void setC_exception(int c_exception) {
+		this.c_exception = c_exception;
 	}
 
 	@Override
 	public String toString() {
 		return "EmployeeTotalBean [c_late=" + c_late + ", c_early=" + c_early + ", c_sick=" + c_sick + ", c_thing="
 				+ c_thing + ", c_year=" + c_year + ", c_other=" + c_other + ", c_evection_locale=" + c_evection_locale
-				+ ", c_evection_remote=" + c_evection_remote + ", c_overtime_locale=" + c_overtime_locale
-				+ ", c_overtime_remote=" + c_overtime_remote + ", h_overtime=" + h_overtime + ", "
-				+ (exception != null ? "exception=" + exception : "") + "]";
+				+ ", c_evection_remote=" + c_evection_remote + ", c_overtime_workday=" + c_overtime_workday
+				+ ", c_overtime_weekend=" + c_overtime_weekend + ", c_overtime_holiday=" + c_overtime_holiday
+				+ ", c_overtime_remote=" + c_overtime_remote + ", h_overtime=" + h_overtime + ", c_exception="
+				+ c_exception + "]";
 	}
 
 	/**
@@ -202,10 +229,12 @@ public class EmployeeTotalBean extends EmployeeDomain {
 		totalMap.put("c_other", "其他假期（天）");
 		totalMap.put("c_evection_locale", "本地出差（天）");
 		totalMap.put("c_evection_remote", "外地出差（天）");
-		totalMap.put("c_overtime_locale", "本地加班（天）");
-		totalMap.put("c_overtime_remote", "外地加班（天）");
+		totalMap.put("c_overtime_workday", "工作日加班（次）");
+		totalMap.put("c_overtime_weekend", "周末加班（次）");
+		totalMap.put("c_overtime_holiday", "法定假日加班（次）");
+		totalMap.put("c_overtime_remote", "外地加班（次）");
 		totalMap.put("h_overtime", "加班时间（小时）");
-		totalMap.put("exception", "异常情况");
+		totalMap.put("c_exception", "异常情况");
 		return totalMap;
 	}
 }

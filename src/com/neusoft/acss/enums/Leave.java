@@ -1,5 +1,7 @@
 package com.neusoft.acss.enums;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * <p> Title: [请假类型]</p>
  * <p> Description: [描述请假的Enum类]</p>
@@ -22,6 +24,10 @@ public enum Leave {
 	@Override
 	public String toString() {
 		return this.leave;
+	}
+
+	public boolean isEmpty() {
+		return StringUtils.isEmpty(leave);
 	}
 
 }

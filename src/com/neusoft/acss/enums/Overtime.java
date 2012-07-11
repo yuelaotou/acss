@@ -11,7 +11,7 @@ package com.neusoft.acss.enums;
  * @version 1.0
  */
 public enum Overtime {
-	WORKDAY("工作日加班"), WEEKEND("周末加班"), HOLIDAY("法定假日加班");
+	WORKDAY("工作日加班"), WEEKEND("周末加班"), HOLIDAY("法定假日加班"), REMOTE("外地加班");
 
 	private final String overtime;
 

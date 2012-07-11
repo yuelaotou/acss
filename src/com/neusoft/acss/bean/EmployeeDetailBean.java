@@ -43,12 +43,12 @@ public class EmployeeDetailBean extends EmployeeDomain {
 	private String tMorning;
 
 	/**
-	 * 午休时间A
+	 * 午休开始时间
 	 */
 	private String tNooningA;
 
 	/**
-	 * 午休时间B
+	 * 午休结束时间
 	 */
 	private String tNooningB;
 
@@ -60,7 +60,7 @@ public class EmployeeDetailBean extends EmployeeDomain {
 	/**
 	 * 工作情况
 	 */
-	private WorkSt status;
+	private WorkSt workSt;
 
 	/**
 	 * 迟到时间
@@ -158,12 +158,12 @@ public class EmployeeDetailBean extends EmployeeDomain {
 		this.tEvening = tEvening;
 	}
 
-	public WorkSt getStatus() {
-		return status;
+	public WorkSt getWorkSt() {
+		return workSt;
 	}
 
-	public void setStatus(WorkSt status) {
-		this.status = status;
+	public void setWorkSt(WorkSt workSt) {
+		this.workSt = workSt;
 	}
 
 	public String getTLate() {
@@ -238,7 +238,7 @@ public class EmployeeDetailBean extends EmployeeDomain {
 				+ (tNooningA != null ? "tNooningA=" + tNooningA + ", " : "")
 				+ (tNooningB != null ? "tNooningB=" + tNooningB + ", " : "")
 				+ (tEvening != null ? "tEvening=" + tEvening + ", " : "")
-				+ (status != null ? "status=" + status + ", " : "") + (tLate != null ? "tLate=" + tLate + ", " : "")
+				+ (workSt != null ? "workSt=" + workSt + ", " : "") + (tLate != null ? "tLate=" + tLate + ", " : "")
 				+ (tEarly != null ? "tEarly=" + tEarly + ", " : "")
 				+ (evection_locale != null ? "evection_locale=" + evection_locale + ", " : "")
 				+ (evection_remote != null ? "evection_remote=" + evection_remote + ", " : "")
@@ -266,10 +266,10 @@ public class EmployeeDetailBean extends EmployeeDomain {
 		detailMap.put("week", "星期");
 		detailMap.put("isRest", "是否休息日");
 		detailMap.put("tMorning", "上班时间");
-		detailMap.put("tNooningA", "午休时间A");
-		detailMap.put("tNooningB", "午休时间B");
+		detailMap.put("tNooningA", "午休开始时间");
+		detailMap.put("tNooningB", "午休结束时间");
 		detailMap.put("tEvening", "下班时间");
-		detailMap.put("status", "工作情况");
+		detailMap.put("workSt", "工作情况");
 		detailMap.put("tLate", "迟到时间");
 		detailMap.put("tEarly", "早退时间");
 		detailMap.put("evection_locale", "本地出差地点");

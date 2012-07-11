@@ -29,17 +29,17 @@ public class EvectionBean {
 	/**
 	 * 出差时间
 	 */
-	private String evection;
+	private String tEvection;
 
 	/**
 	 * 外地出差地点
 	 */
-	private String outPosition;
+	private String evection_remote;
 
 	/**
 	 * 本地出差地点
 	 */
-	private String inPosition;
+	private String evection_locale;
 
 	/**
 	 * 加班
@@ -49,17 +49,17 @@ public class EvectionBean {
 	/**
 	 * 病假
 	 */
-	private String sick_leave;
+	private String leave_sick;
 
 	/**
 	 * 事假
 	 */
-	private String thing_leave;
+	private String leave_thing;
 
 	/**
 	 * 年假
 	 */
-	private String year_leave;
+	private String leave_year;
 
 	/**
 	 * 签字，并不会用到，只是预留。
@@ -90,28 +90,28 @@ public class EvectionBean {
 		this.day = day;
 	}
 
-	public String getEvection() {
-		return evection;
+	public String getTEvection() {
+		return tEvection;
 	}
 
-	public void setEvection(String evection) {
-		this.evection = evection;
+	public void setTEvection(String tEvection) {
+		this.tEvection = tEvection;
 	}
 
-	public String getOutPosition() {
-		return outPosition;
+	public String getEvection_remote() {
+		return evection_remote;
 	}
 
-	public void setOutPosition(String outPosition) {
-		this.outPosition = outPosition;
+	public void setEvection_remote(String evection_remote) {
+		this.evection_remote = evection_remote;
 	}
 
-	public String getInPosition() {
-		return inPosition;
+	public String getEvection_locale() {
+		return evection_locale;
 	}
 
-	public void setInPosition(String inPosition) {
-		this.inPosition = inPosition;
+	public void setEvection_locale(String evection_locale) {
+		this.evection_locale = evection_locale;
 	}
 
 	public String getOvertime() {
@@ -122,28 +122,28 @@ public class EvectionBean {
 		this.overtime = overtime;
 	}
 
-	public String getSick_leave() {
-		return sick_leave;
+	public String getLeave_sick() {
+		return leave_sick;
 	}
 
-	public void setSick_leave(String sick_leave) {
-		this.sick_leave = sick_leave;
+	public void setLeave_sick(String leave_sick) {
+		this.leave_sick = leave_sick;
 	}
 
-	public String getThing_leave() {
-		return thing_leave;
+	public String getLeave_thing() {
+		return leave_thing;
 	}
 
-	public void setThing_leave(String thing_leave) {
-		this.thing_leave = thing_leave;
+	public void setLeave_thing(String leave_thing) {
+		this.leave_thing = leave_thing;
 	}
 
-	public String getYear_leave() {
-		return year_leave;
+	public String getLeave_year() {
+		return leave_year;
 	}
 
-	public void setYear_leave(String year_leave) {
-		this.year_leave = year_leave;
+	public void setLeave_year(String leave_year) {
+		this.leave_year = leave_year;
 	}
 
 	public String getSign() {
@@ -156,13 +156,15 @@ public class EvectionBean {
 
 	@Override
 	public String toString() {
-		return "EvectionBean [name=" + name + ", month=" + month + ", day=" + day + ", evection=" + evection
-				+ ", outPosition=" + outPosition + ", inPosition=" + inPosition + ", overtime=" + overtime
-				+ ", sick_leave=" + sick_leave + ", thing_leave=" + thing_leave + ", year_leave=" + year_leave + "]";
+		return "EvectionBean [name=" + name + ", month=" + month + ", day=" + day + ", tEvection=" + tEvection
+				+ ", evection_locale=" + evection_locale + ", evection_remote=" + evection_remote + ", overtime="
+				+ overtime + ", leave_sick=" + leave_sick + ", leave_thing=" + leave_thing + ", leave_year="
+				+ leave_year + "]";
 	}
 
 	public boolean isEmpty() {
-		return "".equals(evection + outPosition + inPosition + overtime + sick_leave + thing_leave + year_leave);
+		return "".equals(tEvection + evection_locale + evection_remote + overtime + leave_sick + leave_thing
+				+ leave_year);
 	}
 
 }

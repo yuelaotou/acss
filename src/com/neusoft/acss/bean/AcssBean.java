@@ -14,6 +14,11 @@ import com.neusoft.acss.enums.Week;
 public class AcssBean {
 
 	/**
+	 * 公司
+	 */
+	private String company;
+
+	/**
 	 * 部门
 	 */
 	private String department;
@@ -83,10 +88,13 @@ public class AcssBean {
 	 */
 	private boolean isVacation = false;
 
-	/**
-	 * 是否请假
-	 */
-	private boolean isLeave = false;
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
 
 	public String getDepartment() {
 		return department;
@@ -198,14 +206,6 @@ public class AcssBean {
 
 	public void setVacation(boolean isVacation) {
 		this.isVacation = isVacation;
-	}
-
-	public boolean isLeave() {
-		return isLeave;
-	}
-
-	public void setLeave(boolean isLeave) {
-		this.isLeave = isLeave;
 	}
 
 	@Override

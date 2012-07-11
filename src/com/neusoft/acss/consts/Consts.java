@@ -42,18 +42,23 @@ public abstract class Consts {
 	public static String PATH_EMPLOYEETOTAL = "D:\\acss\\employeeTotal.xlsx";
 
 	/**
-	 * 日期正则表达式 yyyy-MM-dd
+	 * 日期正则表达式 yyyy-MM-dd，满足基本判断
 	 */
 	public static String REGEX_DATE = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
 
 	/**
-	 * 时间正则表达式 HH:mm:ss
+	 * 时间正则表达式 HH:mm:ss，满足基本判断
 	 */
 	public static String REGEX_TIME = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
-	
+
 	/**
-	 * 宽限时间正则表达式 Number(2)
+	 * 导出EXCEL表格的行高 = 18
 	 */
-	public static String REGEX_GRACE = "[0-9]{2}";
+	public static int ROW_HEIGHT = 18;
+
+	/**
+	 * 导出EXCEL表格的列宽 = 2600
+	 */
+	public static int COLUMN_WIDTH = 2600;
 
 }

@@ -33,13 +33,19 @@ import com.neusoft.acss.exception.BizException;
  * @author 杨光 - yang.guang@neusoft.com
  * @version 1.0
  */
-public class TxtUtil {
+public final class TxtUtil {
+
+	/**
+	 * 隐藏公用构造方法<p>
+	 */
+	private TxtUtil() {
+		// noop
+	}
 
 	/**
 	 * <p>Discription:[读取考勤结果txt文件，存入到List&lt;{@link AcssBean}&gt;中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static List<AcssBean> readAcssBeanFromFile(File file, String tnoon_begin, String tnoon_middle,
 			String tnoon_end) {
@@ -78,7 +84,6 @@ public class TxtUtil {
 	 * </p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static List<Vacation> getVacations() {
 		List<Vacation> list = new ArrayList<Vacation>();
@@ -105,7 +110,6 @@ public class TxtUtil {
 	 * <p>Discription:[导入法定假期到Consts.PATH_VACATIONS中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static void saveVacations(File file) {
 		try {
@@ -128,7 +132,6 @@ public class TxtUtil {
 	 * <p>Discription:[从文件中读取字符串到集合中，然后返回WorkDay的集合]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static List<WorkDay> getWorkDays() {
 		List<WorkDay> list = new ArrayList<WorkDay>();
@@ -154,7 +157,6 @@ public class TxtUtil {
 	 * <p>Discription:[导入导入周末信息到Consts.PATH_WORKDAYS中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static void saveWorkDays(File file) {
 		try {

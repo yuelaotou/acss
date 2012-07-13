@@ -38,7 +38,6 @@ public class Business {
 	 * <p>Discription:[读取考勤记录后，用本方法进行解析，按行存入到{@link AcssBean}中，以后更改解析规则来此修改，请记录信息]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static AcssBean parseStrToAcssBean(String str, String tnoon_begin, String tnoon_middle, String tnoon_end) {
 		AcssBean acssBean = new AcssBean();
@@ -101,7 +100,6 @@ public class Business {
 	 * <p>Discription:[若以后需求有变更，修改这里。比如：如何计算加班时间等等算法]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static List<EmployeeDetailBean> generateEmployeeDetailList(List<AcssBean> acssBeanList,
 			List<EvectionBean> evectionBeanList, String tmorning, String tevening, String tnoon_begin, String tnoon_end) {
@@ -183,7 +181,6 @@ public class Business {
 	 * <p>Discription:[处理工作情况，Workst]</p>
 	 * Created on 2012-7-11
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static WorkSt getWorkSt(AcssBean ab, EvectionBean evb) {
 		if (evb == null)
@@ -200,7 +197,6 @@ public class Business {
 	 * <p>Discription:[处理迟到时间，根据业务需要本方法可能会变更]</p>
 	 * Created on 2012-7-11
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static String getTLate(AcssBean ab, EvectionBean evb, String tmorning, String tevening, String tnoon_begin,
 			String tnoon_end) {
@@ -221,7 +217,6 @@ public class Business {
 	 * <p>Discription:[处理早退时间，根据业务需要本方法可能会变更]</p>
 	 * Created on 2012-7-11
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static String getTEarly(AcssBean ab, EvectionBean evb, String tmorning, String tevening, String tnoon_begin,
 			String tnoon_end) {
@@ -242,7 +237,6 @@ public class Business {
 	 * <p>Discription:[处理加班类型，根据业务需要本方法可能会变更]</p>
 	 * Created on 2012-7-11
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static Overtime getOvertime(AcssBean ab, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
@@ -264,7 +258,6 @@ public class Business {
 	 * <p>Discription:[处理加班时间，根据业务需要本方法可能会变更]</p>
 	 * Created on 2012-7-11
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static String getTOvertime(AcssBean ab, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
@@ -280,7 +273,6 @@ public class Business {
 	 * <p>Discription:[处理加班类型，根据业务需要本方法可能会变更]</p>
 	 * Created on 2012-7-11
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static Leave getLeave(AcssBean ab, EvectionBean evb, String tmorning, String tevening, String tnoon_begin,
 			String tnoon_end) {
@@ -303,7 +295,6 @@ public class Business {
 	 * <p>Discription:[处理异常信息，根据业务需要本方法可能会变更]</p>
 	 * Created on 2012-7-11
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static String getException(AcssBean ab, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
@@ -326,7 +317,6 @@ public class Business {
 	 * <p>Discription:[若以后需求有变更，修改这里。比如：如何计算加班时间等等算法]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static List<EmployeeTotalBean> convertDetail2Total(List<EmployeeDetailBean> edblist) {
 		List<EmployeeTotalBean> etblist = new ArrayList<EmployeeTotalBean>();
@@ -476,7 +466,6 @@ public class Business {
 	 * <p>Discription:[根据传入的字符串转换成Week的Enum对象]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static Week getWeek(String week) {
 		if (week.equals("1") || week.equals("一")) {
@@ -507,7 +496,6 @@ public class Business {
 	 * <p>Discription:[根据法定假日和串休记录，再结合正常周六周日休息，判断AcssBean是正常上班还是休息]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static void checkVacation(List<AcssBean> acssBeanList, List<Vacation> vacationList, List<WorkDay> workDayList) {
 		for (AcssBean acssBean : acssBeanList) {
@@ -544,7 +532,6 @@ public class Business {
 	 * Created on 2012-7-2
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 * @throws ParseException 
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static int minusDate(String beginTime, String endTime, int n) {
 		if (n == Calendar.SECOND) {

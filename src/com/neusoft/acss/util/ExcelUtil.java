@@ -44,13 +44,19 @@ import com.neusoft.acss.exception.BizException;
  * @author 杨光 - yang.guang@neusoft.com
  * @version 1.0
  */
-public class ExcelUtil {
+public final class ExcelUtil {
+
+	/**
+	 * 隐藏公用构造方法<p>
+	 */
+	private ExcelUtil() {
+		// noop
+	}
 
 	/**
 	 * <p>Discription:[解析EXCEL2007版本的外出登记表，存储在List&lt;{@link EvectionBean}&gt;中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static List<EvectionBean> parseExcel2EvectionList() {
 		List<EvectionBean> list = new ArrayList<EvectionBean>();
@@ -103,7 +109,6 @@ public class ExcelUtil {
 	 * <p>Discription:[根据传入的employeeDetailBeanList生成DetailExcel，文件保存在Consts.PATH_EMPLOYEEDETAIL]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static void exportEmployeeDetailExcel(List<EmployeeDetailBean> employeeDetailBeanList, Map<String, String> m) {
 		Workbook wb = new SXSSFWorkbook(500);
@@ -170,13 +175,12 @@ public class ExcelUtil {
 	 * <p>Discription:[根据传入的employeeTotalBeanList导出统计总表，文件保存在Consts.PATH_EMPLOYEETOTAL]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static void exportEmployeeTotalExcel(List<EmployeeTotalBean> employeeTotalBeanList, Map<String, String> m) {
 		Workbook wb = new SXSSFWorkbook(500);
 		Sheet sheet = wb.createSheet();
 		sheet.createFreezePane(0, 1);
-		
+
 		// 生成表头
 		Row row = sheet.createRow(0);
 		row.setHeightInPoints(Consts.ROW_HEIGHT);

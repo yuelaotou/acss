@@ -11,7 +11,6 @@ public class Test {
 	 * Created on 2012-7-9
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 * @throws ParseException 
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 * @throws: 
 	 */
 	public static void main(String[] args) {
@@ -19,7 +18,6 @@ public class Test {
 		// map.put("a", 1);
 		//
 
-		
 		System.out.println(StringUtils.isEmpty(null));
 		System.out.println(StringUtils.isNumeric("5d"));
 

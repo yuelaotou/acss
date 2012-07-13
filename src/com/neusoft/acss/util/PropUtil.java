@@ -25,13 +25,19 @@ import com.neusoft.acss.exception.BizException;
  * @author 杨光 - yang.guang@neusoft.com
  * @version 1.0
  */
-public class PropUtil {
+public final class PropUtil {
+
+	/**
+	 * 隐藏公用构造方法<p>
+	 */
+	private PropUtil() {
+		// noop
+	}
 
 	/**
 	 * <p>Discription:[读取所有键值对，放入Map<String, String>中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static Map<String, String> readProperties() {
 		Properties properties = new Properties();
@@ -60,7 +66,6 @@ public class PropUtil {
 	 * <p>Discription:[把上下班时间等属性写入到配置文件中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
 	 */
 	public static void writeProperties(String key, String value, String comments) {
 		Properties properties = new Properties();

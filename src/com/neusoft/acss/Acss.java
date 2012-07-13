@@ -100,7 +100,7 @@ public class Acss extends JFrame {
 
 	private final JButton evectionButton = new JButton("导入出差信息");
 
-	private final JButton entranceButton = new JButton("导入打卡记录");
+	private final JButton entranceButton = new JButton("导入考勤记录");
 
 	private final JButton exportDetailButton = new JButton("导出详细信息表");
 
@@ -163,46 +163,26 @@ public class Acss extends JFrame {
 	 * @throws:
 	 */
 	private void initGraceProperties() {
-		Date d_tmorning;
 		try {
-			d_tmorning = DateUtils.addMinutes(DateUtils.parseDate(tmorning, "HH:mm:ss"), Integer.parseInt(tgrace));
-		} catch (NumberFormatException e) {
-			throw new BizException("上下班宽限时间不为分钟（数字），请检查", e);
-		} catch (ParseException e) {
-			throw new BizException("上班时间格式错误，请确认格式为HH:mm:ss，如：08:30:00", e);
-		}
-		tmorning = DateFormatUtils.format(d_tmorning, "HH:mm:ss");
-		Date d_tevening;
-		try {
-			d_tevening = DateUtils.addMinutes(DateUtils.parseDate(tevening, "HH:mm:ss"), -Integer.parseInt(tgrace));
-		} catch (NumberFormatException e) {
-			throw new BizException("上下班宽限时间不为分钟（数字），请检查", e);
-		} catch (ParseException e) {
-			throw new BizException("下班时间格式错误，请确认格式为HH:mm:ss，如：17:30:00", e);
-		}
-		tevening = DateFormatUtils.format(d_tevening, "HH:mm:ss");
+			Date d_tmorning = DateUtils.addMinutes(DateUtils.parseDate(tmorning, "HH:mm:ss"), Integer.parseInt(tgrace));
+			tmorning = DateFormatUtils.format(d_tmorning, "HH:mm:ss");
 
-		Date d_tnoon_begin;
-		try {
-			d_tnoon_begin = DateUtils.addMinutes(DateUtils.parseDate(tnoon_begin, "HH:mm:ss"),
+			Date d_tevening = DateUtils
+					.addMinutes(DateUtils.parseDate(tevening, "HH:mm:ss"), -Integer.parseInt(tgrace));
+			tevening = DateFormatUtils.format(d_tevening, "HH:mm:ss");
+
+			Date d_tnoon_begin = DateUtils.addMinutes(DateUtils.parseDate(tnoon_begin, "HH:mm:ss"),
 					-Integer.parseInt(tnoon_grace));
-		} catch (NumberFormatException e) {
-			throw new BizException("午休宽限时间不为分钟（数字），请检查", e);
-		} catch (ParseException e) {
-			throw new BizException("午休开始时间格式错误，请确认格式为HH:mm:ss，如：12:00:00", e);
-		}
-		tnoon_begin = DateFormatUtils.format(d_tnoon_begin, "HH:mm:ss");
+			tnoon_begin = DateFormatUtils.format(d_tnoon_begin, "HH:mm:ss");
 
-		Date d_tnoon_end;
-		try {
-			d_tnoon_end = DateUtils.addMinutes(DateUtils.parseDate(tnoon_end, "HH:mm:ss"),
+			Date d_tnoon_end = DateUtils.addMinutes(DateUtils.parseDate(tnoon_end, "HH:mm:ss"),
 					Integer.parseInt(tnoon_grace));
+			tnoon_end = DateFormatUtils.format(d_tnoon_end, "HH:mm:ss");
 		} catch (NumberFormatException e) {
-			throw new BizException("午休宽限时间不为分钟（数字），请检查", e);
+			e.printStackTrace();
 		} catch (ParseException e) {
-			throw new BizException("午休结束时间格式错误，请确认格式为HH:mm:ss，如：13:00:00", e);
+			e.printStackTrace();
 		}
-		tnoon_end = DateFormatUtils.format(d_tnoon_end, "HH:mm:ss");
 	}
 
 	private void initComponents() {
@@ -329,7 +309,7 @@ public class Acss extends JFrame {
 					JOptionPane.showMessageDialog(frame, "目前还没有请假信息，请忽略！");
 				} else if (e.getActionCommand().equals("导入出差信息")) {
 					JOptionPane.showMessageDialog(frame, "目前还没有出差信息，请忽略！");
-				} else if (e.getActionCommand().equals("导入打卡记录")) {
+				} else if (e.getActionCommand().equals("导入考勤记录")) {
 					JFileChooser fDialog = new JFileChooser();
 					int result = fDialog.showOpenDialog(frame);
 					if (result == JFileChooser.APPROVE_OPTION) {

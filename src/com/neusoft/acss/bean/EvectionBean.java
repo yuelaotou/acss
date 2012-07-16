@@ -29,7 +29,7 @@ public class EvectionBean {
 	/**
 	 * 出差时间
 	 */
-	private String tEvection;
+	private String tevection;
 
 	/**
 	 * 外地出差地点
@@ -90,12 +90,12 @@ public class EvectionBean {
 		this.day = day;
 	}
 
-	public String getTEvection() {
-		return tEvection;
+	public String getTevection() {
+		return tevection;
 	}
 
-	public void setTEvection(String tEvection) {
-		this.tEvection = tEvection;
+	public void setTevection(String tevection) {
+		this.tevection = tevection;
 	}
 
 	public String getEvection_remote() {
@@ -156,14 +156,14 @@ public class EvectionBean {
 
 	@Override
 	public String toString() {
-		return "EvectionBean [name=" + name + ", month=" + month + ", day=" + day + ", tEvection=" + tEvection
+		return "EvectionBean [name=" + name + ", month=" + month + ", day=" + day + ", tevection=" + tevection
 				+ ", evection_locale=" + evection_locale + ", evection_remote=" + evection_remote + ", overtime="
 				+ overtime + ", leave_sick=" + leave_sick + ", leave_thing=" + leave_thing + ", leave_year="
 				+ leave_year + "]";
 	}
 
 	public boolean isEmpty() {
-		return "".equals(tEvection + evection_locale + evection_remote + overtime + leave_sick + leave_thing
+		return "".equals(tevection + evection_locale + evection_remote + overtime + leave_sick + leave_thing
 				+ leave_year);
 	}
 

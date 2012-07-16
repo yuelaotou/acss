@@ -13,14 +13,11 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import com.neusoft.acss.Acss;
-import com.neusoft.acss.bean.AcssBean;
 import com.neusoft.acss.bean.EmployeeDetailBean;
 import com.neusoft.acss.bean.EmployeeTotalBean;
 import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
-import com.neusoft.acss.enums.Leave;
-import com.neusoft.acss.enums.Overtime;
 import com.neusoft.acss.enums.Week;
 import com.neusoft.acss.exception.BizException;
 
@@ -71,30 +68,30 @@ public class Business {
 
 		for (int i = n; i < s_info.length; i++) {
 			String time = s_info[i];
-			if (time.compareTo(tnoon_begin) < 0) {// 上班
+			if (time.compareTo(tnoon_begin) <= 0) {// 上班
 				// 判断是否为空，需要写入相对早些的时间，因为读取的时间是按照顺序来的。
-				if (edb.getValue("tMorning") == null) {
-					edb.setValue("tMorning", time);
+				if (edb.getValue("tmorning") == null) {
+					edb.setValue("tmorning", time);
 				}
-			} else if (time.compareTo(tnoon_begin) >= 0 && time.compareTo(tnoon_middle) < 0) {// 午休A
+			} else if (time.compareTo(tnoon_begin) > 0 && time.compareTo(tnoon_middle) < 0) {// 午休A
 				// 判断是否为空，需要写入相对早些的时间，因为读取的时间是按照顺序来的。
-				if (edb.getValue("tNooningA") == null) {
-					edb.setValue("tNooningA", time);
+				if (edb.getValue("tnooningA") == null) {
+					edb.setValue("tnooningA", time);
 				}
-			} else if (time.compareTo(tnoon_middle) >= 0 && time.compareTo(tnoon_end) <= 0) {// 午休B
+			} else if (time.compareTo(tnoon_middle) >= 0 && time.compareTo(tnoon_end) < 0) {// 午休B
 				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
-				if (edb.getValue("tNooningB") == null) {
-					edb.setValue("tNooningB", time);
+				if (edb.getValue("tnooningB") == null) {
+					edb.setValue("tnooningB", time);
 				} else {
 					// 若午休第一次打卡为空，则进行一定的处理。
-					if (edb.getValue("tNooningA") == null) {
-						edb.setValue("tNooningA", edb.getValue("tNooningB").toString());
-						edb.setValue("tNooningB", time);
+					if (edb.getValue("tnooningA") == null) {
+						edb.setValue("tnooningA", edb.getValue("tnooningB").toString());
+						edb.setValue("tnooningB", time);
 					}
 				}
-			} else if (time.compareTo(tnoon_end) > 0) {// 下班
+			} else if (time.compareTo(tnoon_end) >= 0) {// 下班
 				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
-				edb.setValue("tEvening", time);
+				edb.setValue("tevening", time);
 			}
 		}
 
@@ -111,7 +108,7 @@ public class Business {
 	public static List<EmployeeDetailBean> generateEmployeeDetailList(List<EmployeeDetailBean> list,
 			List<EvectionBean> evectionBeanList, String tmorning, String tevening, String tnoon_begin, String tnoon_end)
 			throws ClassNotFoundException {
-		Map<String, Object[]> m = EmployeeDetailBean.getPropertyMap();
+		Map<String, Object[]> m = EmployeeDetailBS.getPropertyMap();
 
 		for (EmployeeDetailBean edb : list) {
 			EvectionBean evb = null;
@@ -129,16 +126,20 @@ public class Business {
 			Iterator<Entry<String, Object[]>> it = m.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry<String, Object[]> entry = it.next();
-				Object key = entry.getValue();
+				Object key = entry.getKey();
 				Object[] values = entry.getValue();
 				Object args[] = new Object[] { edb, evb, tmorning, tevening, tnoon_begin, tnoon_end };
-				Object clz[] = new Object[] { EmployeeDetailBean.class, EvectionBean.class, String.class, String.class,
-						String.class, String.class };
+				Object clz[] = new Object[] { Class.forName("com.neusoft.acss.bean.EmployeeDetailBean"),
+						Class.forName("com.neusoft.acss.bean.EvectionBean"), Class.forName("java.lang.String"),
+						Class.forName("java.lang.String"), Class.forName("java.lang.String"),
+						Class.forName("java.lang.String") };
 				try {
-					Object value = MethodUtils.invokeExactMethod(new Business(), values[2].toString(), args, clz);
+					Object value = MethodUtils.invokeMethod(EmployeeDetailBS.getInstance(), values[2].toString(),
+							args, clz);
 					edb.setValue(key.toString(), value);
 				} catch (Exception e) {
-					throw new BizException("EmployeeDetailBean#getPropertiesMap配置错误，属性是：" + key, e);
+					e.printStackTrace();
+					throw new BizException("EmployeeDetailBS#getPropertiesMap配置错误，属性是：" + key, e);
 				}
 			}
 
@@ -173,7 +174,7 @@ public class Business {
 		int s_c_exception = 0;
 		String name = "";
 		for (EmployeeDetailBean edb : edblist) {
-			if (!name.equals(edb.getName()) && !"".equals(name)) {
+			if (!name.equals(edb.getValue("name")) && !"".equals(name)) {
 
 				// 说明已经完成一个人信息的统计
 				etb = new EmployeeTotalBean();
@@ -216,82 +217,82 @@ public class Business {
 			/*
 			 * 只要迟到时间不空，就算今天迟到一次。不是按照时间累积成一天才算一天。 若以后需求有变更，修改这里。
 			 */
-			if (!StringUtils.isEmpty(edb.getTLate())) {
+			if (edb.getValue("tLate") != null) {
 				s_c_late++;
 			}
 
 			/*
 			 * 只要早退时间不空，就算今天早退一次。不是按照时间累积成一天才算一天。 若以后需求有变更，修改这里。
 			 */
-			if (!StringUtils.isEmpty(edb.getTEarly())) {
-				s_c_early++;
-			}
+			//			if (!StringUtils.isEmpty(edb.getTEarly())) {
+			//				s_c_early++;
+			//			}
 
 			/*
 			 * 只要请假类型不空，就算今天请假一次。再根据请假类型分开计算请假的天数。 若以后需求有变更，修改这里。
 			 */
-			if (edb.getLeave() != null) {
-				if (edb.getLeave().equals(Leave.SICK)) {
-					s_c_sick++;
-				}
-				if (edb.getLeave().equals(Leave.THING)) {
-					s_c_thing++;
-				}
-				if (edb.getLeave().equals(Leave.YEAR)) {
-					s_c_year++;
-				}
-				if (edb.getLeave().equals(Leave.OTHER)) {
-					s_c_other++;
-				}
-			}
+			//			if (edb.getLeave() != null) {
+			//				if (edb.getLeave().equals(Leave.SICK)) {
+			//					s_c_sick++;
+			//				}
+			//				if (edb.getLeave().equals(Leave.THING)) {
+			//					s_c_thing++;
+			//				}
+			//				if (edb.getLeave().equals(Leave.YEAR)) {
+			//					s_c_year++;
+			//				}
+			//				if (edb.getLeave().equals(Leave.OTHER)) {
+			//					s_c_other++;
+			//				}
+			//			}
 
 			/*
 			 * 只要本地出差字段不空，就算今天本地出差一次。 若以后需求有变更，修改这里。
 			 */
-			if (!StringUtils.isEmpty(edb.getEvection_locale())) {
-				s_c_evection_locale++;
-			}
+			//			if (!StringUtils.isEmpty(edb.getEvection_locale())) {
+			//				s_c_evection_locale++;
+			//			}
 
 			/*
 			 * 只要外地出差字段不空，就算今天外地出差一次。 若以后需求有变更，修改这里。
 			 */
-			if (!StringUtils.isEmpty(edb.getEvection_remote())) {
-				s_c_evection_remote++;
-			}
+			//			if (!StringUtils.isEmpty(edb.getEvection_remote())) {
+			//				s_c_evection_remote++;
+			//			}
 			/*
 			 * 只要加班类型不空，就加班。若以后需求有变更，修改这里。
 			 */
-			if (edb.getOvertime() != null) {
-				if (edb.getOvertime().equals(Overtime.WORKDAY)) {
-					s_c_overtime_workday++;
-				}
-				if (edb.getOvertime().equals(Overtime.WEEKEND)) {
-					s_c_overtime_weekend++;
-				}
-				if (edb.getOvertime().equals(Overtime.HOLIDAY)) {
-					s_c_overtime_holiday++;
-				}
-				if (edb.getOvertime().equals(Overtime.REMOTE)) {
-					s_c_overtime_remote++;
-				}
-			}
+			//			if (edb.getOvertime() != null) {
+			//				if (edb.getOvertime().equals(Overtime.WORKDAY)) {
+			//					s_c_overtime_workday++;
+			//				}
+			//				if (edb.getOvertime().equals(Overtime.WEEKEND)) {
+			//					s_c_overtime_weekend++;
+			//				}
+			//				if (edb.getOvertime().equals(Overtime.HOLIDAY)) {
+			//					s_c_overtime_holiday++;
+			//				}
+			//				if (edb.getOvertime().equals(Overtime.REMOTE)) {
+			//					s_c_overtime_remote++;
+			//				}
+			//			}
 
 			/*
 			 * 只要加班字段不空，把加班时间累积起来。 若以后需求有变更，修改这里。
 			 */
-			if (!StringUtils.isEmpty(edb.getTOvertime())) {
-				s_h_overtime++;
-				// s_h_overtime += Integer.parseInt(edb.getTOvertime());
-			}
+			//			if (!StringUtils.isEmpty(edb.getTOvertime())) {
+			//				s_h_overtime++;
+			// s_h_overtime += Integer.parseInt(edb.getTOvertime());
+			//			}
 
 			/*
 			 * 只要异常字段不空，有一次算一次统计出来。 若以后需求有变更，修改这里。
 			 */
-			if (!StringUtils.isEmpty(edb.getException())) {
-				s_c_exception++;
-			}
+			//			if (!StringUtils.isEmpty(edb.getException())) {
+			//				s_c_exception++;
+			//			}
 
-			name = edb.getName();
+			//			name = edb.getName();
 		}
 
 		return etblist;
@@ -334,6 +335,7 @@ public class Business {
 	 */
 	public static void checkVacation(List<EmployeeDetailBean> edbList, List<Vacation> vacationList,
 			List<WorkDay> workDayList) {
+
 		for (EmployeeDetailBean edb : edbList) {
 			Calendar c = Calendar.getInstance();
 			try {
@@ -344,11 +346,11 @@ public class Business {
 
 			// 判断是否为周六周日
 			if (c.get(Calendar.DAY_OF_WEEK) == 7 || c.get(Calendar.DAY_OF_WEEK) == 1) {
-				edb.setValue("isRest", true);
+				edb.setValue("rest", "休息日");
 				// 如果在串休列表中，直接return flase，不再计算Vacation了。
 				for (WorkDay wd : workDayList) {
 					if (wd.getDate().compareTo(c.getTime()) == 0) {
-						edb.setValue("isRest", false);
+						edb.setValue("rest", null);
 						break;
 					}
 				}
@@ -356,7 +358,7 @@ public class Business {
 				// 如果在国家规定的休假列表中，return true。
 				for (Vacation vac : vacationList) {
 					if (vac.getDate().compareTo(c.getTime()) == 0) {
-						edb.setValue("isRest", true);
+						edb.setValue("rest", "休息日");
 					}
 				}
 			}

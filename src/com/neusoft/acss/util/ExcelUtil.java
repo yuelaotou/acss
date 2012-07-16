@@ -83,7 +83,7 @@ public final class ExcelUtil {
 					eb.setName(name);
 					eb.setMonth(month);
 					eb.setDay(StringUtils.leftPad(row.getCell(0).toString().replace("日", ""), 2, "0"));
-					eb.setTEvection(row.getCell(1).toString().trim());
+					eb.setTevection(row.getCell(1).toString().trim());
 					eb.setEvection_remote(row.getCell(2).toString().trim());
 					eb.setEvection_locale(row.getCell(3).toString().trim());
 					eb.setOvertime(row.getCell(4).toString().trim());

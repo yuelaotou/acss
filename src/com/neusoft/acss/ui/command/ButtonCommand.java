@@ -19,6 +19,7 @@ import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.bs.Business;
+import com.neusoft.acss.bs.EmployeeDetailBS;
 import com.neusoft.acss.consts.Consts;
 import com.neusoft.acss.exception.BizException;
 import com.neusoft.acss.ui.UIPanel;
@@ -44,6 +45,7 @@ public abstract class ButtonCommand extends JFrame {
 			Date d_tmorning = DateUtils.addMinutes(DateUtils.parseDate(ui.getTmorning(), "HH:mm:ss"),
 					Integer.parseInt(ui.getTgrace()));
 			ui.setTmorning(DateFormatUtils.format(d_tmorning, "HH:mm:ss"));
+
 			Date d_tevening = DateUtils.addMinutes(DateUtils.parseDate(ui.getTevening(), "HH:mm:ss"),
 					-Integer.parseInt(ui.getTgrace()));
 			ui.setTevening(DateFormatUtils.format(d_tevening, "HH:mm:ss"));
@@ -55,6 +57,7 @@ public abstract class ButtonCommand extends JFrame {
 			Date d_tnoon_end = DateUtils.addMinutes(DateUtils.parseDate(ui.getTnoon_end(), "HH:mm:ss"),
 					Integer.parseInt(ui.getTnoon_grace()));
 			ui.setTnoon_end(DateFormatUtils.format(d_tnoon_end, "HH:mm:ss"));
+
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -205,7 +208,6 @@ class EntranceButtonButtonCommand extends ButtonCommand {
 				// 读取考勤打卡记录
 				List<EmployeeDetailBean> edbList = TxtUtil.readAcssBeanFromFile(fDialog.getSelectedFile(),
 						ui.getTnoon_begin(), ui.getTnoon_middle(), ui.getTnoon_end());
-				ui.setEmployeeDetailBeanList(edbList);
 				// 读取本年度休假记录
 				List<Vacation> vacationList = TxtUtil.getVacations();
 				ui.setVacationList(vacationList);
@@ -214,6 +216,7 @@ class EntranceButtonButtonCommand extends ButtonCommand {
 				ui.setWorkDayList(workDayList);
 				// 根据法定假日和串休记录，再结合正常周六周日休息，判断AcssBean是正常上班还是休息
 				Business.checkVacation(edbList, vacationList, workDayList);
+				ui.setEmployeeDetailBeanList(edbList);
 
 				// 读取本月所有人的外出登记表，存在List<EvectionBean>中
 				List<EvectionBean> evectionBeanList = ExcelUtil.parseExcel2EvectionList();
@@ -237,13 +240,13 @@ class ExportDetailButtonCommand extends ButtonCommand {
 
 	@Override
 	public UIPanel handleRequest() throws BizException, Exception {
-		if (ui.getAcssBeanList() == null) {
+		if (ui.getEmployeeDetailBeanList() == null) {
 			JOptionPane.showMessageDialog(this, "还未导入打卡记录，无法导出详细信息表！");
 		} else {
 			List<EmployeeDetailBean> employeeDetailBeanList = Business.generateEmployeeDetailList(
 					ui.getEmployeeDetailBeanList(), ui.getEvectionBeanList(), ui.getTmorning(), ui.getTevening(),
 					ui.getTnoon_begin(), ui.getTnoon_end());
-			Map<String, Object[]> propertyMap = EmployeeDetailBean.getPropertyMap();
+			Map<String, Object[]> propertyMap = EmployeeDetailBS.getPropertyMap();
 			ExcelUtil.exportEmployeeDetailExcel(employeeDetailBeanList, propertyMap);
 			JOptionPane.showMessageDialog(this, "导出成功，请查看: " + Consts.PATH_EMPLOYEEDETAIL);
 		}
@@ -263,14 +266,12 @@ class ExportTotalButtonCommand extends ButtonCommand {
 
 	@Override
 	public UIPanel handleRequest() throws BizException, Exception {
-		if (ui.getAcssBeanList() == null) {
+		if (ui.getEmployeeDetailBeanList() == null) {
 			JOptionPane.showMessageDialog(this, "还未导入打卡记录，无法导出统计总表！");
 		} else {
-			List<EmployeeDetailBean> employeeDetailBeanList = Business.generateEmployeeDetailList(
-					ui.getEmployeeDetailBeanList(), ui.getEvectionBeanList(), ui.getTmorning(), ui.getTevening(),
-					ui.getTnoon_begin(), ui.getTnoon_end());
 			Map<String, String> totalMap = EmployeeTotalBean.getTotalMap();
-			List<EmployeeTotalBean> employeeTotalBeanList = Business.convertDetail2Total(employeeDetailBeanList);
+			List<EmployeeTotalBean> employeeTotalBeanList = Business
+					.convertDetail2Total(ui.getEmployeeDetailBeanList());
 			ExcelUtil.exportEmployeeTotalExcel(employeeTotalBeanList, totalMap);
 			JOptionPane.showMessageDialog(this, "导出成功，请查看: " + Consts.PATH_EMPLOYEETOTAL);
 		}

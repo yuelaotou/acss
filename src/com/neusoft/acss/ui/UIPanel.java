@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.neusoft.acss.bean.AcssBean;
 import com.neusoft.acss.bean.EmployeeDetailBean;
 import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Vacation;
@@ -101,8 +100,6 @@ public class UIPanel extends JFrame {
 	private String tevening = null;
 
 	private String tgrace = null;
-
-	private List<AcssBean> acssBeanList = null;
 
 	private List<Vacation> vacationList = null;
 
@@ -269,14 +266,6 @@ public class UIPanel extends JFrame {
 
 	public void setTgrace(String tgrace) {
 		this.tgrace = tgrace;
-	}
-
-	public List<AcssBean> getAcssBeanList() {
-		return acssBeanList;
-	}
-
-	public void setAcssBeanList(List<AcssBean> acssBeanList) {
-		this.acssBeanList = acssBeanList;
 	}
 
 	public List<Vacation> getVacationList() {

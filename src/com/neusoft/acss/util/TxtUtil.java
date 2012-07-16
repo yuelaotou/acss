@@ -18,11 +18,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import com.neusoft.acss.Acss;
-import com.neusoft.acss.bean.AcssBean;
 import com.neusoft.acss.bean.EmployeeDetailBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.bs.Business;
+import com.neusoft.acss.bs.EmployeeDetailBS;
 import com.neusoft.acss.consts.Consts;
 import com.neusoft.acss.exception.BizException;
 
@@ -53,14 +53,13 @@ public final class TxtUtil {
 			String tnoon_end) {
 		List<EmployeeDetailBean> list = new ArrayList<EmployeeDetailBean>();
 		try {
-			Map<String, Object[]> m = EmployeeDetailBean.getPropertyMap();
+			Map<String, Object[]> m = EmployeeDetailBS.getPropertyMap();
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GBK"));
 			String str = "";
 			EmployeeDetailBean edb = null;
 			while ((str = br.readLine()) != null) {
 				if (!StringUtils.isEmpty(str)) {
 					edb = Business.parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end, m);
-					// System.out.println(edb);
 					list.add(edb);
 				}
 			}

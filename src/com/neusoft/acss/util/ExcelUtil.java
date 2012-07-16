@@ -110,18 +110,19 @@ public final class ExcelUtil {
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static void exportEmployeeDetailExcel(List<EmployeeDetailBean> employeeDetailBeanList, Map<String, String> m) {
+	public static void exportEmployeeDetailExcel(List<EmployeeDetailBean> employeeDetailBeanList,
+			Map<String, Object[]> m) {
 		Workbook wb = new SXSSFWorkbook(500);
 		Sheet sheet = wb.createSheet();
 		sheet.createFreezePane(0, 1);
 		// 生成表头
 		Row row = sheet.createRow(0);
 		row.setHeightInPoints(Consts.ROW_HEIGHT);
-		Iterator<Entry<String, String>> it = m.entrySet().iterator();
+		Iterator<Entry<String, Object[]>> it = m.entrySet().iterator();
 		CellStyle style_head = getHeadCellStyle(wb);
 		int i = 0;
 		while (it.hasNext()) {
-			Map.Entry<String, String> entry = it.next();
+			Map.Entry<String, Object[]> entry = it.next();
 			Object value = entry.getValue();
 
 			sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
@@ -142,7 +143,7 @@ public final class ExcelUtil {
 			it = m.entrySet().iterator();
 			i = 0;
 			while (it.hasNext()) {
-				Map.Entry<String, String> entry = it.next();
+				Map.Entry<String, Object[]> entry = it.next();
 				Object key = entry.getKey();
 
 				// 根据提供的类，取得类的属性及Read方法，再反射出具体的内容

@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.neusoft.acss.bean.AcssBean;
+import com.neusoft.acss.bean.EmployeeDetailBean;
 import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
@@ -106,6 +107,8 @@ public class UIPanel extends JFrame {
 	private List<Vacation> vacationList = null;
 
 	private List<WorkDay> workDayList = null;
+
+	private List<EmployeeDetailBean> employeeDetailBeanList = null;
 
 	private List<EvectionBean> evectionBeanList = null;
 
@@ -290,6 +293,14 @@ public class UIPanel extends JFrame {
 
 	public void setWorkDayList(List<WorkDay> workDayList) {
 		this.workDayList = workDayList;
+	}
+
+	public List<EmployeeDetailBean> getEmployeeDetailBeanList() {
+		return employeeDetailBeanList;
+	}
+
+	public void setEmployeeDetailBeanList(List<EmployeeDetailBean> employeeDetailBeanList) {
+		this.employeeDetailBeanList = employeeDetailBeanList;
 	}
 
 	public List<EvectionBean> getEvectionBeanList() {

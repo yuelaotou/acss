@@ -12,12 +12,14 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import com.neusoft.acss.Acss;
 import com.neusoft.acss.bean.AcssBean;
+import com.neusoft.acss.bean.EmployeeDetailBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.bs.Business;
@@ -47,18 +49,19 @@ public final class TxtUtil {
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static List<AcssBean> readAcssBeanFromFile(File file, String tnoon_begin, String tnoon_middle,
+	public static List<EmployeeDetailBean> readAcssBeanFromFile(File file, String tnoon_begin, String tnoon_middle,
 			String tnoon_end) {
-		List<AcssBean> list = new ArrayList<AcssBean>();
+		List<EmployeeDetailBean> list = new ArrayList<EmployeeDetailBean>();
 		try {
+			Map<String, Object[]> m = EmployeeDetailBean.getPropertyMap();
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GBK"));
 			String str = "";
-			AcssBean acssBean = null;
+			EmployeeDetailBean edb = null;
 			while ((str = br.readLine()) != null) {
 				if (!StringUtils.isEmpty(str)) {
-					acssBean = Business.parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end);
-					// System.out.println(acssBean);
-					list.add(acssBean);
+					edb = Business.parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end, m);
+					// System.out.println(edb);
+					list.add(edb);
 				}
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -67,6 +70,8 @@ public final class TxtUtil {
 			throw new BizException("不会发生的异常，吗的", e);
 		} catch (IOException e) {
 			throw new BizException("读取文件：" + file.getName() + " 内容异常", e);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 
 		return list;

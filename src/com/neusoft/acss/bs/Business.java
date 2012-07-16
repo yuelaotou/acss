@@ -3,9 +3,13 @@ package com.neusoft.acss.bs;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import com.neusoft.acss.Acss;
@@ -18,7 +22,6 @@ import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.enums.Leave;
 import com.neusoft.acss.enums.Overtime;
 import com.neusoft.acss.enums.Week;
-import com.neusoft.acss.enums.WorkSt;
 import com.neusoft.acss.exception.BizException;
 
 /**
@@ -38,9 +41,12 @@ public class Business {
 	 * <p>Discription:[读取考勤记录后，用本方法进行解析，按行存入到{@link AcssBean}中，以后更改解析规则来此修改，请记录信息]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
+	 * @throws ClassNotFoundException 
 	 */
-	public static AcssBean parseStrToAcssBean(String str, String tnoon_begin, String tnoon_middle, String tnoon_end) {
-		AcssBean acssBean = new AcssBean();
+	public static EmployeeDetailBean parseStrToAcssBean(String str, String tnoon_begin, String tnoon_middle,
+			String tnoon_end, Map<String, Object[]> m) throws ClassNotFoundException {
+
+		EmployeeDetailBean edb = new EmployeeDetailBean(m);
 
 		String searchList[] = new String[] { "[ ", "【", "】", "缺" };
 		String replacementList[] = new String[] { "[", " ", " ", " " };
@@ -49,17 +55,17 @@ public class Business {
 		String s_info[] = StringUtils.split(str);
 		int n = 0;
 		if (!str.startsWith("[")) {
-			acssBean.setName(s_info[0]);
+			edb.setValue("name", s_info[0]);
 			NAME = s_info[0];
 			String date_week[] = StringUtils.substringsBetween(s_info[1], "[", "]");
-			acssBean.setDate(date_week[0]);
-			acssBean.setWeek(getWeek(date_week[1]));
+			edb.setValue("date", date_week[0]);
+			edb.setValue("week", getWeek(date_week[1]));
 			n += 2;
 		} else {
-			acssBean.setName(NAME);
+			edb.setValue("name", NAME);
 			String date_week[] = StringUtils.substringsBetween(s_info[0], "[", "]");
-			acssBean.setDate(date_week[0]);
-			acssBean.setWeek(getWeek(date_week[1]));
+			edb.setValue("date", date_week[0]);
+			edb.setValue("week", getWeek(date_week[1]));
 			n++;
 		}
 
@@ -67,32 +73,32 @@ public class Business {
 			String time = s_info[i];
 			if (time.compareTo(tnoon_begin) < 0) {// 上班
 				// 判断是否为空，需要写入相对早些的时间，因为读取的时间是按照顺序来的。
-				if (StringUtils.isEmpty(acssBean.getTMorning())) {
-					acssBean.setTMorning(time);
+				if (edb.getValue("tMorning") == null) {
+					edb.setValue("tMorning", time);
 				}
 			} else if (time.compareTo(tnoon_begin) >= 0 && time.compareTo(tnoon_middle) < 0) {// 午休A
 				// 判断是否为空，需要写入相对早些的时间，因为读取的时间是按照顺序来的。
-				if (StringUtils.isEmpty(acssBean.getTNooningA())) {
-					acssBean.setTNooningA(time);
+				if (edb.getValue("tNooningA") == null) {
+					edb.setValue("tNooningA", time);
 				}
 			} else if (time.compareTo(tnoon_middle) >= 0 && time.compareTo(tnoon_end) <= 0) {// 午休B
 				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
-				if (StringUtils.isEmpty(acssBean.getTNooningB())) {
-					acssBean.setTNooningB(time);
+				if (edb.getValue("tNooningB") == null) {
+					edb.setValue("tNooningB", time);
 				} else {
 					// 若午休第一次打卡为空，则进行一定的处理。
-					if (StringUtils.isEmpty(acssBean.getTNooningA())) {
-						acssBean.setTNooningA(acssBean.getTNooningB());
-						acssBean.setTNooningB(time);
+					if (edb.getValue("tNooningA") == null) {
+						edb.setValue("tNooningA", edb.getValue("tNooningB").toString());
+						edb.setValue("tNooningB", time);
 					}
 				}
 			} else if (time.compareTo(tnoon_end) > 0) {// 下班
 				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
-				acssBean.setTEvening(time);
+				edb.setValue("tEvening", time);
 			}
 		}
 
-		return acssBean;
+		return edb;
 	}
 
 	/**
@@ -100,216 +106,45 @@ public class Business {
 	 * <p>Discription:[若以后需求有变更，修改这里。比如：如何计算加班时间等等算法]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
+	 * @throws ClassNotFoundException 
 	 */
-	public static List<EmployeeDetailBean> generateEmployeeDetailList(List<AcssBean> acssBeanList,
-			List<EvectionBean> evectionBeanList, String tmorning, String tevening, String tnoon_begin, String tnoon_end) {
-		EmployeeDetailBean edb = null;
-		List<EmployeeDetailBean> list = new ArrayList<EmployeeDetailBean>();
+	public static List<EmployeeDetailBean> generateEmployeeDetailList(List<EmployeeDetailBean> list,
+			List<EvectionBean> evectionBeanList, String tmorning, String tevening, String tnoon_begin, String tnoon_end)
+			throws ClassNotFoundException {
+		Map<String, Object[]> m = EmployeeDetailBean.getPropertyMap();
 
-		for (AcssBean ab : acssBeanList) {
-			edb = new EmployeeDetailBean();
+		for (EmployeeDetailBean edb : list) {
 			EvectionBean evb = null;
-			edb.setCompany(ab.getCompany());
-			edb.setDepartment(ab.getDepartment());
-			edb.setName(ab.getName());
-			edb.setLocale("归属地");// 以后处理
-			edb.setId(ab.getId());
-			edb.setDate(ab.getDate());
-			edb.setWeek(ab.getWeek());
-			edb.setTMorning(ab.getTMorning());
-			edb.setTNooningA(ab.getTNooningA());
-			edb.setTNooningB(ab.getTNooningB());
-			edb.setTEvening(ab.getTEvening());
 
-			// 根据当天是否isVacation提前处理Workst，然后若当天有出差登记情况，再修改
-			if (ab.isVacation()) {
-				edb.setWorkSt(WorkSt.REST);
-				edb.setIsRest("休息日");
-			} else {
-				edb.setWorkSt(WorkSt.WORK);
-				edb.setIsRest("");
-			}
 			for (EvectionBean evb_1 : evectionBeanList) {
 				evb = null;
-				if (ab.getName().equals(evb_1.getName())
-						&& ab.getDate().replace("-", "").equals(evb_1.getMonth().concat(evb_1.getDay()))) {
+				if (edb.getValue("name").equals(evb_1.getName())
+						&& edb.getValue("date").toString().replace("-", "")
+								.equals(evb_1.getMonth().concat(evb_1.getDay()))) {
 					evb = evb_1;
 					break;
 				}
 			}
 
-			// 外地和本地出差地点
-			if (evb != null) {
-				edb.setEvection_remote(evb.getEvection_remote() == null ? "" : evb.getEvection_remote());
-				edb.setEvection_locale(evb.getEvection_locale() == null ? "" : evb.getEvection_locale());
+			Iterator<Entry<String, Object[]>> it = m.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, Object[]> entry = it.next();
+				Object key = entry.getValue();
+				Object[] values = entry.getValue();
+				Object args[] = new Object[] { edb, evb, tmorning, tevening, tnoon_begin, tnoon_end };
+				Object clz[] = new Object[] { EmployeeDetailBean.class, EvectionBean.class, String.class, String.class,
+						String.class, String.class };
+				try {
+					Object value = MethodUtils.invokeExactMethod(new Business(), values[2].toString(), args, clz);
+					edb.setValue(key.toString(), value);
+				} catch (Exception e) {
+					throw new BizException("EmployeeDetailBean#getPropertiesMap配置错误，属性是：" + key, e);
+				}
 			}
-
-			// 处理工作情况，Workst
-			WorkSt st = getWorkSt(ab, evb);
-			edb.setWorkSt(st == null ? edb.getWorkSt() : st);
-
-			// 处理迟到信息
-			String tLate = getTLate(ab, evb, tmorning, tevening, tnoon_begin, tnoon_end);
-			edb.setTLate(tLate);
-
-			// 处理早退信息
-			String tEarly = getTEarly(ab, evb, tmorning, tevening, tnoon_begin, tnoon_end);
-			edb.setTEarly(tEarly);
-
-			// 处理加班类型
-			Overtime o = getOvertime(ab, evb, tmorning, tevening, tnoon_begin, tnoon_end);
-			edb.setOvertime(o);
-
-			// 处理加班时间
-			String tOvertime = getTOvertime(ab, evb, tmorning, tevening, tnoon_begin, tnoon_end);
-			edb.setTOvertime(tOvertime);
-
-			// 处理请假类型
-			Leave l = getLeave(ab, evb, tmorning, tevening, tnoon_begin, tnoon_end);
-			edb.setLeave(l);
-
-			// 处理异常信息
-			String exception = getException(ab, evb, tmorning, tevening, tnoon_begin, tnoon_end);
-			edb.setException(exception);
 
 			list.add(edb);
 		}
 		return list;
-	}
-
-	/**
-	 * <p>Discription:[处理工作情况，Workst]</p>
-	 * Created on 2012-7-11
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 */
-	public static WorkSt getWorkSt(AcssBean ab, EvectionBean evb) {
-		if (evb == null)
-			return null;
-		if (evb.getEvection_locale() != null || evb.getEvection_remote() != null) {
-			return WorkSt.EVECTION;
-		} else if (evb.getLeave_sick() != null || evb.getLeave_thing() != null || evb.getLeave_year() != null) {
-			return WorkSt.LEAVE;
-		}
-		return null;
-	}
-
-	/**
-	 * <p>Discription:[处理迟到时间，根据业务需要本方法可能会变更]</p>
-	 * Created on 2012-7-11
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 */
-	public static String getTLate(AcssBean ab, EvectionBean evb, String tmorning, String tevening, String tnoon_begin,
-			String tnoon_end) {
-		if (StringUtils.isEmpty(ab.getTMorning()) || StringUtils.isEmpty(ab.getTNooningA())
-				|| StringUtils.isEmpty(ab.getTNooningB()) || StringUtils.isEmpty(ab.getTEvening())) {
-			return "";
-		} else {
-			int t = minusDate(tmorning, ab.getTMorning(), 1000 * 60);
-			if (t <= 0) {
-				return "";
-			} else {
-				return t + "";
-			}
-		}
-	}
-
-	/**
-	 * <p>Discription:[处理早退时间，根据业务需要本方法可能会变更]</p>
-	 * Created on 2012-7-11
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 */
-	public static String getTEarly(AcssBean ab, EvectionBean evb, String tmorning, String tevening, String tnoon_begin,
-			String tnoon_end) {
-		if (StringUtils.isEmpty(ab.getTMorning()) || StringUtils.isEmpty(ab.getTNooningA())
-				|| StringUtils.isEmpty(ab.getTNooningB()) || StringUtils.isEmpty(ab.getTEvening())) {
-			return "";
-		} else {
-			int t = minusDate(ab.getTEvening(), tevening, 1000 * 60);
-			if (t <= 0) {
-				return "";
-			} else {
-				return t + "";
-			}
-		}
-	}
-
-	/**
-	 * <p>Discription:[处理加班类型，根据业务需要本方法可能会变更]</p>
-	 * Created on 2012-7-11
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 */
-	public static Overtime getOvertime(AcssBean ab, EvectionBean evb, String tmorning, String tevening,
-			String tnoon_begin, String tnoon_end) {
-		// 以后需要加入判断是周末还是法定假日
-		if (evb != null) {
-			if (!StringUtils.isEmpty(evb.getOvertime())) {
-				if (ab.isVacation()) {
-					return Overtime.HOLIDAY;
-				} else {
-					return Overtime.WORKDAY;
-				}
-			}
-		}
-		return null;
-
-	}
-
-	/**
-	 * <p>Discription:[处理加班时间，根据业务需要本方法可能会变更]</p>
-	 * Created on 2012-7-11
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 */
-	public static String getTOvertime(AcssBean ab, EvectionBean evb, String tmorning, String tevening,
-			String tnoon_begin, String tnoon_end) {
-		if (evb != null) {
-			if (!StringUtils.isEmpty(evb.getOvertime())) {
-				return evb.getOvertime();
-			}
-		}
-		return "";
-	}
-
-	/**
-	 * <p>Discription:[处理加班类型，根据业务需要本方法可能会变更]</p>
-	 * Created on 2012-7-11
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 */
-	public static Leave getLeave(AcssBean ab, EvectionBean evb, String tmorning, String tevening, String tnoon_begin,
-			String tnoon_end) {
-		if (evb == null) {
-			return null;
-		}
-		if (!StringUtils.isEmpty(evb.getLeave_sick())) {
-			return Leave.SICK;
-		}
-		if (!StringUtils.isEmpty(evb.getLeave_thing())) {
-			return Leave.THING;
-		}
-		if (!StringUtils.isEmpty(evb.getLeave_year())) {
-			return Leave.YEAR;
-		}
-		return null;
-	}
-
-	/**
-	 * <p>Discription:[处理异常信息，根据业务需要本方法可能会变更]</p>
-	 * Created on 2012-7-11
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 */
-	public static String getException(AcssBean ab, EvectionBean evb, String tmorning, String tevening,
-			String tnoon_begin, String tnoon_end) {
-		if (ab.isVacation()) {
-			if (!StringUtils.isEmpty(ab.getTMorning()) && !StringUtils.isEmpty(ab.getTNooningA())
-					&& !StringUtils.isEmpty(ab.getTNooningB()) && !StringUtils.isEmpty(ab.getTEvening())) {
-				return "异常";
-			}
-		} else {
-			if (StringUtils.isEmpty(ab.getTMorning()) || StringUtils.isEmpty(ab.getTNooningA())
-					|| StringUtils.isEmpty(ab.getTNooningB()) || StringUtils.isEmpty(ab.getTEvening())) {
-				return "异常";
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -497,22 +332,23 @@ public class Business {
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static void checkVacation(List<AcssBean> acssBeanList, List<Vacation> vacationList, List<WorkDay> workDayList) {
-		for (AcssBean acssBean : acssBeanList) {
+	public static void checkVacation(List<EmployeeDetailBean> edbList, List<Vacation> vacationList,
+			List<WorkDay> workDayList) {
+		for (EmployeeDetailBean edb : edbList) {
 			Calendar c = Calendar.getInstance();
 			try {
-				c.setTime(DateUtils.parseDate(acssBean.getDate(), "yyyy-MM-dd"));
+				c.setTime(DateUtils.parseDate(edb.getValue("date").toString(), "yyyy-MM-dd"));
 			} catch (ParseException e) {
-				throw new BizException("考勤文件中日期格式错误，请确认格式为：yyyy-MM-dd，" + acssBean.getDate(), e);
+				throw new BizException("考勤文件中日期格式错误，请确认格式为：yyyy-MM-dd，" + edb.getValue("date"), e);
 			}
 
 			// 判断是否为周六周日
 			if (c.get(Calendar.DAY_OF_WEEK) == 7 || c.get(Calendar.DAY_OF_WEEK) == 1) {
-				acssBean.setVacation(true);
+				edb.setValue("isRest", true);
 				// 如果在串休列表中，直接return flase，不再计算Vacation了。
 				for (WorkDay wd : workDayList) {
 					if (wd.getDate().compareTo(c.getTime()) == 0) {
-						acssBean.setVacation(false);
+						edb.setValue("isRest", false);
 						break;
 					}
 				}
@@ -520,7 +356,7 @@ public class Business {
 				// 如果在国家规定的休假列表中，return true。
 				for (Vacation vac : vacationList) {
 					if (vac.getDate().compareTo(c.getTime()) == 0) {
-						acssBean.setVacation(true);
+						edb.setValue("isRest", true);
 					}
 				}
 			}

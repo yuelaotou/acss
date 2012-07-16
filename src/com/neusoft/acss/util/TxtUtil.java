@@ -51,18 +51,18 @@ public final class TxtUtil {
 			String tnoon_end) {
 		List<AcssBean> list = new ArrayList<AcssBean>();
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GB2312"));
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GBK"));
 			String str = "";
 			AcssBean acssBean = null;
 			while ((str = br.readLine()) != null) {
 				if (!StringUtils.isEmpty(str)) {
 					acssBean = Business.parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end);
-					System.out.println(acssBean);
+					// System.out.println(acssBean);
 					list.add(acssBean);
 				}
 			}
 		} catch (UnsupportedEncodingException e) {
-			throw new BizException("考勤结果txt编码格式错误，目前编码格式要求为：GB2312", e);
+			throw new BizException("考勤结果txt编码格式错误，目前编码格式要求为：GBK", e);
 		} catch (FileNotFoundException e) {
 			throw new BizException("不会发生的异常，吗的", e);
 		} catch (IOException e) {

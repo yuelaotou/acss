@@ -20,7 +20,7 @@ import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.exception.BizException;
-import com.neusoft.acss.ui.command.ActionCommandContext;
+import com.neusoft.acss.ui.command.context.ActionCommandContext;
 import com.neusoft.acss.util.PropUtil;
 
 public class UIPanel extends JFrame {
@@ -108,6 +108,8 @@ public class UIPanel extends JFrame {
 	private List<EmployeeDetailBean> employeeDetailBeanList = null;
 
 	private List<EvectionBean> evectionBeanList = null;
+
+	private String message = null;
 
 	public UIPanel() {
 		initProperties();
@@ -200,7 +202,10 @@ public class UIPanel extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			ActionCommandContext acc = new ActionCommandContext(e.getActionCommand(), UIPanel.this);
 			try {
-				acc.handleRequest();
+				String message = acc.handleRequest();
+				if (message != null) {
+					JOptionPane.showMessageDialog(UIPanel.this, message, "提示信息", JOptionPane.INFORMATION_MESSAGE);
+				}
 			} catch (BizException ex) {
 				ex.printStackTrace();
 				JOptionPane.showMessageDialog(UIPanel.this, ex.getMessage(), "错误信息", JOptionPane.ERROR_MESSAGE);
@@ -298,6 +303,14 @@ public class UIPanel extends JFrame {
 
 	public void setEvectionBeanList(List<EvectionBean> evectionBeanList) {
 		this.evectionBeanList = evectionBeanList;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public JPanel getMorningTimePanel() {

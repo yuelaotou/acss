@@ -50,7 +50,7 @@ public class EmployeeDetailBS {
 		m.put("tevening", new Object[] { Class.forName("java.lang.String"), "下班时间", "generateTevening" });
 		m.put("workSt", new Object[] { Class.forName("com.neusoft.acss.enums.WorkSt"), "工作情况", "generateWorkSt" });
 		m.put("tlate", new Object[] { Class.forName("java.lang.String"), "迟到时间", "generateTlate" });
-		m.put("tearly", new Object[] { Class.forName("java.lang.String"), "下班时间", "generateTearly" });
+		m.put("tearly", new Object[] { Class.forName("java.lang.String"), "早退时间", "generateTearly" });
 		m.put("evection_locale",
 				new Object[] { Class.forName("java.lang.String"), "本地出差地点", "generateEvection_locale" });
 		m.put("evection_remote",
@@ -70,8 +70,9 @@ public class EmployeeDetailBS {
 	 */
 	public String generateCompany(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("company") == null ? "" : edb.getValue("company").toString();
+		return edb.getString("company");
 	}
+
 	/**
 	 * <p>Discription:[部门]</p>
 	 * Created on 2012-7-11
@@ -79,7 +80,7 @@ public class EmployeeDetailBS {
 	 */
 	public String generateDepartment(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("department") == null ? "" : edb.getValue("department").toString();
+		return edb.getString("department");
 	}
 
 	/**
@@ -89,7 +90,7 @@ public class EmployeeDetailBS {
 	 */
 	public String generateName(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("name") == null ? "" : edb.getValue("name").toString();
+		return edb.getString("name");
 	}
 
 	/**
@@ -99,7 +100,7 @@ public class EmployeeDetailBS {
 	 */
 	public String generateLocale(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("locale") == null ? "归属地" : edb.getValue("locale").toString();
+		return edb.getString("locale", "归属地");
 	}
 
 	/**
@@ -109,7 +110,7 @@ public class EmployeeDetailBS {
 	 */
 	public Integer generateId(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("id") == null ? new Integer(0) : new Integer(edb.getValue("id").toString());
+		return edb.isNull("id") ? new Integer(0) : new Integer(edb.getString("id"));
 	}
 
 	/**
@@ -119,7 +120,7 @@ public class EmployeeDetailBS {
 	 */
 	public String generateDate(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("date") == null ? "" : edb.getValue("date").toString();
+		return edb.getString("date");
 	}
 
 	/**
@@ -139,7 +140,7 @@ public class EmployeeDetailBS {
 	 */
 	public String generateRest(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("rest") == null ? null : edb.getValue("rest").toString();
+		return edb.getString("rest");
 	}
 
 	/**
@@ -149,7 +150,7 @@ public class EmployeeDetailBS {
 	 */
 	public String generateTmorning(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("tmorning") == null ? "" : edb.getValue("tmorning").toString();
+		return edb.getString("tmorning");
 	}
 
 	/**
@@ -159,7 +160,7 @@ public class EmployeeDetailBS {
 	 */
 	public String generateTnooningA(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("tnooningA") == null ? "" : edb.getValue("tnooningA").toString();
+		return edb.getString("tnooningA");
 	}
 
 	/**
@@ -169,7 +170,7 @@ public class EmployeeDetailBS {
 	 */
 	public String generateTnooningB(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("tnooningB") == null ? "" : edb.getValue("tnooningB").toString();
+		return edb.getString("tnooningB");
 	}
 
 	/**
@@ -179,7 +180,7 @@ public class EmployeeDetailBS {
 	 */
 	public String generateTevening(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return edb.getValue("tevening") == null ? "" : edb.getValue("tevening").toString();
+		return edb.getString("tevening");
 	}
 
 	/**
@@ -189,8 +190,9 @@ public class EmployeeDetailBS {
 	 */
 	public WorkSt generateWorkSt(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		if (evb == null)
+		if (evb == null) {
 			return null;
+		}
 		if (evb.getEvection_locale() != null || evb.getEvection_remote() != null) {
 			return WorkSt.EVECTION;
 		} else if (evb.getLeave_sick() != null || evb.getLeave_thing() != null || evb.getLeave_year() != null) {
@@ -206,11 +208,10 @@ public class EmployeeDetailBS {
 	 */
 	public String generateTlate(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		if (edb.getValue("tmorning") == null || edb.getValue("tnooningA") == null || edb.getValue("tnooningB") == null
-				|| edb.getValue("tevening") == null) {
+		if (edb.isNull("tmorning") || edb.isNull("tnooningA") || edb.isNull("tnooningB") || edb.isNull("tevening")) {
 			return "";
 		} else {
-			int t = Business.minusDate(tmorning, edb.getValue("tmorning").toString(), 1000 * 60);
+			int t = Business.minusDate(tmorning, edb.getString("tmorning"), 1000 * 60);
 			if (t <= 0) {
 				return "";
 			} else {
@@ -226,11 +227,10 @@ public class EmployeeDetailBS {
 	 */
 	public String generateTearly(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		if (edb.getValue("tmorning") == null || edb.getValue("tnooningA") == null || edb.getValue("tnooningB") == null
-				|| edb.getValue("tevening") == null) {
+		if (edb.isNull("tmorning") || edb.isNull("tnooningA") || edb.isNull("tnooningB") || edb.isNull("tevening")) {
 			return "";
 		} else {
-			int t = Business.minusDate(edb.getValue("tevening").toString(), tevening, 1000 * 60);
+			int t = Business.minusDate(edb.getString("tevening"), tevening, 1000 * 60);
 			if (t <= 0) {
 				return "";
 			} else {
@@ -246,7 +246,10 @@ public class EmployeeDetailBS {
 	 */
 	public String generateEvection_locale(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return evb.getEvection_locale();
+		if (evb != null) {
+			return evb.getEvection_locale();
+		}
+		return null;
 	}
 
 	/**
@@ -256,7 +259,10 @@ public class EmployeeDetailBS {
 	 */
 	public String generateEvection_remote(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
-		return evb.getEvection_remote();
+		if (evb != null) {
+			return evb.getEvection_remote();
+		}
+		return null;
 	}
 
 	/**
@@ -269,10 +275,10 @@ public class EmployeeDetailBS {
 		// 以后需要加入判断是周末还是法定假日
 		if (evb != null) {
 			if (!StringUtils.isEmpty(evb.getOvertime())) {
-				if (Boolean.valueOf(edb.getValue("rest").toString())) {
-					return Overtime.HOLIDAY;
-				} else {
+				if (edb.isNull("rest")) {
 					return Overtime.WORKDAY;
+				} else {
+					return Overtime.HOLIDAY;
 				}
 			}
 		}
@@ -324,16 +330,15 @@ public class EmployeeDetailBS {
 	public String generateException(EmployeeDetailBean edb, EvectionBean evb, String tmorning, String tevening,
 			String tnoon_begin, String tnoon_end) {
 
-		if (Boolean.valueOf(edb.getValue("rest").toString())) {
-			if (edb.getValue("tmorning") != null && edb.getValue("tnooningA") != null
-					&& edb.getValue("tnooningB") != null && edb.getValue("tevening") != null) {
+		if (edb.isNull("rest")) {// 说明是正常上班日
+			if (edb.isNull("tmorning") || edb.isNull("tnooningA") || edb.isNull("tnooningB") || edb.isNull("tevening")) {
 				return "异常";
 			}
-		} else {
-			if (edb.getValue("tmorning") == null || edb.getValue("tnooningA") == null
-					|| edb.getValue("tnooningB") == null || edb.getValue("tevening") == null) {
-				return "异常";
-			}
+			// } else {
+			// if (edb.isNull("tmorning") || edb.isNull("tnooningA") || edb.isNull("tnooningB") ||
+			// edb.isNull("tevening")) {
+			// return "异常";
+			// }
 		}
 		return null;
 	}

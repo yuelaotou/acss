@@ -129,21 +129,21 @@ public class Business {
 				Object key = entry.getKey();
 				Object[] values = entry.getValue();
 				Object args[] = new Object[] { edb, evb, tmorning, tevening, tnoon_begin, tnoon_end };
-				Object clz[] = new Object[] { Class.forName("com.neusoft.acss.bean.EmployeeDetailBean"),
+				Class<?> clz[] = new Class<?>[] { Class.forName("com.neusoft.acss.bean.EmployeeDetailBean"),
 						Class.forName("com.neusoft.acss.bean.EvectionBean"), Class.forName("java.lang.String"),
 						Class.forName("java.lang.String"), Class.forName("java.lang.String"),
 						Class.forName("java.lang.String") };
 				try {
-					Object value = MethodUtils.invokeMethod(EmployeeDetailBS.getInstance(), values[2].toString(),
-							args, clz);
+					Object value = MethodUtils.invokeMethod(EmployeeDetailBS.getInstance(), values[2].toString(), args,
+							clz);
 					edb.setValue(key.toString(), value);
 				} catch (Exception e) {
 					e.printStackTrace();
-					throw new BizException("EmployeeDetailBS#getPropertiesMap配置错误，属性是：" + key, e);
+					throw new BizException("EmployeeDetailBS#getPropertiesMap配置错误，属性是：" + key + "，方法是："
+							+ values[2].toString(), e);
 				}
 			}
-
-			list.add(edb);
+			System.out.println(edb);
 		}
 		return list;
 	}
@@ -224,75 +224,75 @@ public class Business {
 			/*
 			 * 只要早退时间不空，就算今天早退一次。不是按照时间累积成一天才算一天。 若以后需求有变更，修改这里。
 			 */
-			//			if (!StringUtils.isEmpty(edb.getTEarly())) {
-			//				s_c_early++;
-			//			}
+			// if (!StringUtils.isEmpty(edb.getTEarly())) {
+			// s_c_early++;
+			// }
 
 			/*
 			 * 只要请假类型不空，就算今天请假一次。再根据请假类型分开计算请假的天数。 若以后需求有变更，修改这里。
 			 */
-			//			if (edb.getLeave() != null) {
-			//				if (edb.getLeave().equals(Leave.SICK)) {
-			//					s_c_sick++;
-			//				}
-			//				if (edb.getLeave().equals(Leave.THING)) {
-			//					s_c_thing++;
-			//				}
-			//				if (edb.getLeave().equals(Leave.YEAR)) {
-			//					s_c_year++;
-			//				}
-			//				if (edb.getLeave().equals(Leave.OTHER)) {
-			//					s_c_other++;
-			//				}
-			//			}
+			// if (edb.getLeave() != null) {
+			// if (edb.getLeave().equals(Leave.SICK)) {
+			// s_c_sick++;
+			// }
+			// if (edb.getLeave().equals(Leave.THING)) {
+			// s_c_thing++;
+			// }
+			// if (edb.getLeave().equals(Leave.YEAR)) {
+			// s_c_year++;
+			// }
+			// if (edb.getLeave().equals(Leave.OTHER)) {
+			// s_c_other++;
+			// }
+			// }
 
 			/*
 			 * 只要本地出差字段不空，就算今天本地出差一次。 若以后需求有变更，修改这里。
 			 */
-			//			if (!StringUtils.isEmpty(edb.getEvection_locale())) {
-			//				s_c_evection_locale++;
-			//			}
+			// if (!StringUtils.isEmpty(edb.getEvection_locale())) {
+			// s_c_evection_locale++;
+			// }
 
 			/*
 			 * 只要外地出差字段不空，就算今天外地出差一次。 若以后需求有变更，修改这里。
 			 */
-			//			if (!StringUtils.isEmpty(edb.getEvection_remote())) {
-			//				s_c_evection_remote++;
-			//			}
+			// if (!StringUtils.isEmpty(edb.getEvection_remote())) {
+			// s_c_evection_remote++;
+			// }
 			/*
 			 * 只要加班类型不空，就加班。若以后需求有变更，修改这里。
 			 */
-			//			if (edb.getOvertime() != null) {
-			//				if (edb.getOvertime().equals(Overtime.WORKDAY)) {
-			//					s_c_overtime_workday++;
-			//				}
-			//				if (edb.getOvertime().equals(Overtime.WEEKEND)) {
-			//					s_c_overtime_weekend++;
-			//				}
-			//				if (edb.getOvertime().equals(Overtime.HOLIDAY)) {
-			//					s_c_overtime_holiday++;
-			//				}
-			//				if (edb.getOvertime().equals(Overtime.REMOTE)) {
-			//					s_c_overtime_remote++;
-			//				}
-			//			}
+			// if (edb.getOvertime() != null) {
+			// if (edb.getOvertime().equals(Overtime.WORKDAY)) {
+			// s_c_overtime_workday++;
+			// }
+			// if (edb.getOvertime().equals(Overtime.WEEKEND)) {
+			// s_c_overtime_weekend++;
+			// }
+			// if (edb.getOvertime().equals(Overtime.HOLIDAY)) {
+			// s_c_overtime_holiday++;
+			// }
+			// if (edb.getOvertime().equals(Overtime.REMOTE)) {
+			// s_c_overtime_remote++;
+			// }
+			// }
 
 			/*
 			 * 只要加班字段不空，把加班时间累积起来。 若以后需求有变更，修改这里。
 			 */
-			//			if (!StringUtils.isEmpty(edb.getTOvertime())) {
-			//				s_h_overtime++;
+			// if (!StringUtils.isEmpty(edb.getTOvertime())) {
+			// s_h_overtime++;
 			// s_h_overtime += Integer.parseInt(edb.getTOvertime());
-			//			}
+			// }
 
 			/*
 			 * 只要异常字段不空，有一次算一次统计出来。 若以后需求有变更，修改这里。
 			 */
-			//			if (!StringUtils.isEmpty(edb.getException())) {
-			//				s_c_exception++;
-			//			}
+			// if (!StringUtils.isEmpty(edb.getException())) {
+			// s_c_exception++;
+			// }
 
-			//			name = edb.getName();
+			// name = edb.getName();
 		}
 
 		return etblist;

@@ -123,20 +123,20 @@ public final class ExcelUtil {
 		int i = 0;
 		while (it.hasNext()) {
 			Map.Entry<String, Object[]> entry = it.next();
-			Object value = entry.getValue();
+			Object[] values = entry.getValue();
 
 			sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
 			Cell c = row.createCell(i);
 			c.setCellStyle(style_head);
-			c.setCellValue(value.toString());
+			c.setCellValue(values[1].toString());
 			i++;
 		}
 
 		// 生成表体，填充内容
-		EmployeeDetailBean employeeDetailBean = null;
+		EmployeeDetailBean edb = null;
 		CellStyle style_body = getBodyCellStyle(wb);
 		for (int rownum = 0; rownum < employeeDetailBeanList.size(); rownum++) {
-			employeeDetailBean = employeeDetailBeanList.get(rownum);
+			edb = employeeDetailBeanList.get(rownum);
 			row = sheet.createRow(rownum + 1);
 			row.setHeightInPoints(Consts.ROW_HEIGHT - 2);
 
@@ -145,15 +145,7 @@ public final class ExcelUtil {
 			while (it.hasNext()) {
 				Map.Entry<String, Object[]> entry = it.next();
 				Object key = entry.getKey();
-
-				// 根据提供的类，取得类的属性及Read方法，再反射出具体的内容
-				Object value = null;
-				try {
-					value = FieldUtils.readField(employeeDetailBean, key.toString(), true);
-				} catch (Exception e) {
-					// IllegalAccessException,IllegalArgumentException
-					throw new BizException("EmployeeDetailBean#getDetailMap配置错误，属性是：" + key, e);
-				}
+				Object value = edb.getValue(key.toString());
 
 				Cell c = row.createCell(i);
 				c.setCellStyle(style_body);

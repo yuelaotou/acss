@@ -52,6 +52,33 @@ public class EmployeeDetailBean {
 	}
 
 	/** 
+	 * 通过属性名得到属性String值 
+	 * @param property 属性名 
+	 * @return 值 
+	 */
+	public String getString(String property) {
+		return beanMap.get(property) == null ? "" : beanMap.get(property).toString();
+	}
+
+	/** 
+	 * 通过属性名得到属性String值 
+	 * @param property 属性名 
+	 * @return 值 
+	 */
+	public String getString(String property, String nullStr) {
+		return beanMap.get(property) == null ? nullStr : beanMap.get(property).toString();
+	}
+
+	/** 
+	 * 判断property是否为Null或""值，是返回true
+	 * @param property 属性名 
+	 * @return 值 
+	 */
+	public boolean isNull(String property) {
+		return getValue(property) == null || "".equals(getString(property));
+	}
+
+	/** 
 	  * 得到该实体bean对象 
 	  * @return 
 	  */
@@ -89,7 +116,7 @@ public class EmployeeDetailBean {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return sb.substring(0, sb.length()-2);
+		return sb.substring(0, sb.length() - 2);
 	}
 
 }

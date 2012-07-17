@@ -154,147 +154,65 @@ public class Business {
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static List<EmployeeTotalBean> convertDetail2Total(List<EmployeeDetailBean> edblist) {
+	public static List<EmployeeTotalBean> convertDetail2Total(List<EmployeeDetailBean> edblist)
+			throws ClassNotFoundException {
+		List<EmployeeDetailBean> list = new ArrayList<EmployeeDetailBean>();
 		List<EmployeeTotalBean> etblist = new ArrayList<EmployeeTotalBean>();
+		Map<String, Object[]> m = EmployeeTotalBS.getPropertyMap();
 		EmployeeTotalBean etb = null;
 
-		int s_c_late = 0;
-		int s_c_early = 0;
-		int s_c_sick = 0;
-		int s_c_thing = 0;
-		int s_c_year = 0;
-		int s_c_other = 0;
-		int s_c_evection_locale = 0;
-		int s_c_evection_remote = 0;
-		int s_c_overtime_workday = 0;
-		int s_c_overtime_weekend = 0;
-		int s_c_overtime_holiday = 0;
-		int s_c_overtime_remote = 0;
-		int s_h_overtime = 0;
-		int s_c_exception = 0;
 		String name = "";
-		for (EmployeeDetailBean edb : edblist) {
-			if (!name.equals(edb.getValue("name")) && !"".equals(name)) {
+		for (int i = 0; i < edblist.size(); i++) {
+			EmployeeDetailBean edb = edblist.get(i);
 
-				// 说明已经完成一个人信息的统计
-				etb = new EmployeeTotalBean();
-				etb.setName(name);
-				etb.setC_late(s_c_late);
-				etb.setC_early(s_c_early);
-
-				etb.setC_sick(s_c_sick);
-				etb.setC_thing(s_c_thing);
-				etb.setC_year(s_c_year);
-				etb.setC_other(s_c_other);
-
-				etb.setC_evection_locale(s_c_evection_locale);
-				etb.setC_evection_remote(s_c_evection_remote);
-
-				etb.setC_overtime_workday(s_c_overtime_workday);
-				etb.setC_overtime_weekend(s_c_overtime_weekend);
-				etb.setC_overtime_holiday(s_c_overtime_holiday);
-				etb.setC_overtime_remote(s_c_overtime_remote);
-				etb.setH_overtime(s_h_overtime);
-				etb.setC_exception(s_c_exception);
-				etblist.add(etb);
-
-				s_c_late = 0;
-				s_c_early = 0;
-				s_c_sick = 0;
-				s_c_thing = 0;
-				s_c_year = 0;
-				s_c_other = 0;
-				s_c_evection_locale = 0;
-				s_c_evection_remote = 0;
-				s_c_overtime_workday = 0;
-				s_c_overtime_weekend = 0;
-				s_c_overtime_holiday = 0;
-				s_c_overtime_remote = 0;
-				s_h_overtime = 0;
-				s_c_exception = 0;
+			// 首次进来，添加edb到list中。
+			if (i == 0) {
+				list.add(edb);
+				name = edb.getString("name");
+				continue;
 			}
 
-			/*
-			 * 只要迟到时间不空，就算今天迟到一次。不是按照时间累积成一天才算一天。 若以后需求有变更，修改这里。
-			 */
-			if (edb.getValue("tLate") != null) {
-				s_c_late++;
+			// 若是最后一次循环，需要提前添加edb到list中
+			if (i == edblist.size() - 1) {
+				list.add(edb);
+			} else if (name.equals(edb.getString("name"))) {
+				// 若本次的edb和上次的是同一个人，则只添加edb到list中，继续下次循环
+				list.add(edb);
+				continue;
 			}
 
-			/*
-			 * 只要早退时间不空，就算今天早退一次。不是按照时间累积成一天才算一天。 若以后需求有变更，修改这里。
-			 */
-			// if (!StringUtils.isEmpty(edb.getTEarly())) {
-			// s_c_early++;
-			// }
+			// 其余情况走到这里，只有两种情况：1,换人了; 2,最后一条记录。
+			// 不管哪种情况说明是可以统计当前list当中的edb情况了，统计之后添加etb到etblist中。所以本情况走完之后应该做4件事：
+			// 1,重新new ArrayList<EmployeeDetailBean>();
+			// 2,把etb添加到etblist中;
+			// 3,重新给name赋值为：edb.getString("name");
+			// 4,把当前的edb添加到list中，因为情况1（换人了）还未统计本个edb，不要落了。而情况2添不添加都不执行了。所以还是要添加。
 
-			/*
-			 * 只要请假类型不空，就算今天请假一次。再根据请假类型分开计算请假的天数。 若以后需求有变更，修改这里。
-			 */
-			// if (edb.getLeave() != null) {
-			// if (edb.getLeave().equals(Leave.SICK)) {
-			// s_c_sick++;
-			// }
-			// if (edb.getLeave().equals(Leave.THING)) {
-			// s_c_thing++;
-			// }
-			// if (edb.getLeave().equals(Leave.YEAR)) {
-			// s_c_year++;
-			// }
-			// if (edb.getLeave().equals(Leave.OTHER)) {
-			// s_c_other++;
-			// }
-			// }
+			etb = new EmployeeTotalBean(m);
+			Iterator<Entry<String, Object[]>> it = m.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, Object[]> entry = it.next();
+				Object key = entry.getKey();
+				Object[] values = entry.getValue();
 
-			/*
-			 * 只要本地出差字段不空，就算今天本地出差一次。 若以后需求有变更，修改这里。
-			 */
-			// if (!StringUtils.isEmpty(edb.getEvection_locale())) {
-			// s_c_evection_locale++;
-			// }
+				Object args[] = new Object[] { list };
+				Class<?> clz[] = new Class<?>[] { Class.forName("java.util.ArrayList") };
+				try {
+					Object value = MethodUtils.invokeMethod(EmployeeTotalBS.getInstance(), values[2].toString(), args,
+							clz);
+					etb.setValue(key.toString(), value);
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new BizException("EmployeeTotalBS#getPropertiesMap配置错误，属性是：" + key + "，方法是："
+							+ values[2].toString(), e);
+				}
+			}
+			etblist.add(etb);
 
-			/*
-			 * 只要外地出差字段不空，就算今天外地出差一次。 若以后需求有变更，修改这里。
-			 */
-			// if (!StringUtils.isEmpty(edb.getEvection_remote())) {
-			// s_c_evection_remote++;
-			// }
-			/*
-			 * 只要加班类型不空，就加班。若以后需求有变更，修改这里。
-			 */
-			// if (edb.getOvertime() != null) {
-			// if (edb.getOvertime().equals(Overtime.WORKDAY)) {
-			// s_c_overtime_workday++;
-			// }
-			// if (edb.getOvertime().equals(Overtime.WEEKEND)) {
-			// s_c_overtime_weekend++;
-			// }
-			// if (edb.getOvertime().equals(Overtime.HOLIDAY)) {
-			// s_c_overtime_holiday++;
-			// }
-			// if (edb.getOvertime().equals(Overtime.REMOTE)) {
-			// s_c_overtime_remote++;
-			// }
-			// }
-
-			/*
-			 * 只要加班字段不空，把加班时间累积起来。 若以后需求有变更，修改这里。
-			 */
-			// if (!StringUtils.isEmpty(edb.getTOvertime())) {
-			// s_h_overtime++;
-			// s_h_overtime += Integer.parseInt(edb.getTOvertime());
-			// }
-
-			/*
-			 * 只要异常字段不空，有一次算一次统计出来。 若以后需求有变更，修改这里。
-			 */
-			// if (!StringUtils.isEmpty(edb.getException())) {
-			// s_c_exception++;
-			// }
-
-			// name = edb.getName();
+			name = edb.getString("name");
+			list = new ArrayList<EmployeeDetailBean>();
+			list.add(edb);
 		}
-
 		return etblist;
 	}
 

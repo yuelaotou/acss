@@ -1,7 +1,13 @@
 package com.neusoft.acss.bean;
 
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import net.sf.cglib.beans.BeanGenerator;
+import net.sf.cglib.beans.BeanMap;
+
+import com.neusoft.acss.bs.EmployeeTotalBS;
 
 /**
  * <p> Title: [员工打卡统计总表实体]</p>
@@ -12,229 +18,105 @@ import java.util.Map;
  * @author 杨光 - yang.guang@neusoft.com
  * @version 1.0
  */
-public class EmployeeTotalBean extends EmployeeDomain {
+public class EmployeeTotalBean {
 
-	private static final long serialVersionUID = 1L;
+	private Object object = null;
 
-	/**
-	 * 迟到次数
+	private BeanMap beanMap = null;
+
+	public EmployeeTotalBean() {
+		super();
+	}
+
+	public EmployeeTotalBean(Map<String, Object[]> propertyMap) {
+		this.object = generateBean(propertyMap);
+		this.beanMap = BeanMap.create(this.object);
+	}
+
+	/** 
+	  * 给EmployeeDetailBean属性赋值 
+	  * @param property 属性名 
+	  * @param value 值 
+	  */
+	public void setValue(String property, Object value) {
+		beanMap.put(property, value);
+	}
+
+	/** 
+	  * 通过属性名得到属性值 
+	  * @param property 属性名 
+	  * @return 值 
+	  */
+	public Object getValue(String property) {
+		return beanMap.get(property);
+	}
+
+	/** 
+	 * 通过属性名得到属性String值 
+	 * @param property 属性名 
+	 * @return 值 
 	 */
-	private int c_late;
+	public String getString(String property) {
+		return beanMap.get(property) == null ? "" : beanMap.get(property).toString();
+	}
 
-	/**
-	 * 早退次数
+	/** 
+	 * 通过属性名得到属性String值 
+	 * @param property 属性名 
+	 * @return 值 
 	 */
-	private int c_early;
+	public String getString(String property, String nullStr) {
+		return beanMap.get(property) == null ? nullStr : beanMap.get(property).toString();
+	}
 
-	/**
-	 * 病假（天）
+	/** 
+	 * 判断property是否为Null或""值，是返回true
+	 * @param property 属性名 
+	 * @return 值 
 	 */
-	private int c_sick;
+	public boolean isNull(String property) {
+		return getValue(property) == null || "".equals(getString(property));
+	}
 
-	/**
-	 * 事假（天）
+	/** 
+	  * 得到该实体bean对象 
+	  * @return 
+	  */
+	public Object getObject() {
+		return this.object;
+	}
+
+	/** 
+	 * @param propertyMap 
+	 * @return 
 	 */
-	private int c_thing;
-
-	/**
-	 * 年假（天）
-	 */
-	private int c_year;
-
-	/**
-	 * 其他假期（天）
-	 */
-	private int c_other;
-
-	/**
-	 * 本地出差（天）
-	 */
-	private int c_evection_locale;
-
-	/**
-	 * 外地出差（天）
-	 */
-	private int c_evection_remote;
-
-	/**
-	 * 工作日加班（天）
-	 */
-	private int c_overtime_workday;
-
-	/**
-	 * 周末加班（天）
-	 */
-	private int c_overtime_weekend;
-
-	/**
-	 * 法定假日加班（天）
-	 */
-	private int c_overtime_holiday;
-
-	/**
-	 * 外地加班（天）
-	 */
-	private int c_overtime_remote;
-
-	/**
-	 * 加班时间（小时）
-	 */
-	private int h_overtime;
-
-	/**
-	 * 异常情况
-	 */
-	private int c_exception;
-
-	public int getC_late() {
-		return c_late;
-	}
-
-	public void setC_late(int c_late) {
-		this.c_late = c_late;
-	}
-
-	public int getC_early() {
-		return c_early;
-	}
-
-	public void setC_early(int c_early) {
-		this.c_early = c_early;
-	}
-
-	public int getC_sick() {
-		return c_sick;
-	}
-
-	public void setC_sick(int c_sick) {
-		this.c_sick = c_sick;
-	}
-
-	public int getC_thing() {
-		return c_thing;
-	}
-
-	public void setC_thing(int c_thing) {
-		this.c_thing = c_thing;
-	}
-
-	public int getC_year() {
-		return c_year;
-	}
-
-	public void setC_year(int c_year) {
-		this.c_year = c_year;
-	}
-
-	public int getC_other() {
-		return c_other;
-	}
-
-	public void setC_other(int c_other) {
-		this.c_other = c_other;
-	}
-
-	public int getC_evection_locale() {
-		return c_evection_locale;
-	}
-
-	public void setC_evection_locale(int c_evection_locale) {
-		this.c_evection_locale = c_evection_locale;
-	}
-
-	public int getC_evection_remote() {
-		return c_evection_remote;
-	}
-
-	public void setC_evection_remote(int c_evection_remote) {
-		this.c_evection_remote = c_evection_remote;
-	}
-
-	public int getC_overtime_workday() {
-		return c_overtime_workday;
-	}
-
-	public void setC_overtime_workday(int c_overtime_workday) {
-		this.c_overtime_workday = c_overtime_workday;
-	}
-
-	public int getC_overtime_weekend() {
-		return c_overtime_weekend;
-	}
-
-	public void setC_overtime_weekend(int c_overtime_weekend) {
-		this.c_overtime_weekend = c_overtime_weekend;
-	}
-
-	public int getC_overtime_holiday() {
-		return c_overtime_holiday;
-	}
-
-	public void setC_overtime_holiday(int c_overtime_holiday) {
-		this.c_overtime_holiday = c_overtime_holiday;
-	}
-
-	public int getC_overtime_remote() {
-		return c_overtime_remote;
-	}
-
-	public void setC_overtime_remote(int c_overtime_remote) {
-		this.c_overtime_remote = c_overtime_remote;
-	}
-
-	public int getH_overtime() {
-		return h_overtime;
-	}
-
-	public void setH_overtime(int h_overtime) {
-		this.h_overtime = h_overtime;
-	}
-
-	public int getC_exception() {
-		return c_exception;
-	}
-
-	public void setC_exception(int c_exception) {
-		this.c_exception = c_exception;
+	private Object generateBean(Map<String, Object[]> m) {
+		BeanGenerator generator = new BeanGenerator();
+		Iterator<Entry<String, Object[]>> it = m.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Object[]> entry = it.next();
+			Object key = entry.getKey();
+			Object[] values = entry.getValue();
+			generator.addProperty(key.toString(), (Class<?>) values[0]);
+		}
+		return generator.create();
 	}
 
 	@Override
 	public String toString() {
-		return "EmployeeTotalBean [c_late=" + c_late + ", c_early=" + c_early + ", c_sick=" + c_sick + ", c_thing="
-				+ c_thing + ", c_year=" + c_year + ", c_other=" + c_other + ", c_evection_locale=" + c_evection_locale
-				+ ", c_evection_remote=" + c_evection_remote + ", c_overtime_workday=" + c_overtime_workday
-				+ ", c_overtime_weekend=" + c_overtime_weekend + ", c_overtime_holiday=" + c_overtime_holiday
-				+ ", c_overtime_remote=" + c_overtime_remote + ", h_overtime=" + h_overtime + ", c_exception="
-				+ c_exception + "]";
+		StringBuffer sb = new StringBuffer();
+		try {
+			Map<String, Object[]> m = EmployeeTotalBS.getPropertyMap();
+			Iterator<Entry<String, Object[]>> it = m.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, Object[]> entry = it.next();
+				Object key = entry.getKey();
+				sb.append("[" + key + " = " + getValue(key.toString()) + "], ");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sb.substring(0, sb.length() - 2);
 	}
 
-	/**
-	 * <p>Discription:[把EmployeeTotalBean的属性作为map对象整理，以备后续生成TotalExcel用。可以修改这个Map设置导出那些列]</p>
-	 * Created on 2012-7-10
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @update: [日期YYYY-MM-DD] [更改人姓名]
-	 */
-	public static Map<String, String> getTotalMap() {
-		Map<String, String> totalMap = new LinkedHashMap<String, String>();
-		totalMap.put("company", "公司");
-		totalMap.put("department", "部门");
-		totalMap.put("name", "姓名");
-		totalMap.put("locale", "归属地");
-		totalMap.put("id", "登记号");
-		totalMap.put("c_late", "迟到次数");
-		totalMap.put("c_early", "早退次数");
-		totalMap.put("c_sick", "病假（天）");
-		totalMap.put("c_thing", "事假（天）");
-		totalMap.put("c_year", "年假（天）");
-		totalMap.put("c_other", "其他假期（天）");
-		totalMap.put("c_evection_locale", "本地出差（天）");
-		totalMap.put("c_evection_remote", "外地出差（天）");
-		totalMap.put("c_overtime_workday", "工作日加班（次）");
-		totalMap.put("c_overtime_weekend", "周末加班（次）");
-		totalMap.put("c_overtime_holiday", "法定假日加班（次）");
-		totalMap.put("c_overtime_remote", "外地加班（次）");
-		totalMap.put("h_overtime", "加班时间（小时）");
-		totalMap.put("c_exception", "异常情况");
-		return totalMap;
-	}
 }

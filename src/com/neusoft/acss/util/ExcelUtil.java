@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.ss.usermodel.Cell;
@@ -124,8 +123,13 @@ public final class ExcelUtil {
 		while (it.hasNext()) {
 			Map.Entry<String, Object[]> entry = it.next();
 			Object[] values = entry.getValue();
-
-			sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
+			if (values[1].toString().length() > 6) {
+				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 1800);
+			} else if (values[1].toString().length() > 4) {
+				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 600);
+			} else {
+				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
+			}
 			Cell c = row.createCell(i);
 			c.setCellStyle(style_head);
 			c.setCellValue(values[1].toString());
@@ -169,7 +173,7 @@ public final class ExcelUtil {
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static void exportEmployeeTotalExcel(List<EmployeeTotalBean> employeeTotalBeanList, Map<String, String> m) {
+	public static void exportEmployeeTotalExcel(List<EmployeeTotalBean> employeeTotalBeanList, Map<String, Object[]> m) {
 		Workbook wb = new SXSSFWorkbook(500);
 		Sheet sheet = wb.createSheet();
 		sheet.createFreezePane(0, 1);
@@ -177,41 +181,40 @@ public final class ExcelUtil {
 		// 生成表头
 		Row row = sheet.createRow(0);
 		row.setHeightInPoints(Consts.ROW_HEIGHT);
-		Iterator<Entry<String, String>> it = m.entrySet().iterator();
+		Iterator<Entry<String, Object[]>> it = m.entrySet().iterator();
 		CellStyle style_head = getHeadCellStyle(wb);
 		int i = 0;
 		while (it.hasNext()) {
-			Map.Entry<String, String> entry = it.next();
-			Object value = entry.getValue();
-			sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
+			Map.Entry<String, Object[]> entry = it.next();
+			Object[] values = entry.getValue();
+			if (values[1].toString().length() > 6) {
+				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 1800);
+			} else if (values[1].toString().length() > 4) {
+				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 600);
+			} else {
+				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
+			}
 			Cell c = row.createCell(i);
 			c.setCellStyle(style_head);
-			c.setCellValue(value.toString());
+			c.setCellValue(values[1].toString());
 			i++;
 		}
 
 		// 生成表体，填充内容
-		EmployeeTotalBean employeeTotalBean = null;
+		EmployeeTotalBean etb = null;
 		CellStyle style_body = getBodyCellStyle(wb);
 		for (int rownum = 0; rownum < employeeTotalBeanList.size(); rownum++) {
-			employeeTotalBean = employeeTotalBeanList.get(rownum);
+			etb = employeeTotalBeanList.get(rownum);
 			row = sheet.createRow(rownum + 1);
 			row.setHeightInPoints(Consts.ROW_HEIGHT - 2);
 
 			it = m.entrySet().iterator();
 			i = 0;
 			while (it.hasNext()) {
-				Map.Entry<String, String> entry = it.next();
+				Map.Entry<String, Object[]> entry = it.next();
 				Object key = entry.getKey();
+				Object value = etb.getValue(key.toString());
 
-				// 根据提供的类，取得类的属性及Read方法，再反射出具体的内容
-				Object value = null;
-				try {
-					value = FieldUtils.readField(employeeTotalBean, key.toString(), true);
-				} catch (Exception e) {
-					// IllegalAccessException,IllegalArgumentException
-					throw new BizException("EmployeeTotalBean#getTotalMap配置错误，属性是：" + key, e);
-				}
 				Cell c = row.createCell(i);
 				c.setCellStyle(style_body);
 				c.setCellValue(value == null ? "" : value.toString());

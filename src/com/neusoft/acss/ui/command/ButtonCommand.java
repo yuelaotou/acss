@@ -20,6 +20,7 @@ import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.bs.Business;
 import com.neusoft.acss.bs.EmployeeDetailBS;
+import com.neusoft.acss.bs.EmployeeTotalBS;
 import com.neusoft.acss.consts.Consts;
 import com.neusoft.acss.exception.BizException;
 import com.neusoft.acss.ui.UIPanel;
@@ -242,15 +243,15 @@ class ExportDetailButtonCommand extends ButtonCommand {
 		if (ui.getEmployeeDetailBeanList() == null) {
 			JOptionPane.showMessageDialog(this, "还未导入打卡记录，无法导出详细信息表！");
 		} else {
-			List<EmployeeDetailBean> edbList = Business.generateEmployeeDetailList(ui.getEmployeeDetailBeanList(),
+			List<EmployeeDetailBean> edblist = Business.generateEmployeeDetailList(ui.getEmployeeDetailBeanList(),
 					ui.getEvectionBeanList(), ui.getTmorning(), ui.getTevening(), ui.getTnoon_begin(),
 					ui.getTnoon_end());
 
-			for (EmployeeDetailBean edb : edbList) {
+			for (EmployeeDetailBean edb : edblist) {
 				System.out.println(edb);
 			}
 			Map<String, Object[]> propertyMap = EmployeeDetailBS.getPropertyMap();
-			ExcelUtil.exportEmployeeDetailExcel(edbList, propertyMap);
+			ExcelUtil.exportEmployeeDetailExcel(edblist, propertyMap);
 			JOptionPane.showMessageDialog(this, "导出成功，请查看: " + Consts.PATH_EMPLOYEEDETAIL);
 		}
 		return ui;
@@ -272,13 +273,16 @@ class ExportTotalButtonCommand extends ButtonCommand {
 		if (ui.getEmployeeDetailBeanList() == null) {
 			JOptionPane.showMessageDialog(this, "还未导入打卡记录，无法导出统计总表！");
 		} else {
-			List<EmployeeDetailBean> edbList = Business.generateEmployeeDetailList(ui.getEmployeeDetailBeanList(),
+			// 防止未导出详细考勤信息表而直接导出统计总表，所以再次执行以下计算详细考勤信息表
+			List<EmployeeDetailBean> edblist = Business.generateEmployeeDetailList(ui.getEmployeeDetailBeanList(),
 					ui.getEvectionBeanList(), ui.getTmorning(), ui.getTevening(), ui.getTnoon_begin(),
 					ui.getTnoon_end());
+			ui.setEmployeeDetailBeanList(edblist);
 
-			Map<String, String> totalMap = EmployeeTotalBean.getTotalMap();
-			List<EmployeeTotalBean> employeeTotalBeanList = Business.convertDetail2Total(edbList);
-			ExcelUtil.exportEmployeeTotalExcel(employeeTotalBeanList, totalMap);
+			Map<String, Object[]> propertyMap = EmployeeTotalBS.getPropertyMap();
+			List<EmployeeTotalBean> employeeTotalBeanList = Business
+					.convertDetail2Total(ui.getEmployeeDetailBeanList());
+			ExcelUtil.exportEmployeeTotalExcel(employeeTotalBeanList, propertyMap);
 			JOptionPane.showMessageDialog(this, "导出成功，请查看: " + Consts.PATH_EMPLOYEETOTAL);
 		}
 		return ui;

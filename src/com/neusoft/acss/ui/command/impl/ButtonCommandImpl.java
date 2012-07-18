@@ -5,5 +5,5 @@ import com.neusoft.acss.ui.UIPanel;
 
 public interface ButtonCommandImpl {
 
-	public abstract UIPanel handleRequest() throws BizException, Exception;
+	public UIPanel handleRequest() throws BizException, Exception;
 }

@@ -12,17 +12,15 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import com.neusoft.acss.Acss;
-import com.neusoft.acss.bean.EmployeeDetailBean;
+import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.bs.Business;
-import com.neusoft.acss.bs.EmployeeDetailBS;
 import com.neusoft.acss.consts.Consts;
 import com.neusoft.acss.exception.BizException;
 
@@ -45,22 +43,21 @@ public final class TxtUtil {
 	}
 
 	/**
-	 * <p>Discription:[读取考勤结果txt文件，存入到List&lt;{@link AcssBean}&gt;中]</p>
+	 * <p>Description:[读取考勤结果txt文件，存入到List&lt;{@link AcssBean}&gt;中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static List<EmployeeDetailBean> readAcssBeanFromFile(File file, String tnoon_begin, String tnoon_middle,
+	public static List<RecordBean> readAcssBeanFromFile(File file, String tnoon_begin, String tnoon_middle,
 			String tnoon_end) {
-		List<EmployeeDetailBean> list = new ArrayList<EmployeeDetailBean>();
+		List<RecordBean> list = new ArrayList<RecordBean>();
 		try {
-			Map<String, Object[]> m = EmployeeDetailBS.getPropertyMap();
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GBK"));
 			String str = "";
-			EmployeeDetailBean edb = null;
+			RecordBean rb = null;
 			while ((str = br.readLine()) != null) {
 				if (!StringUtils.isEmpty(str)) {
-					edb = Business.parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end, m);
-					list.add(edb);
+					rb = Business.parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end);
+					list.add(rb);
 				}
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -69,15 +66,13 @@ public final class TxtUtil {
 			throw new BizException("不会发生的异常，吗的", e);
 		} catch (IOException e) {
 			throw new BizException("读取文件：" + file.getName() + " 内容异常", e);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
 
 		return list;
 	}
 
 	/**
-	 * <p>Discription:[从文件中读取字符串到集合中，然后返回Vacation的集合]</p>
+	 * <p>Description:[从文件中读取字符串到集合中，然后返回Vacation的集合]</p>
 	 * <p>
 	 * #元旦：2012年1月1日至3日放假调休，共3天。2011年12月31日(星期六)上班。</br>
 	 * #春节：1月22日至28日放假调休，共7天。1月21日(星期六)、1月29日(星期日)上班。</br>
@@ -111,7 +106,7 @@ public final class TxtUtil {
 	}
 
 	/**
-	 * <p>Discription:[导入法定假期到Consts.PATH_VACATIONS中]</p>
+	 * <p>Description:[导入法定假期到Consts.PATH_VACATIONS中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
@@ -133,7 +128,7 @@ public final class TxtUtil {
 	}
 
 	/**
-	 * <p>Discription:[从文件中读取字符串到集合中，然后返回WorkDay的集合]</p>
+	 * <p>Description:[从文件中读取字符串到集合中，然后返回WorkDay的集合]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
@@ -158,7 +153,7 @@ public final class TxtUtil {
 	}
 
 	/**
-	 * <p>Discription:[导入导入周末信息到Consts.PATH_WORKDAYS中]</p>
+	 * <p>Description:[导入导入周末信息到Consts.PATH_WORKDAYS中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */

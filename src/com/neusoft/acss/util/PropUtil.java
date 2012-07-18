@@ -35,7 +35,7 @@ public final class PropUtil {
 	}
 
 	/**
-	 * <p>Discription:[读取所有键值对，放入Map<String, String>中]</p>
+	 * <p>Description:[读取所有键值对，放入Map<String, String>中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
@@ -63,7 +63,7 @@ public final class PropUtil {
 	}
 
 	/**
-	 * <p>Discription:[把上下班时间等属性写入到配置文件中]</p>
+	 * <p>Description:[把上下班时间等属性写入到配置文件中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */

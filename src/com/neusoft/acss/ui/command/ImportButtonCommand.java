@@ -10,8 +10,8 @@ import javax.swing.JFrame;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
-import com.neusoft.acss.bean.EmployeeDetailBean;
 import com.neusoft.acss.bean.EvectionBean;
+import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.bs.Business;
@@ -40,8 +40,8 @@ public class ImportButtonCommand implements ButtonCommandImpl {
 				// 根据宽限时间重新计算上班下班等时间和中午休息打卡时间。
 				ui = initGraceProperties(ui);
 				// 读取考勤打卡记录
-				List<EmployeeDetailBean> edbList = TxtUtil.readAcssBeanFromFile(fDialog.getSelectedFile(),
-						ui.getTnoon_begin(), ui.getTnoon_middle(), ui.getTnoon_end());
+				List<RecordBean> rbList = TxtUtil.readAcssBeanFromFile(fDialog.getSelectedFile(), ui.getTnoon_begin(),
+						ui.getTnoon_middle(), ui.getTnoon_end());
 				// 读取本年度休假记录
 				List<Vacation> vacationList = TxtUtil.getVacations();
 				ui.setVacationList(vacationList);
@@ -49,11 +49,14 @@ public class ImportButtonCommand implements ButtonCommandImpl {
 				List<WorkDay> workDayList = TxtUtil.getWorkDays();
 				ui.setWorkDayList(workDayList);
 				// 根据法定假日和串休记录，再结合正常周六周日休息，判断AcssBean是正常上班还是休息
-				Business.checkVacation(edbList, vacationList, workDayList);
-				ui.setEmployeeDetailBeanList(edbList);
+				Business.checkVacation(rbList, vacationList, workDayList);
+				for (RecordBean rb : rbList) {
+					System.out.println(rb);
+				}
+				ui.setRecordBeanList(rbList);
 				// 读取本月所有人的外出登记表，存在List<EvectionBean>中
-				List<EvectionBean> evectionBeanList = ExcelUtil.parseExcel2EvectionList();
-				ui.setEvectionBeanList(evectionBeanList);
+				List<EvectionBean> evbList = ExcelUtil.parseExcel2EvectionList();
+				ui.setEvectionBeanList(evbList);
 				ui.setMessage("导入考勤打卡记录成功！\r\n同时也自动导入本月所有人的外出登记表！\r\n现在可以导出详细信息表和统计总表！");
 			}
 		} else {
@@ -64,7 +67,7 @@ public class ImportButtonCommand implements ButtonCommandImpl {
 	}
 
 	/**
-	 * <p>Discription:[根据宽限时间计算最迟的上班打卡时间和最早的下班打卡时间等]</p>
+	 * <p>Description:[根据宽限时间计算最迟的上班打卡时间和最早的下班打卡时间等]</p>
 	 * Created on 2012-7-9
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 * @update: [日期YYYY-MM-DD] [更改人姓名]

@@ -7,10 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -28,9 +26,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.neusoft.acss.Acss;
-import com.neusoft.acss.bean.EmployeeDetailBean;
-import com.neusoft.acss.bean.EmployeeTotalBean;
 import com.neusoft.acss.bean.EvectionBean;
+import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
+import com.neusoft.acss.column.total.impl.ColumnTotalImpl;
 import com.neusoft.acss.consts.Consts;
 import com.neusoft.acss.exception.BizException;
 
@@ -53,7 +51,7 @@ public final class ExcelUtil {
 	}
 
 	/**
-	 * <p>Discription:[解析EXCEL2007版本的外出登记表，存储在List&lt;{@link EvectionBean}&gt;中]</p>
+	 * <p>Description:[解析EXCEL2007版本的外出登记表，存储在List&lt;{@link EvectionBean}&gt;中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
@@ -105,59 +103,53 @@ public final class ExcelUtil {
 	}
 
 	/**
-	 * <p>Discription:[根据传入的employeeDetailBeanList生成DetailExcel，文件保存在Consts.PATH_EMPLOYEEDETAIL]</p>
+	 * <p>Description:[根据传入的考勤详细统计信息列表生成DetailExcel，文件保存在Consts.PATH_EMPLOYEEDETAIL]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static void exportEmployeeDetailExcel(List<EmployeeDetailBean> employeeDetailBeanList,
-			Map<String, Object[]> m) {
+	public static void exportEmployeeDetailExcel(List<Map<String, String>> lm, List<Class<?>> lc) {
 		Workbook wb = new SXSSFWorkbook(500);
 		Sheet sheet = wb.createSheet();
 		sheet.createFreezePane(0, 1);
 		// 生成表头
 		Row row = sheet.createRow(0);
 		row.setHeightInPoints(Consts.ROW_HEIGHT);
-		Iterator<Entry<String, Object[]>> it = m.entrySet().iterator();
 		CellStyle style_head = getHeadCellStyle(wb);
-		int i = 0;
-		while (it.hasNext()) {
-			Map.Entry<String, Object[]> entry = it.next();
-			Object[] values = entry.getValue();
-			if (values[1].toString().length() > 6) {
-				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 1800);
-			} else if (values[1].toString().length() > 4) {
-				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 600);
-			} else {
-				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
-			}
-			Cell c = row.createCell(i);
-			c.setCellStyle(style_head);
-			c.setCellValue(values[1].toString());
-			i++;
-		}
 
-		// 生成表体，填充内容
-		EmployeeDetailBean edb = null;
-		CellStyle style_body = getBodyCellStyle(wb);
-		for (int rownum = 0; rownum < employeeDetailBeanList.size(); rownum++) {
-			edb = employeeDetailBeanList.get(rownum);
-			row = sheet.createRow(rownum + 1);
-			row.setHeightInPoints(Consts.ROW_HEIGHT - 2);
+		try {
+			int i = 0;
+			for (Class<?> clz : lc) {
+				ColumnDetailImpl c = (ColumnDetailImpl) clz.newInstance();
+				String description = c.getDescription();
+				if (description.length() > 6) {
+					sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 1800);
+				} else if (description.length() > 4) {
+					sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 600);
+				} else {
+					sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
+				}
 
-			it = m.entrySet().iterator();
-			i = 0;
-			while (it.hasNext()) {
-				Map.Entry<String, Object[]> entry = it.next();
-				Object key = entry.getKey();
-				Object value = edb.getValue(key.toString());
-
-				Cell c = row.createCell(i);
-				c.setCellStyle(style_body);
-				c.setCellValue(value == null ? "" : value.toString());
+				Cell cell = row.createCell(i);
+				cell.setCellStyle(style_head);
+				cell.setCellValue(description);
 				i++;
 			}
-		}
-		try {
+
+			// 生成表体，填充内容
+			CellStyle style_body = getBodyCellStyle(wb);
+			for (int rownum = 0; rownum < lm.size(); rownum++) {
+				Map<String, String> m = lm.get(rownum);
+				row = sheet.createRow(rownum + 1);
+				row.setHeightInPoints(Consts.ROW_HEIGHT - 2);
+
+				i = 0;
+				for (Class<?> clz : lc) {
+					Cell cell = row.createCell(i);
+					cell.setCellStyle(style_body);
+					cell.setCellValue(m.get(clz.getName()));
+					i++;
+				}
+			}
 			FileOutputStream out = new FileOutputStream(Consts.PATH_EMPLOYEEDETAIL);
 			wb.write(out);
 			out.close();
@@ -165,15 +157,19 @@ public final class ExcelUtil {
 			throw new BizException("找不到文件：" + Consts.PATH_EMPLOYEEDETAIL + "，或文件正在被占用", e);
 		} catch (IOException e) {
 			throw new BizException("导出EmployeeDetailExcel出错，IO异常", e);
+		} catch (InstantiationException e) {
+			throw new BizException("其他异常", e);
+		} catch (IllegalAccessException e) {
+			throw new BizException("其他异常", e);
 		}
 	}
 
 	/**
-	 * <p>Discription:[根据传入的employeeTotalBeanList导出统计总表，文件保存在Consts.PATH_EMPLOYEETOTAL]</p>
+	 * <p>Description:[根据传入的employeeTotalBeanList导出统计总表，文件保存在Consts.PATH_EMPLOYEETOTAL]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static void exportEmployeeTotalExcel(List<EmployeeTotalBean> employeeTotalBeanList, Map<String, Object[]> m) {
+	public static void exportEmployeeTotalExcel(List<Map<String, String>> lm, List<Class<?>> lc) {
 		Workbook wb = new SXSSFWorkbook(500);
 		Sheet sheet = wb.createSheet();
 		sheet.createFreezePane(0, 1);
@@ -181,48 +177,42 @@ public final class ExcelUtil {
 		// 生成表头
 		Row row = sheet.createRow(0);
 		row.setHeightInPoints(Consts.ROW_HEIGHT);
-		Iterator<Entry<String, Object[]>> it = m.entrySet().iterator();
 		CellStyle style_head = getHeadCellStyle(wb);
-		int i = 0;
-		while (it.hasNext()) {
-			Map.Entry<String, Object[]> entry = it.next();
-			Object[] values = entry.getValue();
-			if (values[1].toString().length() > 6) {
-				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 1800);
-			} else if (values[1].toString().length() > 4) {
-				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 600);
-			} else {
-				sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
-			}
-			Cell c = row.createCell(i);
-			c.setCellStyle(style_head);
-			c.setCellValue(values[1].toString());
-			i++;
-		}
-
-		// 生成表体，填充内容
-		EmployeeTotalBean etb = null;
-		CellStyle style_body = getBodyCellStyle(wb);
-		for (int rownum = 0; rownum < employeeTotalBeanList.size(); rownum++) {
-			etb = employeeTotalBeanList.get(rownum);
-			row = sheet.createRow(rownum + 1);
-			row.setHeightInPoints(Consts.ROW_HEIGHT - 2);
-
-			it = m.entrySet().iterator();
-			i = 0;
-			while (it.hasNext()) {
-				Map.Entry<String, Object[]> entry = it.next();
-				Object key = entry.getKey();
-				Object value = etb.getValue(key.toString());
-
-				Cell c = row.createCell(i);
-				c.setCellStyle(style_body);
-				c.setCellValue(value == null ? "" : value.toString());
-				i++;
-			}
-		}
 
 		try {
+			int i = 0;
+			for (Class<?> clz : lc) {
+				ColumnTotalImpl c = (ColumnTotalImpl) clz.newInstance();
+				String description = c.getDescription();
+				if (description.length() > 6) {
+					sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 1800);
+				} else if (description.length() > 4) {
+					sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 600);
+				} else {
+					sheet.setColumnWidth(i, Consts.COLUMN_WIDTH);
+				}
+
+				Cell cell = row.createCell(i);
+				cell.setCellStyle(style_head);
+				cell.setCellValue(description);
+				i++;
+			}
+
+			// 生成表体，填充内容
+			CellStyle style_body = getBodyCellStyle(wb);
+			for (int rownum = 0; rownum < lm.size(); rownum++) {
+				Map<String, String> m = lm.get(rownum);
+				row = sheet.createRow(rownum + 1);
+				row.setHeightInPoints(Consts.ROW_HEIGHT - 2);
+
+				i = 0;
+				for (Class<?> clz : lc) {
+					Cell cell = row.createCell(i);
+					cell.setCellStyle(style_body);
+					cell.setCellValue(m.get(clz.getName()));
+					i++;
+				}
+			}
 			FileOutputStream out = new FileOutputStream(Consts.PATH_EMPLOYEETOTAL);
 			wb.write(out);
 			out.close();
@@ -230,6 +220,10 @@ public final class ExcelUtil {
 			throw new BizException("找不到文件：" + Consts.PATH_EMPLOYEETOTAL + "，或文件正在被占用", e);
 		} catch (IOException e) {
 			throw new BizException("导出EmployeeTotalExcel出错，IO异常", e);
+		} catch (InstantiationException e) {
+			throw new BizException("其他异常", e);
+		} catch (IllegalAccessException e) {
+			throw new BizException("其他异常", e);
 		}
 	}
 

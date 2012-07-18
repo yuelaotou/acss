@@ -15,8 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.neusoft.acss.bean.EmployeeDetailBean;
+import com.neusoft.acss.bean.EmployeeBean;
 import com.neusoft.acss.bean.EvectionBean;
+import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.exception.BizException;
@@ -105,7 +106,9 @@ public class UIPanel extends JFrame {
 
 	private List<WorkDay> workDayList = null;
 
-	private List<EmployeeDetailBean> employeeDetailBeanList = null;
+	private List<EmployeeBean> employeeBeanList = null;
+
+	private List<RecordBean> recordBeanList = null;
 
 	private List<EvectionBean> evectionBeanList = null;
 
@@ -289,12 +292,20 @@ public class UIPanel extends JFrame {
 		this.workDayList = workDayList;
 	}
 
-	public List<EmployeeDetailBean> getEmployeeDetailBeanList() {
-		return employeeDetailBeanList;
+	public List<EmployeeBean> getEmployeeBeanList() {
+		return employeeBeanList;
 	}
 
-	public void setEmployeeDetailBeanList(List<EmployeeDetailBean> employeeDetailBeanList) {
-		this.employeeDetailBeanList = employeeDetailBeanList;
+	public void setEmployeeBeanList(List<EmployeeBean> employeeBeanList) {
+		this.employeeBeanList = employeeBeanList;
+	}
+
+	public List<RecordBean> getRecordBeanList() {
+		return recordBeanList;
+	}
+
+	public void setRecordBeanList(List<RecordBean> recordBeanList) {
+		this.recordBeanList = recordBeanList;
 	}
 
 	public List<EvectionBean> getEvectionBeanList() {

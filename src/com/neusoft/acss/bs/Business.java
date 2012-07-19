@@ -109,6 +109,7 @@ public class Business {
 
 		List<Map<String, String>> l = new ArrayList<Map<String, String>>();
 		List<Class<?>> lc = ClassUtil.getAllImplClassesByInterface(ColumnDetailImpl.class, "super");
+
 		for (RecordBean rb : rbList) {
 			Info i = new Info();
 			i.setRecordBean(rb);
@@ -150,6 +151,7 @@ public class Business {
 		for (Class<?> clz : lc) {
 			ColumnDetailImpl c = (ColumnDetailImpl) clz.newInstance();
 			m.put(clz.getName(), c.generateColumn(i));
+			System.out.println(clz.getName());
 		}
 		return m;
 	}
@@ -221,6 +223,7 @@ public class Business {
 		for (Class<?> clz : lc) {
 			ColumnTotalImpl c = (ColumnTotalImpl) clz.newInstance();
 			m.put(clz.getName(), c.generateColumn(i));
+			System.out.println(clz.getName());
 		}
 		return m;
 

@@ -16,6 +16,13 @@ public class NameColumn implements ColumnDetailImpl {
 		this.name = name;
 	}
 
+	private final int order = 2;
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
+
 	@Override
 	public String getDescription() {
 		return getName();

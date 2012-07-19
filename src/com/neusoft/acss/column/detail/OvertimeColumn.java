@@ -1,12 +1,12 @@
 package com.neusoft.acss.column.detail;
 
 import com.neusoft.acss.bean.Info;
-import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
+import com.neusoft.acss.enums.Overtime;
 
-public class TEveningColumn implements ColumnDetailImpl {
+public class OvertimeColumn implements ColumnDetailImpl {
 
-	private String name = "下班时间";
+	private String name = "加班类型";
 
 	public String getName() {
 		return name;
@@ -16,7 +16,7 @@ public class TEveningColumn implements ColumnDetailImpl {
 		this.name = name;
 	}
 
-	private final int order = 11;
+	private final int order = 17;
 
 	@Override
 	public int getOrder() {
@@ -31,10 +31,9 @@ public class TEveningColumn implements ColumnDetailImpl {
 	@Override
 	public String generateColumn(Info info) {
 		// EmployeeBean eb = info.getEmployeeBean();
-		RecordBean rb = info.getRecordBean();
-		// EvectionBean evb = info.getEvectionBean();
-
-		return rb.getTevening();
+		//RecordBean rb = info.getRecordBean();
+		//		EvectionBean evb = info.getEvectionBean();
+		return Overtime.HOLIDAY.toString();
 	}
 
 }

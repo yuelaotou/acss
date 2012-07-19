@@ -5,6 +5,13 @@ import com.neusoft.acss.bean.Info;
 public interface ColumnTotalImpl {
 
 	/**
+	 * <p>Description:[排序编号，编号小的排在前面]</p>
+	 * Created on 2012-7-19
+	 * @author: 杨光 - yang.guang@neusoft.com
+	 */
+	public int getOrder();
+	
+	/**
 	 * <p>Description:[获得此类的描述，目前只描述了列名，以后可能增加其他信息，因此没直接返回getName()]</p>
 	 * Created on 2012-7-19
 	 * @author: 杨光 - yang.guang@neusoft.com

@@ -16,6 +16,13 @@ public class TNoonEndColumn implements ColumnDetailImpl {
 		this.name = name;
 	}
 
+	private final int order = 10;
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
+
 	@Override
 	public String getDescription() {
 		return getName();

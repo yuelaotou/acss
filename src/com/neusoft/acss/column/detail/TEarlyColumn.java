@@ -15,6 +15,13 @@ public class TEarlyColumn implements ColumnDetailImpl {
 		this.name = name;
 	}
 
+	private final int order = 14;
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
+
 	@Override
 	public String getDescription() {
 		return getName();

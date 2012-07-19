@@ -15,6 +15,13 @@ public class TLateColumn implements ColumnDetailImpl {
 		this.name = name;
 	}
 
+	private final int order = 13;
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
+
 	@Override
 	public String getDescription() {
 		return getName();

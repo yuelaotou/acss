@@ -14,6 +14,12 @@ public class NameColumn implements ColumnTotalImpl {
 	public void setName(String name) {
 		this.name = name;
 	}
+	private final int order = 0;
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
 
 	@Override
 	public String getDescription() {

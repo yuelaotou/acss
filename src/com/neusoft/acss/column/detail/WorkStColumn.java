@@ -15,6 +15,13 @@ public class WorkStColumn implements ColumnDetailImpl {
 		this.name = name;
 	}
 
+	private final int order = 12;
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
+
 	@Override
 	public String getDescription() {
 		return getName();

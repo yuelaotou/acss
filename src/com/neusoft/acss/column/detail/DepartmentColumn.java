@@ -15,6 +15,13 @@ public class DepartmentColumn implements ColumnDetailImpl {
 		this.name = name;
 	}
 
+	private final int order = 1;
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
+
 	@Override
 	public String getDescription() {
 		return getName();

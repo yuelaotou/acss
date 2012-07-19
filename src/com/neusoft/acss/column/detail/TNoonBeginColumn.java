@@ -16,6 +16,13 @@ public class TNoonBeginColumn implements ColumnDetailImpl {
 		this.name = name;
 	}
 
+	private final int order = 9;
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
+
 	@Override
 	public String getDescription() {
 		return getName();

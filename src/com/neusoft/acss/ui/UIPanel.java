@@ -5,7 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -15,15 +14,20 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.neusoft.acss.bean.EmployeeBean;
-import com.neusoft.acss.bean.EvectionBean;
-import com.neusoft.acss.bean.RecordBean;
-import com.neusoft.acss.bean.Vacation;
-import com.neusoft.acss.bean.WorkDay;
+import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.exception.BizException;
 import com.neusoft.acss.ui.command.context.ActionCommandContext;
 import com.neusoft.acss.util.PropUtil;
 
+/**
+ * <p> Title: [构造主窗体的UI界面]</p>
+ * <p> Description: [用来构造主窗体的界面。里面有各个文本框，按钮]</p>
+ * <p> Created on 2012-7-10</p>
+ * <p> Copyright: Copyright (c) 2012</p>
+ * <p> Company: 东软集团股份有限公司</p>
+ * @author 杨光 - yang.guang@neusoft.com
+ * @version 1.0
+ */
 public class UIPanel extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -86,7 +90,7 @@ public class UIPanel extends JFrame {
 
 	private final JButton exportTotalButton = new JButton("导出统计总表");
 
-	private Map<String, String> info = null;
+	private Map<String, String> p = null;
 
 	private String tmorning = null;
 
@@ -102,17 +106,7 @@ public class UIPanel extends JFrame {
 
 	private String tgrace = null;
 
-	private List<Vacation> vacationList = null;
-
-	private List<WorkDay> workDayList = null;
-
-	private List<EmployeeBean> employeeBeanList = null;
-
-	private List<RecordBean> recordBeanList = null;
-
-	private List<EvectionBean> evectionBeanList = null;
-
-	private String message = null;
+	private Info info = new Info();
 
 	public UIPanel() {
 		initProperties();
@@ -187,25 +181,35 @@ public class UIPanel extends JFrame {
 
 	public void initProperties() {
 		// 读取所有属性
-		info = PropUtil.readProperties();
+		p = PropUtil.readProperties();
 
 		// 初始化所有属性，若属性为空，设置默认值
-		tmorning = info.get("work.morning.time") == null ? "08:30:00" : info.get("work.morning.time");
-		tnoon_begin = info.get("work.noon.time.begin") == null ? "12:00:00" : info.get("work.noon.time.begin");
-		tnoon_end = info.get("work.noon.time.end") == null ? "13:00:00" : info.get("work.noon.time.end");
-		tnoon_middle = info.get("work.noon.time.middle") == null ? "12:30:00" : info.get("work.noon.time.middle");
-		tnoon_grace = info.get("work.noon.grace.time") == null ? "25" : info.get("work.noon.grace.time");
-		tevening = info.get("work.evening.time") == null ? "17:30:00" : info.get("work.evening.time");
-		tgrace = info.get("work.grace.time") == null ? "5" : info.get("work.grace.time");
+		tmorning = p.get("work.morning.time") == null ? "08:30:00" : p.get("work.morning.time");
+		tnoon_begin = p.get("work.noon.time.begin") == null ? "12:00:00" : p.get("work.noon.time.begin");
+		tnoon_end = p.get("work.noon.time.end") == null ? "13:00:00" : p.get("work.noon.time.end");
+		tnoon_middle = p.get("work.noon.time.middle") == null ? "12:30:00" : p.get("work.noon.time.middle");
+		tnoon_grace = p.get("work.noon.grace.time") == null ? "25" : p.get("work.noon.grace.time");
+		tevening = p.get("work.evening.time") == null ? "17:30:00" : p.get("work.evening.time");
+		tgrace = p.get("work.grace.time") == null ? "5" : p.get("work.grace.time");
 	}
 
+	/**
+	 * <p> Title: [按钮监听类]</p>
+	 * <p> Description: [各个按钮监听类]</p>
+	 * <p> Created on 2012-7-19</p>
+	 * <p> Copyright: Copyright (c) 2012</p>
+	 * <p> Company: 东软集团股份有限公司</p>
+	 * @author 杨光 - yang.guang@neusoft.com
+	 * @version 1.0
+	 */
 	class ButtonActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ActionCommandContext acc = new ActionCommandContext(e.getActionCommand(), UIPanel.this);
+			ActionCommandContext acc = new ActionCommandContext(e.getActionCommand(), UIPanel.this, info);
 			try {
-				String message = acc.handleRequest();
+				info = acc.handleRequest();
+				String message = info.getMessage();
 				if (message != null) {
 					JOptionPane.showMessageDialog(UIPanel.this, message, "提示信息", JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -274,54 +278,6 @@ public class UIPanel extends JFrame {
 
 	public void setTgrace(String tgrace) {
 		this.tgrace = tgrace;
-	}
-
-	public List<Vacation> getVacationList() {
-		return vacationList;
-	}
-
-	public void setVacationList(List<Vacation> vacationList) {
-		this.vacationList = vacationList;
-	}
-
-	public List<WorkDay> getWorkDayList() {
-		return workDayList;
-	}
-
-	public void setWorkDayList(List<WorkDay> workDayList) {
-		this.workDayList = workDayList;
-	}
-
-	public List<EmployeeBean> getEmployeeBeanList() {
-		return employeeBeanList;
-	}
-
-	public void setEmployeeBeanList(List<EmployeeBean> employeeBeanList) {
-		this.employeeBeanList = employeeBeanList;
-	}
-
-	public List<RecordBean> getRecordBeanList() {
-		return recordBeanList;
-	}
-
-	public void setRecordBeanList(List<RecordBean> recordBeanList) {
-		this.recordBeanList = recordBeanList;
-	}
-
-	public List<EvectionBean> getEvectionBeanList() {
-		return evectionBeanList;
-	}
-
-	public void setEvectionBeanList(List<EvectionBean> evectionBeanList) {
-		this.evectionBeanList = evectionBeanList;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
 	}
 
 	public JPanel getMorningTimePanel() {

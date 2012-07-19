@@ -1,8 +1,6 @@
 package com.neusoft.acss.column.total;
 
-import java.util.List;
-import java.util.Map;
-
+import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.column.total.impl.ColumnTotalImpl;
 
 public class NameColumn implements ColumnTotalImpl {
@@ -16,6 +14,12 @@ public class NameColumn implements ColumnTotalImpl {
 	public void setName(String name) {
 		this.name = name;
 	}
+	private final int order = 0;
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
 
 	@Override
 	public String getDescription() {
@@ -23,9 +27,8 @@ public class NameColumn implements ColumnTotalImpl {
 	}
 
 	@Override
-	public String generateColumn(List<Map<String, String>> lm) {
-		Map<String, String> m = lm.get(0);
-		return m.get("com.neusoft.acss.column.detail.NameColumn");
+	public String generateColumn(Info info) {
+		return info.getSubList().get(0).get(com.neusoft.acss.column.detail.NameColumn.class.getName());
 	}
 
 }

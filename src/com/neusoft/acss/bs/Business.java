@@ -3,11 +3,9 @@ package com.neusoft.acss.bs;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -15,6 +13,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import com.neusoft.acss.Acss;
 import com.neusoft.acss.bean.EmployeeBean;
 import com.neusoft.acss.bean.EvectionBean;
+import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
@@ -38,7 +37,7 @@ public class Business {
 	private static String NAME = null;
 
 	/**
-	 * <p>Description:[读取考勤记录后，用本方法进行解析，按行存入到{@link AcssBean}中，以后更改解析规则来此修改，请记录信息]</p>
+	 * <p>Description:[读取考勤记录后，用本方法进行解析，按行存入到{@link RecordBean}中，以后更改解析规则来此修改，请记录信息]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
@@ -57,13 +56,13 @@ public class Business {
 			NAME = s_info[0];
 			String date_week[] = StringUtils.substringsBetween(s_info[1], "[", "]");
 			rb.setDate(date_week[0]);
-			rb.setWeek(getWeek(date_week[1]));
+			rb.setWeek(Week.getWeek(date_week[1]));
 			n += 2;
 		} else {
 			rb.setName(NAME);
 			String date_week[] = StringUtils.substringsBetween(s_info[0], "[", "]");
 			rb.setDate(date_week[0]);
-			rb.setWeek(getWeek(date_week[1]));
+			rb.setWeek(Week.getWeek(date_week[1]));
 			n++;
 		}
 
@@ -112,38 +111,29 @@ public class Business {
 		List<Class<?>> lc = ClassUtil.getAllImplClassesByInterface(ColumnDetailImpl.class, "super");
 
 		for (RecordBean rb : rbList) {
+			Info i = new Info();
+			i.setRecordBean(rb);
 
 			// 找到相同姓名的EmployeeBean职工基本信息实体
-			EmployeeBean eb = null;
-			// for (EmployeeBean eb_1 : ebList) {
-			// eb = null;
-			// if (rb.getName().equals(eb_1.getName())) {
-			// eb = eb_1;
-			// break;
-			// }
-			// }
-
-			// 过会要删掉的，只是测试类
-			eb = new EmployeeBean();
+			for (EmployeeBean eb : ebList) {
+				if (rb.getName().equals(eb.getName())) {
+					i.setEmployeeBean(eb);
+					break;
+				}
+			}
 
 			// 找到相同姓名和日期的EvectionBean出差登记表实体
-			EvectionBean evb = null;
-			for (EvectionBean evb_1 : evbList) {
-				if (rb.getName().equals(evb_1.getName())
-						&& rb.getDate().replace("-", "").equals(evb_1.getMonth().concat(evb_1.getDay()))) {
-					evb = evb_1;
+			for (EvectionBean evb : evbList) {
+				if (rb.getName().equals(evb.getName())
+						&& rb.getDate().replace("-", "").equals(evb.getMonth().concat(evb.getDay()))) {
+					i.setEvectionBean(evb);
 					break;
 				}
 			}
 
 			// 计算职工每一天的打卡情况，用Class全名作为key
-			Map<String, String> m = generateEmployeeDetail(eb, rb, evb, lc);
+			Map<String, String> m = generateEmployeeDetail(i, lc);
 
-			Iterator<Entry<String, String>> it = m.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry<String, String> entry = it.next();
-				System.out.println(entry.getKey() + " == " + entry.getValue());
-			}
 			l.add(m);
 		}
 		return l;
@@ -155,27 +145,27 @@ public class Business {
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static Map<String, String> generateEmployeeDetail(EmployeeBean eb, RecordBean rb, EvectionBean evb,
-			List<Class<?>> lc) throws Exception {
+	public static Map<String, String> generateEmployeeDetail(Info i, List<Class<?>> lc) throws Exception {
 
 		Map<String, String> m = new LinkedHashMap<String, String>();
 		for (Class<?> clz : lc) {
 			ColumnDetailImpl c = (ColumnDetailImpl) clz.newInstance();
-			m.put(clz.getName(), c.generateColumn(eb, rb, evb));
+			m.put(clz.getName(), c.generateColumn(i));
+			System.out.println(clz.getName());
 		}
 		return m;
 	}
 
 	/**
-	 * <p>Description:[职工详细考勤记录转换成统计信息]</p>
+	 * <p>Description:[职工详细考勤记录转换成统计信息，储存在Info中]</p>
 	 * <p>Description:[本方法按职工分类，每个职工每月的信息统计]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static List<Map<String, String>> convertDetail2Total(List<Map<String, String>> lm) throws Exception {
-
+	public static void convertDetail2Total(Info info) throws Exception {
+		List<Map<String, String>> lm = info.getDetailList();
 		List<Map<String, String>> sublist = new ArrayList<Map<String, String>>();
-		List<Map<String, String>> returnlist = new ArrayList<Map<String, String>>();
+		List<Map<String, String>> totalList = new ArrayList<Map<String, String>>();
 		List<Class<?>> lc = ClassUtil.getAllImplClassesByInterface(ColumnTotalImpl.class, "super");
 
 		String name = "";
@@ -202,8 +192,8 @@ public class Business {
 			// 不管哪种情况说明是可以统计当前list当中的m_detail情况了，统计之后添加Total的map到returnlist中。所以在此应该做4件事：
 
 			// 1,已经按人头有了sublist，所以现在按照sublist计算这个人本月的统计信息，每人一条记录;
-			Map<String, String> mm = calculateDetail2Total(sublist, lc);
-			returnlist.add(mm);
+			Map<String, String> totalMap = calculateDetail2Total(sublist, lc);
+			totalList.add(totalMap);
 
 			// 2,重新给name赋值为：m.get("name");
 			name = m_detail.get("com.neusoft.acss.column.detail.NameColumn");
@@ -214,7 +204,7 @@ public class Business {
 			// 4,把当前的m_detail添加到list中，因为情况1（换人了）还未统计本个m_detail，不要落了。而情况2添不添加都不执行了。所以还是要添加。
 			sublist.add(m_detail);
 		}
-		return returnlist;
+		info.setTotalList(totalList);
 	}
 
 	/**
@@ -223,55 +213,31 @@ public class Business {
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static Map<String, String> calculateDetail2Total(List<Map<String, String>> lm, List<Class<?>> lc)
+	public static Map<String, String> calculateDetail2Total(List<Map<String, String>> sublist, List<Class<?>> lc)
 			throws Exception {
+
+		Info i = new Info();
+		i.setSubList(sublist);
 
 		Map<String, String> m = new LinkedHashMap<String, String>();
 		for (Class<?> clz : lc) {
 			ColumnTotalImpl c = (ColumnTotalImpl) clz.newInstance();
-			m.put(clz.getName(), c.generateColumn(lm));
+			m.put(clz.getName(), c.generateColumn(i));
+			System.out.println(clz.getName());
 		}
 		return m;
 
 	}
 
 	/**
-	 * <p>Description:[根据传入的字符串转换成Week的Enum对象]</p>
+	 * <p>Description:[根据法定假日和串休记录，再结合正常周六周日休息，判断RecordBean是正常上班还是休息]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static Week getWeek(String week) {
-		if (week.equals("1") || week.equals("一")) {
-			return Week.MON;
-		}
-		if (week.equals("2") || week.equals("二")) {
-			return Week.TUE;
-		}
-		if (week.equals("3") || week.equals("三")) {
-			return Week.WED;
-		}
-		if (week.equals("4") || week.equals("四")) {
-			return Week.THU;
-		}
-		if (week.equals("5") || week.equals("五")) {
-			return Week.FRI;
-		}
-		if (week.equals("6") || week.equals("六")) {
-			return Week.SAT;
-		}
-		if (week.equals("7") || week.equals("日")) {
-			return Week.SUN;
-		}
-		return null;
-	}
-
-	/**
-	 * <p>Description:[根据法定假日和串休记录，再结合正常周六周日休息，判断AcssBean是正常上班还是休息]</p>
-	 * Created on 2012-7-10
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 */
-	public static void checkVacation(List<RecordBean> rbList, List<Vacation> vacationList, List<WorkDay> workDayList) {
-
+	public static void checkVacation(Info info) {
+		List<RecordBean> rbList = info.getRecordBeanList();
+		List<Vacation> vacationList = info.getVacationList();
+		List<WorkDay> workDayList = info.getWorkDayList();
 		for (RecordBean rb : rbList) {
 			Calendar c = Calendar.getInstance();
 			try {
@@ -299,34 +265,6 @@ public class Business {
 				}
 			}
 		}
-	}
-
-	/**
-	 * <p>Description:[计算两个时间之间相差多少时间，n为小时或分钟:Calendar.MINUTE,Calendar.HOUR]</p>
-	 * Created on 2012-7-2
-	 * @author: 杨光 - yang.guang@neusoft.com
-	 * @throws ParseException 
-	 */
-	public static int minusDate(String beginTime, String endTime, int n) {
-		if (n == Calendar.SECOND) {
-			n = 1000;
-		}
-		if (n == Calendar.MINUTE) {
-			n = 1000 * 60;
-		}
-		if (n == Calendar.HOUR) {
-			n = 1000 * 60 * 60;
-		}
-		long begin = 0;
-		long end = 0;
-		try {
-			begin = DateUtils.parseDate(beginTime, "HH:mm:ss").getTime();
-			end = DateUtils.parseDate(endTime, "HH:mm:ss").getTime();
-		} catch (ParseException e) {
-			throw new BizException("计算时间差出错:" + beginTime + "，" + endTime, e);
-		}
-		int t = (int) ((end - begin) / n) + 1;
-		return t;
 	}
 
 	public static void main(String args[]) {

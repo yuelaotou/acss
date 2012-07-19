@@ -4,10 +4,25 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
+import com.neusoft.acss.column.total.impl.ColumnTotalImpl;
 
 public class ClassUtil {
+
+	/**
+	 * 隐藏公用构造方法<p>
+	 */
+	private ClassUtil() {
+		// noop
+	}
 
 	public static List<Class<?>> getAllImplClassesByInterface(Class<?> c) {
 
@@ -39,9 +54,11 @@ public class ClassUtil {
 
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List<Class<?>> getAllImplClassesByInterface(Class<?> c, String packageName) {
 
 		// 给一个接口，返回这个接口的所有实现类
+		List<Class<?>> tmpList = new ArrayList<Class<?>>();// 返回结果
 		List<Class<?>> returnClassList = new ArrayList<Class<?>>();// 返回结果
 		// 如果不是一个接口，则不做处理
 		if (c.isInterface()) {
@@ -58,13 +75,45 @@ public class ClassUtil {
 					 */
 					if (c.isAssignableFrom(allClass.get(i))) {
 						if (!c.equals(allClass.get(i))) {// 本身加不进去
-							returnClassList.add(allClass.get(i));
+							tmpList.add(allClass.get(i));
 						}
+					}
+				}
+
+				if (c.equals(ColumnDetailImpl.class)) {
+					Map<Integer, Class<?>> map = new HashMap<Integer, Class<?>>();
+					for (Class<?> clz : tmpList) {
+						ColumnDetailImpl cd = (ColumnDetailImpl) clz.newInstance();
+						int order = cd.getOrder();
+						map.put(order, clz);
+					}
+					List arrayList = new ArrayList(map.entrySet());
+					Collections.sort(arrayList, new ComparatorByKey());
+					for (Iterator<?> it = arrayList.iterator(); it.hasNext();) {
+						Map.Entry<Integer, Class<?>> entry = (Map.Entry<Integer, Class<?>>) it.next();
+						returnClassList.add(entry.getValue());
+					}
+				}else if (c.equals(ColumnTotalImpl.class)) {
+					Map<Integer, Class<?>> map = new HashMap<Integer, Class<?>>();
+					for (Class<?> clz : tmpList) {
+						ColumnTotalImpl cd = (ColumnTotalImpl) clz.newInstance();
+						int order = cd.getOrder();
+						map.put(order, clz);
+					}
+					List arrayList = new ArrayList(map.entrySet());
+					Collections.sort(arrayList, new ComparatorByKey());
+					for (Iterator<?> it = arrayList.iterator(); it.hasNext();) {
+						Map.Entry<Integer, Class<?>> entry = (Map.Entry<Integer, Class<?>>) it.next();
+						returnClassList.add(entry.getValue());
 					}
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
@@ -124,4 +173,18 @@ public class ClassUtil {
 		}
 		return classes;
 	}
+
+	@SuppressWarnings("rawtypes")
+	public static class ComparatorByKey implements Comparator {
+
+		@Override
+		public int compare(Object o1, Object o2) {
+			Map.Entry m1 = (Map.Entry) o1;
+			Map.Entry m2 = (Map.Entry) o2;
+			Integer i1 = (Integer) m1.getKey();
+			Integer i2 = (Integer) m2.getKey();
+			return i1.compareTo(i2);
+		}
+	}
+
 }

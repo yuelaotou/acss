@@ -27,6 +27,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.neusoft.acss.Acss;
 import com.neusoft.acss.bean.EvectionBean;
+import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
 import com.neusoft.acss.column.total.impl.ColumnTotalImpl;
 import com.neusoft.acss.consts.Consts;
@@ -169,7 +170,8 @@ public final class ExcelUtil {
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static void exportEmployeeTotalExcel(List<Map<String, String>> lm, List<Class<?>> lc) {
+	public static void exportEmployeeTotalExcel(Info info, List<Class<?>> lc) {
+		List<Map<String, String>> lm = info.getTotalList();
 		Workbook wb = new SXSSFWorkbook(500);
 		Sheet sheet = wb.createSheet();
 		sheet.createFreezePane(0, 1);

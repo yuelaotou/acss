@@ -4,9 +4,9 @@ import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
 
-public class TMorningColumn implements ColumnDetailImpl {
+public class RestColumn implements ColumnDetailImpl {
 
-	private String name = "上班时间";
+	private String name = "是否休息日";
 
 	public String getName() {
 		return name;
@@ -16,7 +16,7 @@ public class TMorningColumn implements ColumnDetailImpl {
 		this.name = name;
 	}
 
-	private final int order = 8;
+	private final int order = 7;
 
 	@Override
 	public int getOrder() {
@@ -33,8 +33,8 @@ public class TMorningColumn implements ColumnDetailImpl {
 		// EmployeeBean eb = info.getEmployeeBean();
 		RecordBean rb = info.getRecordBean();
 		// EvectionBean evb = info.getEvectionBean();
-
-		return rb.getTmorning();
+		return rb.getRest();
+		// return e.getString("company");
 	}
 
 }

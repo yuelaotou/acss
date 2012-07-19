@@ -9,6 +9,13 @@ import java.util.List;
 
 public class ClassUtil {
 
+	/**
+	 * 隐藏公用构造方法<p>
+	 */
+	private ClassUtil() {
+		// noop
+	}
+
 	public static List<Class<?>> getAllImplClassesByInterface(Class<?> c) {
 
 		// 给一个接口，返回这个接口的所有实现类

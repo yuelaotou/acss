@@ -1,8 +1,6 @@
 package com.neusoft.acss.column.total;
 
-import java.util.List;
-import java.util.Map;
-
+import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.column.total.impl.ColumnTotalImpl;
 
 public class CLateColumn implements ColumnTotalImpl {
@@ -23,7 +21,7 @@ public class CLateColumn implements ColumnTotalImpl {
 	}
 
 	@Override
-	public String generateColumn(List<Map<String, String>> lm) {
+	public String generateColumn(Info info) {
 
 		return "12";
 	}

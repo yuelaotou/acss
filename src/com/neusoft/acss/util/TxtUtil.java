@@ -39,11 +39,10 @@ public final class TxtUtil {
 	 * 隐藏公用构造方法<p>
 	 */
 	private TxtUtil() {
-		// noop
 	}
 
 	/**
-	 * <p>Description:[读取考勤结果txt文件，存入到List&lt;{@link AcssBean}&gt;中]</p>
+	 * <p>Description:[读取考勤结果txt文件，存入到List&lt;{@link RecordBean}&gt;中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */

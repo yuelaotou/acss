@@ -37,7 +37,7 @@ public class Business {
 	private static String NAME = null;
 
 	/**
-	 * <p>Description:[读取考勤记录后，用本方法进行解析，按行存入到{@link AcssBean}中，以后更改解析规则来此修改，请记录信息]</p>
+	 * <p>Description:[读取考勤记录后，用本方法进行解析，按行存入到{@link RecordBean}中，以后更改解析规则来此修改，请记录信息]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
@@ -227,7 +227,7 @@ public class Business {
 	}
 
 	/**
-	 * <p>Description:[根据法定假日和串休记录，再结合正常周六周日休息，判断AcssBean是正常上班还是休息]</p>
+	 * <p>Description:[根据法定假日和串休记录，再结合正常周六周日休息，判断RecordBean是正常上班还是休息]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */

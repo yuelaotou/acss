@@ -30,11 +30,8 @@ public class WeekColumn implements ColumnDetailImpl {
 
 	@Override
 	public String generateColumn(Info info) {
-		// EmployeeBean eb = info.getEmployeeBean();
 		RecordBean rb = info.getRecordBean();
-		// EvectionBean evb = info.getEvectionBean();
 		return rb.getWeek().toString();
-		// return e.getString("company");
 	}
 
 }

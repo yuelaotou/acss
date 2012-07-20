@@ -1,6 +1,9 @@
 package com.neusoft.acss.column.detail;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.neusoft.acss.bean.Info;
+import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
 
 public class ExceptionColumn implements ColumnDetailImpl {
@@ -29,11 +32,12 @@ public class ExceptionColumn implements ColumnDetailImpl {
 
 	@Override
 	public String generateColumn(Info info) {
-		// EmployeeBean eb = info.getEmployeeBean();
-		// RecordBean rb = info.getRecordBean();
-		// EvectionBean evb = info.getEvectionBean();
-		return "部门";
-		// return e.getString("company");
+		RecordBean rb = info.getRecordBean();
+		if (StringUtils.isEmpty(rb.getTmorning()) || StringUtils.isEmpty(rb.getTnooningA())
+				|| StringUtils.isEmpty(rb.getTnooningB()) || StringUtils.isEmpty(rb.getTevening())) {
+			return "有异常";
+		}
+		return null;
 	}
 
 }

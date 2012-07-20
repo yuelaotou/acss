@@ -64,7 +64,7 @@ public final class DateUtil {
 	}
 
 	/**
-	 * <p>Description:[计算两个时间之间相差多少时间，n为小时或分钟:Calendar.MINUTE,Calendar.HOUR]</p>
+	 * <p>Description:[计算两个时间之间相差多少，n是按小时或分钟计算:Calendar.MINUTE,Calendar.HOUR]</p>
 	 * Created on 2012-7-2
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 * @throws ParseException 

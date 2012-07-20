@@ -30,9 +30,7 @@ public class NameColumn implements ColumnDetailImpl {
 
 	@Override
 	public String generateColumn(Info info) {
-		// EmployeeBean eb = info.getEmployeeBean();
 		RecordBean rb = info.getRecordBean();
-		// EvectionBean evb = info.getEvectionBean();
 		return rb.getName();
 	}
 

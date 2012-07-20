@@ -1,5 +1,6 @@
 package com.neusoft.acss.column.detail;
 
+import com.neusoft.acss.bean.EmployeeBean;
 import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
 
@@ -29,11 +30,8 @@ public class CompanyColumn implements ColumnDetailImpl {
 
 	@Override
 	public String generateColumn(Info info) {
-		// EmployeeBean eb = info.getEmployeeBean();
-		// RecordBean rb = info.getRecordBean();
-		// EvectionBean evb = info.getEvectionBean();
-		return "company";
-		// return e.getString("company");
+		EmployeeBean eb = info.getEmployeeBean();
+		return eb == null ? null : eb.getCompany();
 	}
 
 }

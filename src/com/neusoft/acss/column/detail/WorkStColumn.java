@@ -1,7 +1,12 @@
 package com.neusoft.acss.column.detail;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Info;
+import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
+import com.neusoft.acss.enums.WorkSt;
 
 public class WorkStColumn implements ColumnDetailImpl {
 
@@ -29,11 +34,24 @@ public class WorkStColumn implements ColumnDetailImpl {
 
 	@Override
 	public String generateColumn(Info info) {
-		// EmployeeBean eb = info.getEmployeeBean();
-		// RecordBean rb = info.getRecordBean();
-		// EvectionBean evb = info.getEvectionBean();
-		return "需要计算";
-		// return e.getString("company");
+		RecordBean rb = info.getRecordBean();
+		EvectionBean evb = info.getEvectionBean();
+		if (evb != null) {
+			if (!StringUtils.isEmpty(evb.getLeave_sick()) || !StringUtils.isEmpty(evb.getLeave_thing())
+					|| !StringUtils.isEmpty(evb.getLeave_year())) {
+				// 有请假记录
+				return WorkSt.LEAVE.toString();
+			}
+			if (!StringUtils.isEmpty(evb.getEvection_locale()) || !StringUtils.isEmpty(evb.getEvection_remote())) {
+				// 有出差记录
+				return WorkSt.EVECTION.toString();
+			}
+		}
+		if (StringUtils.isEmpty(rb.getRest())) {
+			// 如果Rest为空，则说明是上班日
+			return WorkSt.WORK.toString();
+		} else {
+			return WorkSt.REST.toString();
+		}
 	}
-
 }

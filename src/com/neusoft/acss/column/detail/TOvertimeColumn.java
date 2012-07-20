@@ -1,5 +1,6 @@
 package com.neusoft.acss.column.detail;
 
+import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
 
@@ -29,10 +30,8 @@ public class TOvertimeColumn implements ColumnDetailImpl {
 
 	@Override
 	public String generateColumn(Info info) {
-		// EmployeeBean eb = info.getEmployeeBean();
-		//RecordBean rb = info.getRecordBean();
-//		EvectionBean evb = info.getEvectionBean();
-		return "加班时间";
+		EvectionBean evb = info.getEvectionBean();
+		return evb == null ? null : evb.getOvertime();
 	}
 
 }

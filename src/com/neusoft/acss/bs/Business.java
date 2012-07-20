@@ -17,11 +17,11 @@ import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
-import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
-import com.neusoft.acss.column.total.impl.ColumnTotalImpl;
+import com.neusoft.acss.column.detail.IColumnDetail;
+import com.neusoft.acss.column.detail.impl.NameColumn;
+import com.neusoft.acss.column.total.IColumnTotal;
 import com.neusoft.acss.enums.Week;
 import com.neusoft.acss.exception.BizException;
-import com.neusoft.acss.util.ClassUtil;
 
 /**
  * <p> Title: [业务逻辑类]</p>
@@ -105,10 +105,9 @@ public class Business {
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
 	public static List<Map<String, String>> generateEmployeeDetailList(List<EmployeeBean> ebList,
-			List<RecordBean> rbList, List<EvectionBean> evbList) throws Exception {
+			List<RecordBean> rbList, List<EvectionBean> evbList, List<Class<?>> lc) throws Exception {
 
 		List<Map<String, String>> l = new ArrayList<Map<String, String>>();
-		List<Class<?>> lc = ClassUtil.getAllImplClassesByInterface(ColumnDetailImpl.class, "super");
 
 		for (RecordBean rb : rbList) {
 			Info i = new Info();
@@ -149,7 +148,7 @@ public class Business {
 
 		Map<String, String> m = new LinkedHashMap<String, String>();
 		for (Class<?> clz : lc) {
-			ColumnDetailImpl c = (ColumnDetailImpl) clz.newInstance();
+			IColumnDetail c = (IColumnDetail) clz.newInstance();
 			m.put(clz.getName(), c.generateColumn(i));
 		}
 		return m;
@@ -161,12 +160,11 @@ public class Business {
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
-	public static void convertDetail2Total(Info info) throws Exception {
+	public static void convertDetail2Total(Info info, List<Class<?>> lc) throws Exception {
 		List<Map<String, String>> lm = info.getDetailList();
 		List<Map<String, String>> sublist = new ArrayList<Map<String, String>>();
 		List<Map<String, String>> totalList = new ArrayList<Map<String, String>>();
-		List<Class<?>> lc = ClassUtil.getAllImplClassesByInterface(ColumnTotalImpl.class, "super");
-
+		final String column = NameColumn.class.getName();
 		String name = "";
 		for (int i = 0; i < lm.size(); i++) {
 			Map<String, String> m_detail = lm.get(i);
@@ -174,14 +172,14 @@ public class Business {
 			// 首次进来，主要是把同一个人的信息归到一起。
 			if (i == 0) {
 				sublist.add(m_detail);
-				name = m_detail.get("com.neusoft.acss.column.detail.NameColumn");
+				name = m_detail.get(column);
 				continue;
 			}
 
 			// 若是最后一次循环，需要提前添加m_detail到list中
 			if (i == lm.size() - 1) {
 				sublist.add(m_detail);
-			} else if (name.equals(m_detail.get("com.neusoft.acss.column.detail.NameColumn"))) {
+			} else if (name.equals(m_detail.get(column))) {
 				// 若本次和上次是同一个人，则只添加m_detail到list中，继续下次循环
 				sublist.add(m_detail);
 				continue;
@@ -195,7 +193,7 @@ public class Business {
 			totalList.add(totalMap);
 
 			// 2,重新给name赋值为：m.get("name");
-			name = m_detail.get("com.neusoft.acss.column.detail.NameColumn");
+			name = m_detail.get(column);
 
 			// 3,因为情况1（换人了），所以重新sublist = new ArrayList<Map<String, String>>();
 			sublist = new ArrayList<Map<String, String>>();
@@ -220,7 +218,7 @@ public class Business {
 
 		Map<String, String> m = new LinkedHashMap<String, String>();
 		for (Class<?> clz : lc) {
-			ColumnTotalImpl c = (ColumnTotalImpl) clz.newInstance();
+			IColumnTotal c = (IColumnTotal) clz.newInstance();
 			m.put(clz.getName(), c.generateColumn(i));
 		}
 		return m;

@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 
 import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.exception.BizException;
-import com.neusoft.acss.ui.command.context.ActionCommandContext;
+import com.neusoft.acss.ui.command.ButtonCommandContext;
 import com.neusoft.acss.util.PropUtil;
 
 /**
@@ -206,7 +206,7 @@ public class UIPanel extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ActionCommandContext acc = new ActionCommandContext(e.getActionCommand(), UIPanel.this, info);
+			ButtonCommandContext acc = new ButtonCommandContext(e.getActionCommand(), UIPanel.this, info);
 			try {
 				info = acc.handleRequest();
 				String message = info.getMessage();

@@ -28,8 +28,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.neusoft.acss.Acss;
 import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Info;
-import com.neusoft.acss.column.detail.impl.ColumnDetailImpl;
-import com.neusoft.acss.column.total.impl.ColumnTotalImpl;
+import com.neusoft.acss.column.detail.IColumnDetail;
+import com.neusoft.acss.column.total.IColumnTotal;
 import com.neusoft.acss.consts.Consts;
 import com.neusoft.acss.exception.BizException;
 
@@ -120,7 +120,7 @@ public final class ExcelUtil {
 		try {
 			int i = 0;
 			for (Class<?> clz : lc) {
-				ColumnDetailImpl c = (ColumnDetailImpl) clz.newInstance();
+				IColumnDetail c = (IColumnDetail) clz.newInstance();
 				String description = c.getDescription();
 				if (description.length() > 6) {
 					sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 1800);
@@ -184,7 +184,7 @@ public final class ExcelUtil {
 		try {
 			int i = 0;
 			for (Class<?> clz : lc) {
-				ColumnTotalImpl c = (ColumnTotalImpl) clz.newInstance();
+				IColumnTotal c = (IColumnTotal) clz.newInstance();
 				String description = c.getDescription();
 				if (description.length() > 6) {
 					sheet.setColumnWidth(i, Consts.COLUMN_WIDTH + 1800);

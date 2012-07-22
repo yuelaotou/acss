@@ -59,6 +59,7 @@ public final class TxtUtil {
 					list.add(rb);
 				}
 			}
+			br.close();
 		} catch (UnsupportedEncodingException e) {
 			throw new BizException("考勤结果txt编码格式错误，目前编码格式要求为：GBK", e);
 		} catch (FileNotFoundException e) {
@@ -94,6 +95,7 @@ public final class TxtUtil {
 				vacation.setDate(DateUtils.parseDate(str, "yyyy-MM-dd"));
 				list.add(vacation);
 			}
+			br.close();
 		} catch (FileNotFoundException e) {
 			throw new BizException("找不到文件：" + Consts.PATH_VACATIONS, e);
 		} catch (IOException e) {
@@ -119,6 +121,7 @@ public final class TxtUtil {
 			}
 			out.flush();
 			out.close();
+			br.close();
 		} catch (FileNotFoundException e) {
 			throw new BizException("找不到文件：" + Consts.PATH_VACATIONS + "，无法写入！", e);
 		} catch (IOException e) {
@@ -141,6 +144,7 @@ public final class TxtUtil {
 				workDay.setDate(DateUtils.parseDate(str, "yyyy-MM-dd"));
 				list.add(workDay);
 			}
+			br.close();
 		} catch (FileNotFoundException e) {
 			throw new BizException("找不到文件：" + Consts.PATH_WORKDAYS, e);
 		} catch (IOException e) {
@@ -166,6 +170,7 @@ public final class TxtUtil {
 			}
 			out.flush();
 			out.close();
+			br.close();
 		} catch (FileNotFoundException e) {
 			throw new BizException("找不到文件：" + Consts.PATH_WORKDAYS + "，无法写入！", e);
 		} catch (IOException e) {

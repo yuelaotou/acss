@@ -27,7 +27,6 @@ public class ClassUtil {
 	 * 首先,类不能是抽象的,其次,类必须实现函数接口 
 	 *  
 	 * @param c 
-	 *            类 
 	 * @return 是否是clz的实现类 
 	 */
 	public static boolean isFunction(Class<?> c, Class<?> clz) {

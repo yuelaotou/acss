@@ -78,8 +78,8 @@ public class EmployeeBean {
 
 	@Override
 	public String toString() {
-		return "员工基本信息 [name=" + name + ", company=" + company + ", department=" + department + ", locale=" + locale
-				+ ", id=" + id + "]";
+		return "EmployeeBean [name=" + name + ", company=" + company + ", department=" + department + ", locale="
+				+ locale + ", id=" + id + "]";
 	}
 
 	public boolean isEmpty() {

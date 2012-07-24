@@ -1,6 +1,5 @@
 package com.neusoft.acss.ui.command.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +64,7 @@ public class ImportButtonCommand implements IButtonCommand {
 				info.setRecordBeanList(rbList);
 
 				// 读取职工基本信息
-				List<EmployeeBean> employeeBeanList = new ArrayList<EmployeeBean>();
+				List<EmployeeBean> employeeBeanList = ExcelUtil.parseExcel2EmployeeList();
 				info.setEmployeeBeanList(employeeBeanList);
 
 				// 读取本年度休假记录

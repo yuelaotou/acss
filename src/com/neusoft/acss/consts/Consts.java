@@ -1,6 +1,5 @@
 package com.neusoft.acss.consts;
 
-
 /**
  * <p> Title: [Consts常量类]</p>
  * <p> Description: [常量类，各种文件保存的位置，路径，文件名等存入到此。]</p>
@@ -31,6 +30,11 @@ public final class Consts {
 	 * 个人出差登记表保存路径
 	 */
 	public final static String FOLDER_EVECTIONS = "D:\\acss\\evection";
+
+	/**
+	 * 职工基本信息表保存位置
+	 */
+	public final static String PATH_EMPLOYEEBASE = "D:\\acss\\职工基本信息表.xlsx";
 
 	/**
 	 * 考勤明细表保存位置

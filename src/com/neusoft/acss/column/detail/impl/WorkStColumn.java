@@ -37,14 +37,14 @@ public class WorkStColumn implements IColumnDetail {
 		RecordBean rb = info.getRecordBean();
 		EvectionBean evb = info.getEvectionBean();
 		if (evb != null) {
-			if (!StringUtils.isEmpty(evb.getLeave_sick()) || !StringUtils.isEmpty(evb.getLeave_thing())
-					|| !StringUtils.isEmpty(evb.getLeave_year())) {
-				// 有请假记录
-				return WorkSt.LEAVE.toString();
-			}
-			if (!StringUtils.isEmpty(evb.getEvection_locale()) || !StringUtils.isEmpty(evb.getEvection_remote())) {
+			if (StringUtils.isNotEmpty(evb.getEvection_locale()) || StringUtils.isNotEmpty(evb.getEvection_remote())) {
 				// 有出差记录
 				return WorkSt.EVECTION.toString();
+			}
+			if (StringUtils.isNotEmpty(evb.getLeave_sick()) || StringUtils.isNotEmpty(evb.getLeave_thing())
+					|| StringUtils.isNotEmpty(evb.getLeave_year())) {
+				// 有请假记录
+				return WorkSt.LEAVE.toString();
 			}
 		}
 		if (StringUtils.isEmpty(rb.getRest())) {

@@ -37,15 +37,15 @@ public class OvertimeColumn implements IColumnDetail {
 		RecordBean rb = info.getRecordBean();
 		EvectionBean evb = info.getEvectionBean();
 		if (evb != null) {
-			if (evb.getOvertime() != null) {
-				if (!StringUtils.isEmpty(evb.getEvection_remote())) {
+			if (StringUtils.isNotEmpty(evb.getOvertime())) {
+				if (StringUtils.isNotEmpty(evb.getEvection_remote())) {
 					return Overtime.REMOTE.toString();
 				}
-				if (StringUtils.isEmpty(rb.getRest())) {
-					return Overtime.WORKDAY.toString();
-				} else {
+				if (StringUtils.isNotEmpty(rb.getRest())) {
 					// 这里目前没判断是周末还是法定假日，以后再扩展
 					return Overtime.WEEKEND.toString();
+				} else {
+					return Overtime.WORKDAY.toString();
 				}
 			}
 		}

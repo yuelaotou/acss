@@ -1,5 +1,7 @@
 package com.neusoft.acss.bean;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * <p> Title: [出差登记表实体类]</p>
  * <p> Description: [出差登记表实体，把Excel中所有内容存储到EvectionBean实体中]</p>
@@ -165,6 +167,111 @@ public class EvectionBean {
 	public boolean isEmpty() {
 		return "".equals(tevection + evection_locale + evection_remote + overtime + leave_sick + leave_thing
 				+ leave_year);
+	}
+
+	/**
+	 * <p>Discription:[出差时间、病假、事假、年假是否有和type相同的。type一般为全天、上午、下午]</p>
+	 * Created on 2012-7-24
+	 * @author: 杨光 - yang.guang@neusoft.com
+	 */
+	public boolean hasType(String type) {
+		if (tevection != null && tevection.equals(type)) {
+			return true;
+		}
+		if (leave_sick != null && leave_sick.equals(type)) {
+			return true;
+		}
+		if (leave_thing != null && leave_thing.equals(type)) {
+			return true;
+		}
+		if (leave_year != null && leave_year.equals(type)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * <p>Discription:[出差时间、病假、事假、年假是否有时间在给定time前的。比如给定时间为08:30:00，则判定的是《是否有人在早上上班时就出差或请假了》]</p>
+	 * <p>Discription:[本方法只能判断是时间段的方法。若是写着全天，上午或下午是不能正确判断的。因此调用本方法前需要判断hasType]</p>
+	 * Created on 2012-7-24
+	 * @author: 杨光 - yang.guang@neusoft.com
+	 */
+	public boolean startWith(String time) {
+		if (tevection != null) {
+			String beforetime = StringUtils.substringBefore(tevection.replace("-", "~"), "~");
+			// 包装成HH:mm:ss格式
+			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
+			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) <= 0) {
+				return true;
+			}
+		}
+		if (leave_sick != null) {
+			String beforetime = StringUtils.substringBefore(leave_sick.replace("-", "~"), "~");
+			// 包装成HH:mm:ss格式
+			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
+			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) <= 0) {
+				return true;
+			}
+		}
+		if (leave_thing != null) {
+			String beforetime = StringUtils.substringBefore(leave_thing.replace("-", "~"), "~");
+			// 包装成HH:mm:ss格式
+			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
+			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) <= 0) {
+				return true;
+			}
+		}
+		if (leave_year != null) {
+			String beforetime = StringUtils.substringBefore(leave_year.replace("-", "~"), "~");
+			// 包装成HH:mm:ss格式
+			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
+			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) <= 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * <p>Discription:[出差时间、病假、事假、年假是否有时间在给定time后的。比如给定时间为17:30:00，则判定的是《是否有人出差或请假到晚上下班》]</p>
+	 * <p>Discription:[本方法只能判断是时间段的方法。若是写着全天，上午或下午是不能正确判断的。因此调用本方法前需要判断hasType]</p>
+	 * Created on 2012-7-24
+	 * @author: 杨光 - yang.guang@neusoft.com
+	 */
+	public boolean endWith(String time) {
+		if (tevection != null) {
+			String beforetime = StringUtils.substringBefore(tevection.replace("-", "~"), "~");
+			// 包装成HH:mm:ss格式
+			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
+			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) >= 0) {
+				return true;
+			}
+		}
+		if (leave_sick != null) {
+			String beforetime = StringUtils.substringBefore(leave_sick.replace("-", "~"), "~");
+			// 包装成HH:mm:ss格式
+			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
+			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) >= 0) {
+				return true;
+			}
+		}
+		if (leave_thing != null) {
+			String beforetime = StringUtils.substringBefore(leave_thing.replace("-", "~"), "~");
+			// 包装成HH:mm:ss格式
+			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
+			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) >= 0) {
+				return true;
+			}
+		}
+		if (leave_year != null) {
+			String beforetime = StringUtils.substringBefore(leave_year.replace("-", "~"), "~");
+			// 包装成HH:mm:ss格式
+			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
+			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) >= 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

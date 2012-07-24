@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.neusoft.acss.Acss;
 import com.neusoft.acss.consts.Consts;
 import com.neusoft.acss.exception.BizException;
 
@@ -83,12 +82,6 @@ public final class PropUtil {
 		} catch (IOException e) {
 			throw new BizException("操作文件出错：" + Consts.PATH_PROPERTIES + "，无法写入", e);
 		}
-	}
-
-	public static void main(String args[]) {
-		Acss a = new Acss();
-		a.setSize(500, 300);
-		a.setVisible(true);
 	}
 
 }

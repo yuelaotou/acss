@@ -7,7 +7,6 @@ import java.util.Date;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
-import com.neusoft.acss.Acss;
 import com.neusoft.acss.exception.BizException;
 
 /**
@@ -89,12 +88,6 @@ public final class DateUtil {
 		}
 		int t = (int) ((end - begin) / n) + 1;
 		return t;
-	}
-
-	public static void main(String args[]) {
-		Acss a = new Acss();
-		a.setSize(500, 300);
-		a.setVisible(true);
 	}
 
 }

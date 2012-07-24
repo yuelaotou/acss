@@ -119,7 +119,7 @@ public class RecordBean {
 
 	@Override
 	public String toString() {
-		return "员工打卡详细信息 [name=" + name + ", date=" + date + ", week=" + week + ", tmorning=" + tmorning
+		return "RecordBean [name=" + name + ", date=" + date + ", week=" + week + ", tmorning=" + tmorning
 				+ ", tnooningA=" + tnooningA + ", tnooningB=" + tnooningB + ", tevening=" + tevening + "]";
 	}
 

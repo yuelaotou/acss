@@ -3,12 +3,15 @@ package com.neusoft.acss.column.total.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.neusoft.acss.bean.Info;
+import com.neusoft.acss.column.detail.impl.EvectionLocaleColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
 
-public class NameColumn implements IColumnTotal {
+public class CLocaleColumn implements IColumnTotal {
 
-	private String name = "姓名";
+	private String name = "本地出差次数";
 
 	public String getName() {
 		return name;
@@ -18,7 +21,7 @@ public class NameColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 2;
+	private final int order = 12;
 
 	@Override
 	public int getOrder() {
@@ -32,9 +35,14 @@ public class NameColumn implements IColumnTotal {
 
 	@Override
 	public String generateColumn(Info info) {
+		int count = 0;
 		List<Map<String, String>> list = info.getSubList();
-		Map<String, String> m = list.get(0);
-		return m.get(com.neusoft.acss.column.detail.impl.NameColumn.class.getName());
+		for (Map<String, String> m : list) {
+			if (StringUtils.isNotEmpty(m.get(EvectionLocaleColumn.class.getName()))) {
+				count++;
+			}
+		}
+		return count + "";
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.neusoft.acss.column.detail.impl;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.column.detail.IColumnDetail;
@@ -33,11 +35,11 @@ public class LeaveColumn implements IColumnDetail {
 	public String generateColumn(Info info) {
 		EvectionBean evb = info.getEvectionBean();
 		if (evb != null) {
-			if (evb.getLeave_sick() != null) {
+			if (StringUtils.isNotEmpty(evb.getLeave_sick())) {
 				return Leave.SICK.toString();
-			} else if (evb.getLeave_thing() != null) {
+			} else if (StringUtils.isNotEmpty(evb.getLeave_thing())) {
 				return Leave.THING.toString();
-			} else if (evb.getLeave_year() != null) {
+			} else if (StringUtils.isNotEmpty(evb.getLeave_year())) {
 				return Leave.YEAR.toString();
 			}
 		}

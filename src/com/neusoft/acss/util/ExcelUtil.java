@@ -25,7 +25,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.neusoft.acss.Acss;
+import com.neusoft.acss.bean.EmployeeBean;
 import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.column.detail.IColumnDetail;
@@ -60,7 +60,7 @@ public final class ExcelUtil {
 		List<EvectionBean> list = new ArrayList<EvectionBean>();
 
 		XSSFRow row = null;
-		EvectionBean eb = null;
+		EvectionBean evb = null;
 		File folder = new File(Consts.FOLDER_EVECTIONS);
 		if (!folder.exists()) {
 			folder.mkdir();
@@ -77,28 +77,70 @@ public final class ExcelUtil {
 				// 根据表格的样式，确定从第4行开始读取，读到总行-2。其实也是4+31行。
 				for (int i = sheet.getFirstRowNum() + 3; i < sheet.getPhysicalNumberOfRows() - 2; i++) {
 					row = sheet.getRow(i);
-					eb = new EvectionBean();
-					eb.setName(name);
-					eb.setMonth(month);
-					eb.setDay(StringUtils.leftPad(row.getCell(0).toString().replace("日", ""), 2, "0"));
-					eb.setTevection(row.getCell(1).toString().trim());
-					eb.setEvection_remote(row.getCell(2).toString().trim());
-					eb.setEvection_locale(row.getCell(3).toString().trim());
-					eb.setOvertime(row.getCell(4).toString().trim());
-					eb.setLeave_sick(row.getCell(5).toString().trim());
-					eb.setLeave_thing(row.getCell(6).toString().trim());
-					eb.setLeave_year(row.getCell(7).toString().trim());
-					if (eb.isEmpty()) {
+					evb = new EvectionBean();
+					evb.setName(name);
+					evb.setMonth(month);
+					evb.setDay(StringUtils.leftPad(row.getCell(0).toString().replace("日", ""), 2, "0"));
+					evb.setTevection(row.getCell(1).toString().trim());
+					evb.setEvection_remote(row.getCell(2).toString().trim());
+					evb.setEvection_locale(row.getCell(3).toString().trim());
+					evb.setOvertime(row.getCell(4).toString().trim());
+					evb.setLeave_sick(row.getCell(5).toString().trim());
+					evb.setLeave_thing(row.getCell(6).toString().trim());
+					evb.setLeave_year(row.getCell(7).toString().trim());
+					if (evb.isEmpty()) {
 						continue;
 					}
-					list.add(eb);
+					list.add(evb);
 				}
 				is.close();
 			} catch (FileNotFoundException e) {
-				throw new BizException("能进循环，就不会发生的异常，吗的", e);
+				throw new BizException(e.getMessage(), e);
 			} catch (IOException e) {
 				throw new BizException("读取外出登记表IO异常：" + file.getName(), e);
 			}
+		}
+		return list;
+	}
+
+	/**
+	 * <p>Description:[解析EXCEL2007版本的职工基本信息表，存储在List&lt;{@link EmployeeBean}&gt;中]</p>
+	 * Created on 2012-7-10
+	 * @author: 杨光 - yang.guang@neusoft.com
+	 */
+	public static List<EmployeeBean> parseExcel2EmployeeList() {
+		List<EmployeeBean> list = new ArrayList<EmployeeBean>();
+
+		XSSFRow row = null;
+		EmployeeBean eb = null;
+		File file = new File(Consts.PATH_EMPLOYEEBASE);
+		if (!file.exists()) {
+			throw new BizException("找不到职工基本信息表: " + Consts.PATH_EMPLOYEEBASE);
+		}
+
+		try {
+			InputStream is = new FileInputStream(file);
+			XSSFWorkbook xwb = new XSSFWorkbook(is);
+			XSSFSheet sheet = xwb.getSheetAt(0);
+			// 根据表格的样式，确定从第4行开始读取，读到总行-2。其实也是4+31行。
+			for (int i = sheet.getFirstRowNum(); i < sheet.getPhysicalNumberOfRows(); i++) {
+				row = sheet.getRow(i);
+				eb = new EmployeeBean();
+				eb.setCompany(row.getCell(0).toString().trim());
+				eb.setDepartment(row.getCell(1).toString().trim());
+				eb.setName(row.getCell(2).toString().trim());
+				eb.setLocale(row.getCell(3).toString().trim());
+				eb.setId(row.getCell(4).toString().trim());
+				if (eb.isEmpty()) {
+					continue;
+				}
+				list.add(eb);
+			}
+			is.close();
+		} catch (FileNotFoundException e) {
+			throw new BizException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new BizException("读取职工基本信息表IO异常：" + file.getName(), e);
 		}
 		return list;
 	}
@@ -257,12 +299,6 @@ public final class ExcelUtil {
 		style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
 		style.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		return style;
-	}
-
-	public static void main(String[] args) {
-		Acss a = new Acss();
-		a.setSize(500, 300);
-		a.setVisible(true);
 	}
 
 }

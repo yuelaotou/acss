@@ -16,7 +16,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
-import com.neusoft.acss.Acss;
 import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
@@ -54,7 +53,7 @@ public final class TxtUtil {
 			String str = "";
 			RecordBean rb = null;
 			while ((str = br.readLine()) != null) {
-				if (!StringUtils.isEmpty(str)) {
+				if (StringUtils.isNotEmpty(str)) {
 					rb = Business.parseStrToAcssBean(str.trim(), tnoon_begin, tnoon_middle, tnoon_end);
 					list.add(rb);
 				}
@@ -176,12 +175,6 @@ public final class TxtUtil {
 		} catch (IOException e) {
 			throw new BizException("写入文件出错：" + Consts.PATH_WORKDAYS, e);
 		}
-	}
-
-	public static void main(String args[]) {
-		Acss a = new Acss();
-		a.setSize(500, 300);
-		a.setVisible(true);
 	}
 
 }

@@ -16,6 +16,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import com.neusoft.acss.bean.Holiday;
 import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
@@ -71,7 +72,7 @@ public final class TxtUtil {
 	}
 
 	/**
-	 * <p>Description:[从文件中读取字符串到集合中，然后返回Vacation的集合]</p>
+	 * <p>Description:[从文件中读取字符串到集合中，然后返回节假日的集合]</p>
 	 * <p>
 	 * #元旦：2012年1月1日至3日放假调休，共3天。2011年12月31日(星期六)上班。</br>
 	 * #春节：1月22日至28日放假调休，共7天。1月21日(星期六)、1月29日(星期日)上班。</br>
@@ -96,7 +97,7 @@ public final class TxtUtil {
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
-			throw new BizException("找不到文件：" + Consts.PATH_VACATIONS, e);
+			throw new BizException("找不到文件，或正在被占用：" + Consts.PATH_VACATIONS, e);
 		} catch (IOException e) {
 			throw new BizException("读取文件出错：" + Consts.PATH_VACATIONS, e);
 		} catch (ParseException e) {
@@ -106,7 +107,7 @@ public final class TxtUtil {
 	}
 
 	/**
-	 * <p>Description:[导入法定假期到Consts.PATH_VACATIONS中]</p>
+	 * <p>Description:[导入节假日到Consts.PATH_VACATIONS中]</p>
 	 * Created on 2012-7-10
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */
@@ -122,7 +123,7 @@ public final class TxtUtil {
 			out.close();
 			br.close();
 		} catch (FileNotFoundException e) {
-			throw new BizException("找不到文件：" + Consts.PATH_VACATIONS + "，无法写入！", e);
+			throw new BizException("找不到文件，或正在被占用：" + Consts.PATH_VACATIONS + "，无法写入！", e);
 		} catch (IOException e) {
 			throw new BizException("写入文件出错：" + Consts.PATH_VACATIONS, e);
 		}
@@ -145,7 +146,7 @@ public final class TxtUtil {
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
-			throw new BizException("找不到文件：" + Consts.PATH_WORKDAYS, e);
+			throw new BizException("找不到文件，或正在被占用：" + Consts.PATH_WORKDAYS, e);
 		} catch (IOException e) {
 			throw new BizException("读取文件出错：" + Consts.PATH_WORKDAYS, e);
 		} catch (ParseException e) {
@@ -171,9 +172,67 @@ public final class TxtUtil {
 			out.close();
 			br.close();
 		} catch (FileNotFoundException e) {
-			throw new BizException("找不到文件：" + Consts.PATH_WORKDAYS + "，无法写入！", e);
+			throw new BizException("找不到文件，或正在被占用：" + Consts.PATH_WORKDAYS + "，无法写入！", e);
 		} catch (IOException e) {
 			throw new BizException("写入文件出错：" + Consts.PATH_WORKDAYS, e);
+		}
+	}
+
+	/**
+	 * <p>Description:[从文件中读取字符串到集合中，然后返回节假日的集合]</p>
+	 * <p>
+	 * #元旦：2012年1月1日至3日放假调休，共3天。2011年12月31日(星期六)上班。</br>
+	 * #春节：1月22日至28日放假调休，共7天。1月21日(星期六)、1月29日(星期日)上班。</br>
+	 * #清明节：4月2日至4日放假调休，共3天。3月31日(星期六)、4月1日(星期日)上班。</br>
+	 * #劳动节：4月29日至5月1日放假调休，共3天。4月28日(星期六)上班。</br>
+	 * #端午节：6月22日至24日放假公休，共3天。</br>
+	 * #中秋节、国庆节：9月30日至10月7日放假调休，共8天。9月29日(星期六)上班。</br>
+	 * </p>
+	 * Created on 2012-7-10
+	 * @author: 杨光 - yang.guang@neusoft.com
+	 */
+	public static List<Holiday> getHolidays() {
+		List<Holiday> list = new ArrayList<Holiday>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(Consts.PATH_HOLIDAYS));
+			String str = "";
+			Holiday holiday = null;
+			while ((str = br.readLine()) != null) {
+				holiday = new Holiday();
+				holiday.setDate(DateUtils.parseDate(str, "yyyy-MM-dd"));
+				list.add(holiday);
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			throw new BizException("找不到文件，或正在被占用：" + Consts.PATH_HOLIDAYS, e);
+		} catch (IOException e) {
+			throw new BizException("读取文件出错：" + Consts.PATH_HOLIDAYS, e);
+		} catch (ParseException e) {
+			throw new BizException("文件：" + Consts.PATH_HOLIDAYS + " 中日期格式错误，无法转换", e);
+		}
+		return list;
+	}
+
+	/**
+	 * <p>Description:[导入节假日到Consts.PATH_VACATIONS中]</p>
+	 * Created on 2012-7-10
+	 * @author: 杨光 - yang.guang@neusoft.com
+	 */
+	public static void saveHolidays(File file) {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			FileOutputStream out = new FileOutputStream(Consts.PATH_HOLIDAYS);
+			String str = "";
+			while ((str = br.readLine()) != null) {
+				out.write(str.concat("\r\n").getBytes());
+			}
+			out.flush();
+			out.close();
+			br.close();
+		} catch (FileNotFoundException e) {
+			throw new BizException("找不到文件，或正在被占用：" + Consts.PATH_HOLIDAYS + "，无法写入！", e);
+		} catch (IOException e) {
+			throw new BizException("写入文件出错：" + Consts.PATH_HOLIDAYS, e);
 		}
 	}
 

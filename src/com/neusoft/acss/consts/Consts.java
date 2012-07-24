@@ -14,17 +14,22 @@ public final class Consts {
 	/**
 	 * 设置属性保存的位置，例如：上下班时间
 	 */
-	public final static String PATH_PROPERTIES = "D:\\acss\\info.properties";
+	public final static String PATH_PROPERTIES = "D:\\acss\\info\\配置文件.properties";
 
 	/**
-	 * 导入节假日的文件保存位置
+	 * 法定假日文件的保存位置
 	 */
-	public final static String PATH_VACATIONS = "D:\\acss\\vacations.txt";
+	public final static String PATH_HOLIDAYS = "D:\\acss\\info\\法定假日.txt";
 
 	/**
-	 * 导入工作日或串休文件的保存位置
+	 * 节假日文件的保存位置
 	 */
-	public final static String PATH_WORKDAYS = "D:\\acss\\workdates.txt";
+	public final static String PATH_VACATIONS = "D:\\acss\\info\\节假日.txt";
+
+	/**
+	 * 串休日文件的保存位置
+	 */
+	public final static String PATH_WORKDAYS = "D:\\acss\\info\\串休日.txt";
 
 	/**
 	 * 个人出差登记表保存路径
@@ -34,17 +39,17 @@ public final class Consts {
 	/**
 	 * 职工基本信息表保存位置
 	 */
-	public final static String PATH_EMPLOYEEBASE = "D:\\acss\\职工基本信息表.xlsx";
+	public final static String PATH_EMPLOYEEBASE = "D:\\acss\\info\\职工基本信息表.xlsx";
 
 	/**
 	 * 考勤明细表保存位置
 	 */
-	public final static String PATH_EMPLOYEEDETAIL = "D:\\acss\\employeeDetail.xlsx";
+	public final static String PATH_EMPLOYEEDETAIL = "D:\\acss\\考勤详细信息表.xlsx";
 
 	/**
 	 * 考勤统计总表保存位置
 	 */
-	public final static String PATH_EMPLOYEETOTAL = "D:\\acss\\employeeTotal.xlsx";
+	public final static String PATH_EMPLOYEETOTAL = "D:\\acss\\考勤统计总表.xlsx";
 
 	/**
 	 * 日期正则表达式 yyyy-MM-dd，满足基本判断

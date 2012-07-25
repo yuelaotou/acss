@@ -17,7 +17,7 @@ import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.bean.Vacation;
 import com.neusoft.acss.bean.WorkDay;
 import com.neusoft.acss.column.detail.IColumnDetail;
-import com.neusoft.acss.column.detail.impl.NameColumn;
+import com.neusoft.acss.column.detail.impl.D_B_Name;
 import com.neusoft.acss.column.total.IColumnTotal;
 import com.neusoft.acss.enums.Week;
 import com.neusoft.acss.exception.BizException;
@@ -160,7 +160,7 @@ public class Business {
 		List<Map<String, String>> lm = info.getDetailList();
 		List<Map<String, String>> sublist = new ArrayList<Map<String, String>>();
 		List<Map<String, String>> totalList = new ArrayList<Map<String, String>>();
-		final String column = NameColumn.class.getName();
+		final String column = D_B_Name.class.getName();
 		String name = "";
 		for (int i = 0; i < lm.size(); i++) {
 			Map<String, String> m_detail = lm.get(i);

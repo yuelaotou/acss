@@ -3,15 +3,13 @@ package com.neusoft.acss.column.total.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.neusoft.acss.bean.Info;
-import com.neusoft.acss.column.detail.impl.OvertimeColumn;
+import com.neusoft.acss.column.detail.impl.DepartmentColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
 
-public class COvertimeColumn implements IColumnTotal {
+public class BDepartmentColumn implements IColumnTotal {
 
-	private String name = "加班天数";
+	private String name = "部门";
 
 	public String getName() {
 		return name;
@@ -21,7 +19,7 @@ public class COvertimeColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 13;
+	private final int order = 1;
 
 	@Override
 	public int getOrder() {
@@ -35,14 +33,9 @@ public class COvertimeColumn implements IColumnTotal {
 
 	@Override
 	public String generateColumn(Info info) {
-		int count = 0;
 		List<Map<String, String>> list = info.getSubList();
-		for (Map<String, String> m : list) {
-			if (StringUtils.isNotEmpty(m.get(OvertimeColumn.class.getName()))) {
-				count++;
-			}
-		}
-		return count + "";
+		Map<String, String> m = list.get(0);
+		return m.get(DepartmentColumn.class.getName());
 	}
 
 }

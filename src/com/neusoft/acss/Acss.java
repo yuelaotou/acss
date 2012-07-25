@@ -28,7 +28,7 @@ public class Acss extends JFrame {
 
 	public static void main(String args[]) {
 		Acss a = new Acss();
-		a.setSize(500, 300);
+		a.setBounds(400, 200, 500, 300);
 		a.setVisible(true);
 	}
 }

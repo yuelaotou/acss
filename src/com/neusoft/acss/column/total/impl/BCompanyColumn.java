@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.neusoft.acss.bean.Info;
+import com.neusoft.acss.column.detail.impl.CompanyColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
 
-public class NameColumn implements IColumnTotal {
+public class BCompanyColumn implements IColumnTotal {
 
-	private String name = "姓名";
+	private String name = "公司";
 
 	public String getName() {
 		return name;
@@ -18,7 +19,7 @@ public class NameColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 2;
+	private final int order = 0;
 
 	@Override
 	public int getOrder() {
@@ -34,7 +35,7 @@ public class NameColumn implements IColumnTotal {
 	public String generateColumn(Info info) {
 		List<Map<String, String>> list = info.getSubList();
 		Map<String, String> m = list.get(0);
-		return m.get(com.neusoft.acss.column.detail.impl.NameColumn.class.getName());
+		return m.get(CompanyColumn.class.getName());
 	}
 
 }

@@ -8,7 +8,7 @@ import com.neusoft.acss.bean.RecordBean;
 public interface IColumnDetail {
 
 	/**
-	 * <p>Description:[排序编号，编号小的排在前面]</p>
+	 * <p>Description:[排序编号，编号小的排在前面，并且不允许重复。重复的只能取到一个]</p>
 	 * Created on 2012-7-19
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */

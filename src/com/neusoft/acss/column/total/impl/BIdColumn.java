@@ -3,16 +3,13 @@ package com.neusoft.acss.column.total.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.neusoft.acss.bean.Info;
-import com.neusoft.acss.column.detail.impl.LeaveColumn;
+import com.neusoft.acss.column.detail.impl.IdColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
-import com.neusoft.acss.enums.Leave;
 
-public class CSickColumn implements IColumnTotal {
+public class BIdColumn implements IColumnTotal {
 
-	private String name = "病假次数";
+	private String name = "登记号";
 
 	public String getName() {
 		return name;
@@ -22,7 +19,7 @@ public class CSickColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 7;
+	private final int order = 4;
 
 	@Override
 	public int getOrder() {
@@ -36,16 +33,9 @@ public class CSickColumn implements IColumnTotal {
 
 	@Override
 	public String generateColumn(Info info) {
-		int count = 0;
 		List<Map<String, String>> list = info.getSubList();
-		for (Map<String, String> m : list) {
-			if (StringUtils.isNotEmpty(m.get(LeaveColumn.class.getName()))) {
-				if (m.get(LeaveColumn.class.getName()).equals(Leave.SICK.toString())) {
-					count++;
-				}
-			}
-		}
-		return count + "";
+		Map<String, String> m = list.get(0);
+		return m.get(IdColumn.class.getName());
 	}
 
 }

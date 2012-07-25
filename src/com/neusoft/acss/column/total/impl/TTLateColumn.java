@@ -1,18 +1,17 @@
 package com.neusoft.acss.column.total.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.neusoft.acss.bean.Info;
-import com.neusoft.acss.column.detail.impl.LeaveColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
-import com.neusoft.acss.enums.Leave;
 
-public class CYearColumn implements IColumnTotal {
+public class TTLateColumn implements IColumnTotal {
 
-	private String name = "年假次数";
+	private String name = "迟到总时间（分）";
 
 	public String getName() {
 		return name;
@@ -22,7 +21,7 @@ public class CYearColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 8;
+	private final int order = 6;
 
 	@Override
 	public int getOrder() {
@@ -36,16 +35,15 @@ public class CYearColumn implements IColumnTotal {
 
 	@Override
 	public String generateColumn(Info info) {
-		int count = 0;
+		BigDecimal t = new BigDecimal(0);
 		List<Map<String, String>> list = info.getSubList();
 		for (Map<String, String> m : list) {
-			if (StringUtils.isNotEmpty(m.get(LeaveColumn.class.getName()))) {
-				if (m.get(LeaveColumn.class.getName()).equals(Leave.YEAR.toString())) {
-					count++;
-				}
+			String time = m.get(com.neusoft.acss.column.detail.impl.TLateColumn.class.getName());
+			if (StringUtils.isNotEmpty(time)) {
+				t = t.add(new BigDecimal(time));
 			}
 		}
-		return count + "";
+		return t.toString();
 	}
 
 }

@@ -14,7 +14,7 @@ import com.neusoft.acss.util.PropUtil;
 
 public class TEarlyColumn implements IColumnDetail {
 
-	private String name = "早退时间";
+	private String name = "早退时间（分）";
 
 	public String getName() {
 		return name;

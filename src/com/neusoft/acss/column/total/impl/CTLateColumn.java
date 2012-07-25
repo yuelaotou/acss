@@ -6,13 +6,11 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.neusoft.acss.bean.Info;
-import com.neusoft.acss.column.detail.impl.LeaveColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
-import com.neusoft.acss.enums.Leave;
 
-public class COtherColumn implements IColumnTotal {
+public class CTLateColumn implements IColumnTotal {
 
-	private String name = "其他假期次数";
+	private String name = "迟到次数";
 
 	public String getName() {
 		return name;
@@ -22,7 +20,7 @@ public class COtherColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 10;
+	private final int order = 5;
 
 	@Override
 	public int getOrder() {
@@ -39,10 +37,8 @@ public class COtherColumn implements IColumnTotal {
 		int count = 0;
 		List<Map<String, String>> list = info.getSubList();
 		for (Map<String, String> m : list) {
-			if (StringUtils.isNotEmpty(m.get(LeaveColumn.class.getName()))) {
-				if (m.get(LeaveColumn.class.getName()).equals(Leave.OTHER.toString())) {
-					count++;
-				}
+			if (StringUtils.isNotEmpty(m.get(com.neusoft.acss.column.detail.impl.TLateColumn.class.getName()))) {
+				count++;
 			}
 		}
 		return count + "";

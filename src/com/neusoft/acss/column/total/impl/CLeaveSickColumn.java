@@ -6,13 +6,13 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.neusoft.acss.bean.Info;
-import com.neusoft.acss.column.detail.impl.OvertimeColumn;
+import com.neusoft.acss.column.detail.impl.LeaveColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
-import com.neusoft.acss.enums.Overtime;
+import com.neusoft.acss.enums.Leave;
 
-public class COvertimeRemoteColumn implements IColumnTotal {
+public class CLeaveSickColumn implements IColumnTotal {
 
-	private String name = "外地加班次数";
+	private String name = "病假次数";
 
 	public String getName() {
 		return name;
@@ -22,7 +22,7 @@ public class COvertimeRemoteColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 19;
+	private final int order = 9;
 
 	@Override
 	public int getOrder() {
@@ -39,9 +39,8 @@ public class COvertimeRemoteColumn implements IColumnTotal {
 		int count = 0;
 		List<Map<String, String>> list = info.getSubList();
 		for (Map<String, String> m : list) {
-			String time = m.get(OvertimeColumn.class.getName());
-			if (StringUtils.isNotEmpty(time)) {
-				if (time.equals(Overtime.REMOTE.toString())) {
+			if (StringUtils.isNotEmpty(m.get(LeaveColumn.class.getName()))) {
+				if (m.get(LeaveColumn.class.getName()).equals(Leave.SICK.toString())) {
 					count++;
 				}
 			}

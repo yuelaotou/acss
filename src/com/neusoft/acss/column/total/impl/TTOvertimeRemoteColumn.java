@@ -1,5 +1,6 @@
 package com.neusoft.acss.column.total.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -7,12 +8,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.column.detail.impl.OvertimeColumn;
+import com.neusoft.acss.column.detail.impl.TOvertimeColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
 import com.neusoft.acss.enums.Overtime;
 
-public class COvertimeRemoteColumn implements IColumnTotal {
+public class TTOvertimeRemoteColumn implements IColumnTotal {
 
-	private String name = "外地加班次数";
+	private String name = "外地加班时间（时）";
 
 	public String getName() {
 		return name;
@@ -22,7 +24,7 @@ public class COvertimeRemoteColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 19;
+	private final int order = 20;
 
 	@Override
 	public int getOrder() {
@@ -36,17 +38,20 @@ public class COvertimeRemoteColumn implements IColumnTotal {
 
 	@Override
 	public String generateColumn(Info info) {
-		int count = 0;
+		BigDecimal t = new BigDecimal(0);
 		List<Map<String, String>> list = info.getSubList();
 		for (Map<String, String> m : list) {
 			String time = m.get(OvertimeColumn.class.getName());
 			if (StringUtils.isNotEmpty(time)) {
 				if (time.equals(Overtime.REMOTE.toString())) {
-					count++;
+					String time1 = m.get(TOvertimeColumn.class.getName());
+					if (StringUtils.isNotEmpty(time1)) {
+						t = t.add(new BigDecimal(time1));
+					}
 				}
 			}
 		}
-		return count + "";
+		return t.toString();
 	}
 
 }

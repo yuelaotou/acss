@@ -14,7 +14,7 @@ import com.neusoft.acss.util.PropUtil;
 
 public class TLateColumn implements IColumnDetail {
 
-	private String name = "迟到时间";
+	private String name = "迟到时间（分）";
 
 	public String getName() {
 		return name;

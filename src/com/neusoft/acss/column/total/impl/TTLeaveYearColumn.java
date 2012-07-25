@@ -1,17 +1,18 @@
 package com.neusoft.acss.column.total.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.neusoft.acss.bean.Info;
-import com.neusoft.acss.column.detail.impl.EvectionRemoteColumn;
+import com.neusoft.acss.column.detail.impl.TLeaveYearColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
 
-public class CRemoteColumn implements IColumnTotal {
+public class TTLeaveYearColumn implements IColumnTotal {
 
-	private String name = "外地出差次数";
+	private String name = "年假时间（时）";
 
 	public String getName() {
 		return name;
@@ -21,7 +22,7 @@ public class CRemoteColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 11;
+	private final int order = 14;
 
 	@Override
 	public int getOrder() {
@@ -35,14 +36,15 @@ public class CRemoteColumn implements IColumnTotal {
 
 	@Override
 	public String generateColumn(Info info) {
-		int count = 0;
+		BigDecimal t = new BigDecimal(0);
 		List<Map<String, String>> list = info.getSubList();
 		for (Map<String, String> m : list) {
-			if (StringUtils.isNotEmpty(m.get(EvectionRemoteColumn.class.getName()))) {
-				count++;
+			String time = m.get(TLeaveYearColumn.class.getName());
+			if (StringUtils.isNotEmpty(time)) {
+				t = t.add(new BigDecimal(time));
 			}
 		}
-		return count + "";
+		return t.toString();
 	}
 
 }

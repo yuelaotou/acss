@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
-import com.neusoft.acss.Acss;
 import com.neusoft.acss.bean.EmployeeBean;
 import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Info;
@@ -74,21 +73,18 @@ public class Business {
 					rb.setTmorning(time);
 				}
 			} else if (time.compareTo(tnoon_begin) > 0 && time.compareTo(tnoon_middle) < 0) {// 午休A
-				// 判断是否为空，需要写入相对早些的时间，因为读取的时间是按照顺序来的。
 				if (StringUtils.isEmpty(rb.getTnooningA())) {
 					rb.setTnooningA(time);
+				} else {
+					rb.setTnooningB(time);
 				}
 			} else if (time.compareTo(tnoon_middle) >= 0 && time.compareTo(tnoon_end) < 0) {// 午休B
 				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
-				if (StringUtils.isEmpty(rb.getTnooningB())) {
-					rb.setTnooningB(time);
-				} else {
-					// 若午休第一次打卡为空，则进行一定的处理。
-					if (StringUtils.isEmpty(rb.getTnooningA())) {
-						rb.setTnooningA(rb.getTnooningB());
-						rb.setTnooningB(time);
-					}
+				// 若午休第一次打卡为空，则进行一定的处理。
+				if (StringUtils.isEmpty(rb.getTnooningA()) && StringUtils.isNotEmpty(rb.getTnooningB())) {
+					rb.setTnooningA(rb.getTnooningB());
 				}
+				rb.setTnooningB(time);
 			} else if (time.compareTo(tnoon_end) >= 0) {// 下班
 				// 不用判断为空，需要写入相对晚些的时间，因为读取的时间是按照顺序来的。
 				rb.setTevening(time);
@@ -263,9 +259,4 @@ public class Business {
 		}
 	}
 
-	public static void main(String args[]) {
-		Acss a = new Acss();
-		a.setSize(500, 300);
-		a.setVisible(true);
-	}
 }

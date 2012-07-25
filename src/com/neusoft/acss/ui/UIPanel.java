@@ -169,10 +169,10 @@ public class UIPanel extends JFrame {
 		exportTotalButton.addActionListener(listener);
 
 		cp.add(sureButton);
-		cp.add(vacationButton);
-		cp.add(weekendButton);
-		cp.add(leaveButton);
-		cp.add(evectionButton);
+		// cp.add(vacationButton);
+		// cp.add(weekendButton);
+		// cp.add(leaveButton);
+		// cp.add(evectionButton);
 		cp.add(entranceButton);
 		cp.add(exportDetailButton);
 		cp.add(exportTotalButton);

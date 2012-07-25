@@ -46,6 +46,10 @@ public class WorkStColumn implements IColumnDetail {
 				// 有请假记录
 				return WorkSt.LEAVE.toString();
 			}
+			if (StringUtils.isNotEmpty(evb.getOvertime())) {
+				// 有加班记录
+				return WorkSt.OVERTIME.toString();
+			}
 		}
 		if (StringUtils.isEmpty(rb.getRest())) {
 			// 如果Rest为空，则说明是上班日

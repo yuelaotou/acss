@@ -22,7 +22,7 @@ public class ExceptionColumn implements IColumnDetail {
 		this.name = name;
 	}
 
-	private final int order = 20;
+	private final int order = 23;
 
 	@Override
 	public int getOrder() {
@@ -64,6 +64,20 @@ public class ExceptionColumn implements IColumnDetail {
 					return null;
 				}
 			}
+
+			// 有加班记录
+			if (StringUtils.isNotEmpty(evb.getOvertime())) {
+				String overtime = StringUtils.substringBefore(evb.getOvertime().replace("-", "~"), "~");
+				// 包装成HH:mm:ss格式
+				overtime = StringUtils.rightPad(StringUtils.leftPad(overtime, 5, "0"), 8, ":00");
+				if (!overtime.equals("00000:00") && overtime.compareTo(m.get("work.evening.time")) >= 0) {
+					// 说明晚上有加班，那么如果只有晚上没打卡也不能算是有异常
+					if (StringUtils.isNotEmpty(rb.getTmorning()) && StringUtils.isNotEmpty(rb.getTnooningA())
+							&& StringUtils.isNotEmpty(rb.getTnooningB())) {
+						return null;
+					}
+				}
+			}
 		}
 
 		// 说明是休息日，休息日不管什么情况都不应该出异常。本来就算加班嘛;
@@ -73,6 +87,7 @@ public class ExceptionColumn implements IColumnDetail {
 
 		if (StringUtils.isEmpty(rb.getTmorning()) || StringUtils.isEmpty(rb.getTnooningA())
 				|| StringUtils.isEmpty(rb.getTnooningB()) || StringUtils.isEmpty(rb.getTevening())) {
+
 			return "有异常";
 		}
 		return null;

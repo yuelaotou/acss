@@ -189,7 +189,11 @@ public final class ExcelUtil {
 				for (Class<?> clz : lc) {
 					Cell cell = row.createCell(i);
 					cell.setCellStyle(style_body);
-					cell.setCellValue(m.get(clz.getName()));
+					if (m.get(clz.getName()) != null && m.get(clz.getName()).equals("0")) {
+						cell.setCellValue("");
+					} else {
+						cell.setCellValue(m.get(clz.getName()));
+					}
 					i++;
 				}
 			}
@@ -253,7 +257,11 @@ public final class ExcelUtil {
 				for (Class<?> clz : lc) {
 					Cell cell = row.createCell(i);
 					cell.setCellStyle(style_body);
-					cell.setCellValue(m.get(clz.getName()));
+					if (m.get(clz.getName()) != null && m.get(clz.getName()).equals("0")) {
+						cell.setCellValue("");
+					} else {
+						cell.setCellValue(m.get(clz.getName()));
+					}
 					i++;
 				}
 			}

@@ -1,5 +1,6 @@
 package com.neusoft.acss.column.detail.impl;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +12,7 @@ import com.neusoft.acss.util.DateUtil;
 
 public class TOvertimeColumn implements IColumnDetail {
 
-	private String name = "加班时间";
+	private String name = "加班时间（时）";
 
 	public String getName() {
 		return name;
@@ -49,8 +50,10 @@ public class TOvertimeColumn implements IColumnDetail {
 				String endtime = StringUtils.substringAfter(evb.getOvertime().replace("-", "~"), "~");
 				beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
 				endtime = StringUtils.rightPad(StringUtils.leftPad(endtime, 5, "0"), 8, ":00");
-				int min = DateUtil.minusDate(beforetime, endtime, Calendar.HOUR);
-				return min + "";
+				int min = DateUtil.minusDate(beforetime, endtime, Calendar.MINUTE);
+
+				// 返回小时。带两位小数
+				return new BigDecimal(min).divide(new BigDecimal(60), 2, BigDecimal.ROUND_HALF_UP).toString();
 			}
 		}
 		return null;

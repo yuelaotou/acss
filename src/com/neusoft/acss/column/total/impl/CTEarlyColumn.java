@@ -6,10 +6,9 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.neusoft.acss.bean.Info;
-import com.neusoft.acss.column.detail.impl.TEarlyColumn;
 import com.neusoft.acss.column.total.IColumnTotal;
 
-public class CEarlyColumn implements IColumnTotal {
+public class CTEarlyColumn implements IColumnTotal {
 
 	private String name = "早退次数";
 
@@ -21,7 +20,7 @@ public class CEarlyColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 5;
+	private final int order = 7;
 
 	@Override
 	public int getOrder() {
@@ -38,7 +37,7 @@ public class CEarlyColumn implements IColumnTotal {
 		int count = 0;
 		List<Map<String, String>> list = info.getSubList();
 		for (Map<String, String> m : list) {
-			if (StringUtils.isNotEmpty(m.get(TEarlyColumn.class.getName()))) {
+			if (StringUtils.isNotEmpty(m.get(com.neusoft.acss.column.detail.impl.TEarlyColumn.class.getName()))) {
 				count++;
 			}
 		}

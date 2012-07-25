@@ -21,7 +21,7 @@ public class CExceptionColumn implements IColumnTotal {
 		this.name = name;
 	}
 
-	private final int order = 15;
+	private final int order = 21;
 
 	@Override
 	public int getOrder() {

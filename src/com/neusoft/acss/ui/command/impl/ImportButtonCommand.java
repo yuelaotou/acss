@@ -8,10 +8,11 @@ import javax.swing.JFrame;
 
 import com.neusoft.acss.bean.EmployeeBean;
 import com.neusoft.acss.bean.EvectionBean;
+import com.neusoft.acss.bean.Holiday;
 import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.bean.RecordBean;
-import com.neusoft.acss.bean.Vacation;
-import com.neusoft.acss.bean.WorkDay;
+import com.neusoft.acss.bean.Weekend;
+import com.neusoft.acss.bean.Workday;
 import com.neusoft.acss.bs.Business;
 import com.neusoft.acss.exception.BizException;
 import com.neusoft.acss.ui.command.IButtonCommand;
@@ -24,10 +25,11 @@ import com.neusoft.acss.util.TxtUtil;
  * <p> Title: [导出详细信息表按钮]</p>
  * <p> Description: [导入考勤打卡记录，目前需要在这里同时处理几件事：]</p>
  * <p> 1、读取职工基本信息存储在List&lt;{@link EmployeeBean}&gt;中</p>
- * <p> 2、读取本年度休假记录存储在List&lt;{@link Vacation}&gt;中</p>
- * <p> 3、读取本年度串休记录(正常上班日期)存储在List&lt;{@link WorkDay}&gt;中</p>
+ * <p> 2、读取假日维护表记录，把周末信息存储在List&lt;{@link Weekend}&gt;中</p>
+ * <p> 3、读取假日维护表记录，把上班日信息存储在List&lt;{@link Workday}&gt;中</p>
+ * <p> 3、读取假日维护表记录，把法定假日信息存储在List&lt;{@link Holiday}&gt;中</p>
  * <p> 4、读取本月所有人的外出登记表存储在List&lt;{@link EvectionBean}&gt;中</p>
- * <p> 5、根据法定假日和串休记录，再结合正常周六周日休息，判断RecordBean是正常上班还是休息</p>
+ * <p> 5、根据法定假日，上班日和周末，判断RecordBean是正常上班还是休息</p>
  * <p> 6、最后把所有信息集成在Info对象中返回</p>
  * <p> Created on 2012-7-19</p>
  * <p> Copyright: Copyright (c) 2012</p>
@@ -67,13 +69,8 @@ public class ImportButtonCommand implements IButtonCommand {
 				List<EmployeeBean> employeeBeanList = ExcelUtil.parseExcel2EmployeeList();
 				info.setEmployeeBeanList(employeeBeanList);
 
-				// 读取本年度休假记录
-				List<Vacation> vacationList = TxtUtil.getVacations();
-				info.setVacationList(vacationList);
-
-				// 读取本年度串休记录，正常上班日期
-				List<WorkDay> workDayList = TxtUtil.getWorkDays();
-				info.setWorkDayList(workDayList);
+				// 解析假期维护表,WorkDayList,WeekendList,HoliDayList
+				info = ExcelUtil.getHolidaysFromExcel(info);
 
 				// 读取本月所有人的外出登记表，存在List<EvectionBean>中
 				List<EvectionBean> evbList = ExcelUtil.parseExcel2EvectionList();

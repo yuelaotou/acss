@@ -1,26 +1,23 @@
 package com.neusoft.acss.bs;
 
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 
 import com.neusoft.acss.bean.EmployeeBean;
 import com.neusoft.acss.bean.EvectionBean;
+import com.neusoft.acss.bean.Holiday;
 import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.bean.RecordBean;
-import com.neusoft.acss.bean.Vacation;
-import com.neusoft.acss.bean.WorkDay;
+import com.neusoft.acss.bean.Weekend;
+import com.neusoft.acss.bean.Workday;
 import com.neusoft.acss.column.detail.IColumnDetail;
 import com.neusoft.acss.column.detail.impl.D_B_Name;
 import com.neusoft.acss.column.total.IColumnTotal;
 import com.neusoft.acss.enums.Week;
-import com.neusoft.acss.exception.BizException;
 
 /**
  * <p> Title: [业务逻辑类]</p>
@@ -228,32 +225,33 @@ public class Business {
 	 */
 	public static void checkVacation(Info info) {
 		List<RecordBean> rbList = info.getRecordBeanList();
-		List<Vacation> vacationList = info.getVacationList();
-		List<WorkDay> workDayList = info.getWorkDayList();
+		List<Workday> workdayList = info.getWorkDayList();
+		List<Weekend> weekendList = info.getWeekendList();
+		List<Holiday> holidayList = info.getHolidayList();
 		for (RecordBean rb : rbList) {
-			Calendar c = Calendar.getInstance();
-			try {
-				c.setTime(DateUtils.parseDate(rb.getDate(), "yyyy-MM-dd"));
-			} catch (ParseException e) {
-				throw new BizException("考勤文件中日期格式错误，请确认格式为：yyyy-MM-dd，" + rb.getDate(), e);
+			String date = rb.getDate();
+
+			// 工作日列表
+			for (Workday wd : workdayList) {
+				if (wd.getDate().equals(date)) {
+					rb.setRest(null);
+					break;
+				}
 			}
 
-			// 判断是否为周六周日
-			if (c.get(Calendar.DAY_OF_WEEK) == 7 || c.get(Calendar.DAY_OF_WEEK) == 1) {
-				rb.setRest("休息日");
-				// 如果在串休列表中，直接return flase，不再计算Vacation了。
-				for (WorkDay wd : workDayList) {
-					if (wd.getDate().compareTo(c.getTime()) == 0) {
-						rb.setRest(null);
-						break;
-					}
+			// 周末列表
+			for (Weekend we : weekendList) {
+				if (we.getDate().equals(date)) {
+					rb.setRest("休息日");
+					break;
 				}
-			} else {
-				// 如果在国家规定的休假列表中，return true。
-				for (Vacation vac : vacationList) {
-					if (vac.getDate().compareTo(c.getTime()) == 0) {
-						rb.setRest("休息日");
-					}
+			}
+
+			// 法定假日列表
+			for (Holiday hd : holidayList) {
+				if (hd.getDate().equals(date)) {
+					rb.setRest("法定假日");
+					break;
 				}
 			}
 		}

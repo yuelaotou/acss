@@ -3,14 +3,10 @@ package com.neusoft.acss.ui.command;
 import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.exception.BizException;
 import com.neusoft.acss.ui.UIPanel;
-import com.neusoft.acss.ui.command.impl.EvectionButtonCommand;
 import com.neusoft.acss.ui.command.impl.ExportDetailButtonCommand;
 import com.neusoft.acss.ui.command.impl.ExportTotalButtonCommand;
 import com.neusoft.acss.ui.command.impl.ImportButtonCommand;
-import com.neusoft.acss.ui.command.impl.LeaveButtonCommand;
 import com.neusoft.acss.ui.command.impl.SureButtonCommand;
-import com.neusoft.acss.ui.command.impl.VacationButtonCommand;
-import com.neusoft.acss.ui.command.impl.WeekendButtonCommand;
 
 /**
  * <p> Title: [ActionCommand工厂类]</p>
@@ -28,14 +24,6 @@ public class ButtonCommandContext {
 	public ButtonCommandContext(String actionCommand, UIPanel ui, Info info) {
 		if (actionCommand.equals("确定")) {
 			bc = new SureButtonCommand(ui, info);
-		} else if (actionCommand.equals("导入法定假期")) {
-			bc = new VacationButtonCommand(info);
-		} else if (actionCommand.equals("导入工作串休信息")) {
-			bc = new WeekendButtonCommand(info);
-		} else if (actionCommand.equals("导入请假信息")) {
-			bc = new LeaveButtonCommand(info);
-		} else if (actionCommand.equals("导入出差信息")) {
-			bc = new EvectionButtonCommand(info);
 		} else if (actionCommand.equals("导入考勤记录")) {
 			bc = new ImportButtonCommand(info);
 		} else if (actionCommand.equals("导出详细信息表")) {

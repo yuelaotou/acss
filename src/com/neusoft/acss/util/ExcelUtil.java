@@ -6,11 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.ss.usermodel.Cell;
@@ -27,7 +31,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.neusoft.acss.bean.EmployeeBean;
 import com.neusoft.acss.bean.EvectionBean;
+import com.neusoft.acss.bean.Holiday;
 import com.neusoft.acss.bean.Info;
+import com.neusoft.acss.bean.RecordBean;
+import com.neusoft.acss.bean.Weekend;
+import com.neusoft.acss.bean.Workday;
 import com.neusoft.acss.column.detail.IColumnDetail;
 import com.neusoft.acss.column.total.IColumnTotal;
 import com.neusoft.acss.consts.Consts;
@@ -122,7 +130,6 @@ public final class ExcelUtil {
 			InputStream is = new FileInputStream(file);
 			XSSFWorkbook xwb = new XSSFWorkbook(is);
 			XSSFSheet sheet = xwb.getSheetAt(0);
-			// 根据表格的样式，确定从第4行开始读取，读到总行-2。其实也是4+31行。
 			for (int i = sheet.getFirstRowNum(); i < sheet.getPhysicalNumberOfRows(); i++) {
 				row = sheet.getRow(i);
 				eb = new EmployeeBean();
@@ -143,6 +150,85 @@ public final class ExcelUtil {
 			throw new BizException("读取职工基本信息表IO异常：" + file.getName(), e);
 		}
 		return list;
+	}
+
+	/**
+	 * <p>Description:[解析假期维护表，存储在{@link Info}中]</p>
+	 * Created on 2012-7-10
+	 * @author: 杨光 - yang.guang@neusoft.com
+	 */
+	public static Info getHolidaysFromExcel(Info info) {
+
+		List<RecordBean> rbList = info.getRecordBeanList();
+		RecordBean rb = rbList.get(0);
+		String month = rb.getDate().substring(0, 7);
+
+		Workday workday = null;
+		Weekend weekend = null;
+		Holiday holiday = null;
+		List<Workday> workdayList = new ArrayList<Workday>();
+		List<Weekend> weekendList = new ArrayList<Weekend>();
+		List<Holiday> holidayList = new ArrayList<Holiday>();
+
+		XSSFRow row = null;
+		File file = new File(Consts.PATH_HOLIDAYS);
+		if (!file.exists()) {
+			throw new BizException("找不到假期维护表: " + Consts.PATH_HOLIDAYS);
+		}
+
+		try {
+			InputStream is = new FileInputStream(file);
+			XSSFWorkbook xwb = new XSSFWorkbook(is);
+			XSSFSheet sheet = xwb.getSheetAt(0);
+			// 根据表格的样式，确定从第3行开始读取。
+			for (int i = sheet.getFirstRowNum() + 2; i < sheet.getPhysicalNumberOfRows(); i++) {
+				row = sheet.getRow(i);
+				String date = DateFormatUtils.format(row.getCell(0).getDateCellValue(), "yyyy-MM-dd");
+				String cell = row.getCell(1).toString();
+				if (date.startsWith(month)) {
+					if (StringUtils.isNotEmpty(cell)) {
+						if (cell.equals("上班")) {
+							workday = new Workday();
+							workday.setDate(date);
+							workdayList.add(workday);
+						} else if (cell.equals("休息")) {
+							weekend = new Weekend();
+							weekend.setDate(date);
+							weekendList.add(weekend);
+						} else if (cell.equals("法定假日")) {
+							holiday = new Holiday();
+							holiday.setDate(date);
+							holidayList.add(holiday);
+						}
+					} else {
+						Calendar c = Calendar.getInstance();
+						c.setTime(DateUtils.parseDate(date, "yyyy-MM-dd"));
+
+						// 如果为周六周日，则是周末
+						if (c.get(Calendar.DAY_OF_WEEK) == 7 || c.get(Calendar.DAY_OF_WEEK) == 1) {
+							weekend = new Weekend();
+							weekend.setDate(date);
+							weekendList.add(weekend);
+						} else {
+							workday = new Workday();
+							workday.setDate(date);
+							workdayList.add(workday);
+						}
+					}
+				}
+			}
+			info.setWorkDayList(workdayList);
+			info.setWeekendList(weekendList);
+			info.setHolidayList(holidayList);
+			is.close();
+		} catch (FileNotFoundException e) {
+			throw new BizException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new BizException("读取假期维护表IO异常：" + file.getName(), e);
+		} catch (ParseException e) {
+			throw new BizException("假期维护表时间解析错误：" + file.getName(), e);
+		}
+		return info;
 	}
 
 	/**

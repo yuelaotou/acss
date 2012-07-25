@@ -16,14 +16,19 @@ import java.util.Map;
 public class Info {
 
 	/*
-	 * 法定假日实体类
+	 * 上班日实体类
 	 */
-	private Vacation vacation = null;
+	private Workday workday = null;
 
 	/*
-	 * 串休日实体类
+	 * 周末实体类
 	 */
-	private WorkDay workDay = null;
+	private Weekend weekend = null;
+
+	/*
+	 * 法定假日实体类
+	 */
+	private Holiday holiday = null;
 
 	/*
 	 * 员工基本信息实体类
@@ -41,14 +46,19 @@ public class Info {
 	private EvectionBean evectionBean = null;
 
 	/*
-	 * 法定假日实体集合
+	 * 周末实体集合
 	 */
-	private List<Vacation> vacationList = null;
+	private List<Weekend> weekendList = null;
 
 	/*
-	 * 串休日实体集合
+	 * 上班日实体集合
 	 */
-	private List<WorkDay> workDayList = null;
+	private List<Workday> workdayList = null;
+
+	/*
+	 * 法定假日实体集合
+	 */
+	private List<Holiday> holidayList = null;
 
 	/*
 	 * 员工基本信息实体集合
@@ -85,20 +95,28 @@ public class Info {
 	 */
 	private String message = null;
 
-	public Vacation getVacation() {
-		return vacation;
+	public Weekend getWeekend() {
+		return weekend;
 	}
 
-	public void setVacation(Vacation vacation) {
-		this.vacation = vacation;
+	public void setWeekend(Weekend weekend) {
+		this.weekend = weekend;
 	}
 
-	public WorkDay getWorkDay() {
-		return workDay;
+	public Workday getWorkDay() {
+		return workday;
 	}
 
-	public void setWorkDay(WorkDay workDay) {
-		this.workDay = workDay;
+	public void setWorkDay(Workday workday) {
+		this.workday = workday;
+	}
+
+	public Holiday getHoliday() {
+		return holiday;
+	}
+
+	public void setHoliday(Holiday holiday) {
+		this.holiday = holiday;
 	}
 
 	public EmployeeBean getEmployeeBean() {
@@ -125,20 +143,28 @@ public class Info {
 		this.evectionBean = evectionBean;
 	}
 
-	public List<Vacation> getVacationList() {
-		return vacationList;
+	public List<Workday> getWorkDayList() {
+		return workdayList;
 	}
 
-	public void setVacationList(List<Vacation> vacationList) {
-		this.vacationList = vacationList;
+	public void setWorkDayList(List<Workday> workdayList) {
+		this.workdayList = workdayList;
 	}
 
-	public List<WorkDay> getWorkDayList() {
-		return workDayList;
+	public List<Weekend> getWeekendList() {
+		return weekendList;
 	}
 
-	public void setWorkDayList(List<WorkDay> workDayList) {
-		this.workDayList = workDayList;
+	public void setWeekendList(List<Weekend> weekendList) {
+		this.weekendList = weekendList;
+	}
+
+	public List<Holiday> getHolidayList() {
+		return holidayList;
+	}
+
+	public void setHolidayList(List<Holiday> holidayList) {
+		this.holidayList = holidayList;
 	}
 
 	public List<EmployeeBean> getEmployeeBeanList() {

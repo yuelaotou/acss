@@ -17,11 +17,6 @@ public final class Consts {
 	public final static String PATH_PROPERTIES = "D:\\acss\\info\\配置文件.properties";
 
 	/**
-	 * 法定假日文件的保存位置
-	 */
-	public final static String PATH_HOLIDAYS = "D:\\acss\\info\\法定假日.txt";
-
-	/**
 	 * 节假日文件的保存位置
 	 */
 	public final static String PATH_VACATIONS = "D:\\acss\\info\\节假日.txt";
@@ -35,6 +30,11 @@ public final class Consts {
 	 * 个人出差登记表保存路径
 	 */
 	public final static String FOLDER_EVECTIONS = "D:\\acss\\evection";
+
+	/**
+	 * 假期维护表的保存位置
+	 */
+	public final static String PATH_HOLIDAYS = "D:\\acss\\info\\假期维护表.xlsx";
 
 	/**
 	 * 职工基本信息表保存位置

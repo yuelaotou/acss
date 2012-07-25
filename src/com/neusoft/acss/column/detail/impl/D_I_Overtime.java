@@ -3,7 +3,6 @@ package com.neusoft.acss.column.detail.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 
 import com.neusoft.acss.bean.EvectionBean;
 import com.neusoft.acss.bean.Holiday;
@@ -11,7 +10,6 @@ import com.neusoft.acss.bean.Info;
 import com.neusoft.acss.bean.RecordBean;
 import com.neusoft.acss.column.detail.IColumnDetail;
 import com.neusoft.acss.enums.Overtime;
-import com.neusoft.acss.util.TxtUtil;
 
 public class D_I_Overtime implements IColumnDetail {
 
@@ -47,11 +45,12 @@ public class D_I_Overtime implements IColumnDetail {
 					return Overtime.REMOTE.toString();
 				}
 				if (StringUtils.isNotEmpty(rb.getRest())) {
-					// 这里目前没判断是周末还是法定假日，以后再扩展
-					List<Holiday> list = TxtUtil.getHolidays();
-					for (Holiday h : list) {
-						if (DateFormatUtils.format(h.getDate(), "yyyy-MM-dd").equals(rb.getDate())) {
-							return Overtime.HOLIDAY.toString();
+					List<Holiday> list = info.getHolidayList();
+					if (list != null && list.size() != 0) {
+						for (Holiday h : list) {
+							if (h.getDate().equals(rb.getDate())) {
+								return Overtime.HOLIDAY.toString();
+							}
 						}
 					}
 					return Overtime.WEEKEND.toString();

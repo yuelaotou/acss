@@ -235,7 +235,7 @@ public class EvectionBean {
 	 */
 	public boolean endWith(String time) {
 		if (tevection != null) {
-			String beforetime = StringUtils.substringBefore(tevection.replace("-", "~"), "~");
+			String beforetime = StringUtils.substringAfter(tevection.replace("-", "~"), "~");
 			// 包装成HH:mm:ss格式
 			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
 			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) >= 0) {
@@ -243,7 +243,7 @@ public class EvectionBean {
 			}
 		}
 		if (leave_sick != null) {
-			String beforetime = StringUtils.substringBefore(leave_sick.replace("-", "~"), "~");
+			String beforetime = StringUtils.substringAfter(leave_sick.replace("-", "~"), "~");
 			// 包装成HH:mm:ss格式
 			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
 			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) >= 0) {
@@ -251,7 +251,7 @@ public class EvectionBean {
 			}
 		}
 		if (leave_thing != null) {
-			String beforetime = StringUtils.substringBefore(leave_thing.replace("-", "~"), "~");
+			String beforetime = StringUtils.substringAfter(leave_thing.replace("-", "~"), "~");
 			// 包装成HH:mm:ss格式
 			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
 			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) >= 0) {
@@ -259,7 +259,7 @@ public class EvectionBean {
 			}
 		}
 		if (leave_year != null) {
-			String beforetime = StringUtils.substringBefore(leave_year.replace("-", "~"), "~");
+			String beforetime = StringUtils.substringAfter(leave_year.replace("-", "~"), "~");
 			// 包装成HH:mm:ss格式
 			beforetime = StringUtils.rightPad(StringUtils.leftPad(beforetime, 5, "0"), 8, ":00");
 			if (!beforetime.equals("00000:00") && beforetime.compareTo(time) >= 0) {

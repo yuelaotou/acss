@@ -74,7 +74,21 @@ public class D_T_Late implements IColumnDetail {
 		String morning_grace = DateUtil.addMinutes(m.get("work.morning.time"), m.get("work.grace.time"));
 
 		int min = DateUtil.minusDate(morning_grace, tmorning, Calendar.MINUTE);
-		return min > 0 ? min + "" : null;
+		if (min < 0) {
+			min = 0;
+		}
+		int min1 = 0;
+
+		// 计算午休是否有迟到，是通过午休打卡结束的时间-午休结束时间设定（一般情况是13:00）
+		String tnoonB = rb.getTnooningB();
+		if (StringUtils.isNotEmpty(tnoonB)) {
+			String noon_end = m.get("work.noon.time.end");
+			min1 = DateUtil.minusDate(noon_end, tnoonB, Calendar.MINUTE);
+			if (min1 < 0) {
+				min1 = 0;
+			}
+		}
+		return min + min1 > 0 ? (min + min1) + "" : null;
 
 	}
 }

@@ -23,8 +23,8 @@ public interface IColumnTotal {
 	 * <p>1、Info中存的是每人每月的详细统计信息，一般存储30条记录</p>
 	 * <p>2、需要info.getSubList()来获得List&lt;Map&lt;String, String&gt;&gt; 即：职工每月的详细统计信息</p>
 	 * <p>3、遍历后，每个Map&lt;String, String&gt;存储的是每人每天的详细信息。</p>
-	 * <p>4、提取时具体列时需要根据com.neusoft.acss.column.detail包下的class查看。</p>
-	 * <p>5、比如想获得职工姓名字段，需要这样：map.get("com.neusoft.acss.column.detail.NameColumn");</p>
+	 * <p>4、提取时具体列时需要根据com.neusoft.acss.column.detail.impl包下的class查看。</p>
+	 * <p>5、比如想获得职工姓名字段，需要这样：map.get(D_B_Name.class.getName());</p>
 	 * Created on 2012-7-19
 	 * @author: 杨光 - yang.guang@neusoft.com
 	 */

@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.neusoft.acss.column.detail.IColumnDetail;
 import com.neusoft.acss.column.total.IColumnTotal;
 
@@ -150,29 +152,32 @@ public class ClassUtil {
 		List<Class<?>> returnClassList = new ArrayList<Class<?>>();// 返回结果
 		try {
 			if (clz.equals(IColumnDetail.class)) {
-				Map<Integer, Class<?>> map = new HashMap<Integer, Class<?>>();
+				Map<String, Class<?>> map = new HashMap<String, Class<?>>();
 				for (Class<?> ccc : list) {
 					IColumnDetail cd = (IColumnDetail) ccc.newInstance();
 					int order = cd.getOrder();
-					map.put(order, ccc);
+					String o = StringUtils.leftPad(order + "", 2, "0");
+					recursion(o, map, ccc);
 				}
 				List arrayList = new ArrayList(map.entrySet());
 				Collections.sort(arrayList, new ComparatorByKey());
 				for (Iterator<?> it = arrayList.iterator(); it.hasNext();) {
-					Map.Entry<Integer, Class<?>> entry = (Map.Entry<Integer, Class<?>>) it.next();
+					Map.Entry<String, Class<?>> entry = (Map.Entry<String, Class<?>>) it.next();
+					// System.out.println(entry.getKey() + " == " + entry.getValue());
 					returnClassList.add(entry.getValue());
 				}
 			} else if (clz.equals(IColumnTotal.class)) {
-				Map<Integer, Class<?>> map = new HashMap<Integer, Class<?>>();
+				Map<String, Class<?>> map = new HashMap<String, Class<?>>();
 				for (Class<?> ccc : list) {
 					IColumnTotal cd = (IColumnTotal) ccc.newInstance();
 					int order = cd.getOrder();
-					map.put(order, ccc);
+					String o = StringUtils.leftPad(order + "", 2, "0");
+					recursion(o, map, ccc);
 				}
 				List arrayList = new ArrayList(map.entrySet());
 				Collections.sort(arrayList, new ComparatorByKey());
 				for (Iterator<?> it = arrayList.iterator(); it.hasNext();) {
-					Map.Entry<Integer, Class<?>> entry = (Map.Entry<Integer, Class<?>>) it.next();
+					Map.Entry<String, Class<?>> entry = (Map.Entry<String, Class<?>>) it.next();
 					returnClassList.add(entry.getValue());
 				}
 			}
@@ -191,9 +196,22 @@ public class ClassUtil {
 		public int compare(Object o1, Object o2) {
 			Map.Entry m1 = (Map.Entry) o1;
 			Map.Entry m2 = (Map.Entry) o2;
-			Integer i1 = (Integer) m1.getKey();
-			Integer i2 = (Integer) m2.getKey();
+			String i1 = (String) m1.getKey();
+			String i2 = (String) m2.getKey();
 			return i1.compareTo(i2);
+		}
+	}
+
+	/**
+	 * <p>Discription:[递归，用来排序]</p>
+	 * Created on 2012-7-26
+	 * @author: 杨光 - yang.guang@neusoft.com
+	 */
+	public static void recursion(String o, Map<String, Class<?>> map, Class<?> ccc) {
+		if (map.get(o) == null) {
+			map.put(o, ccc);
+		} else {
+			recursion(o + "_1", map, ccc);
 		}
 	}
 

@@ -78,8 +78,12 @@ public final class DateUtil {
 		} catch (ParseException e) {
 			throw new BizException("计算时间差出错:" + beginTime + "，" + endTime, e);
 		}
-		int t = (int) ((end - begin) / n) + 1;
-		return t;
+
+		if (end > begin) {
+			return (int) ((end - begin) / n + 1);
+		} else {
+			return (int) ((end - begin) / n - 1);
+		}
 	}
 
 }

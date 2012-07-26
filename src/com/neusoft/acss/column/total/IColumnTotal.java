@@ -2,6 +2,22 @@ package com.neusoft.acss.column.total;
 
 import com.neusoft.acss.bean.Info;
 
+/**
+ * <p>考勤统计总表的列字段接口。
+ * 
+ * <p>本实现类的命名规则如下：<br>
+ * 第一个字母为D，代表的是Detail的列<br>
+ * 第二个字母代表了三种意义：<br>
+ * &nbsp;&nbsp;&nbsp;1、B开头，意思是Base基础字段。包括公司，部门等信息<br>
+ * &nbsp;&nbsp;&nbsp;2、C开头，意思是Count求和，合计。迟到次数，早退次数等<br>
+ * &nbsp;&nbsp;&nbsp;3、T开头，意思是Time，时间。包括迟到总时间，请假时间等。<br>
+ * &nbsp;&nbsp;&nbsp;4、I开头，意思是Info，一般的属性。是否提交外出登记表等等<br>
+ * <p> Created on 2012-7-26</p>
+ * <p> Copyright: Copyright (c) 2012</p>
+ * <p> Company: 东软集团股份有限公司</p>
+ * @author 杨光 - yang.guang@neusoft.com
+ * @version 1.0
+ */
 public interface IColumnTotal {
 
 	/**

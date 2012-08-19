@@ -17,6 +17,7 @@ public class Info {
 
 	/*
 	 * 法定假日实体类
+	 * sss
 	 */
 	private Vacation vacation = null;
 
